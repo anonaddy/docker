@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+mkdir -p /etc/services.d/postfix
+cat > /etc/services.d/postfix/run <<EOL
+#!/usr/bin/execlineb -P
+/usr/sbin/postfix -c /etc/postfix start-fg
+EOL
+chmod +x /etc/services.d/postfix/run
