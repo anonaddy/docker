@@ -108,6 +108,7 @@ RUN apk --update --no-cache add -t build-dependencies \
   && git checkout ${ANONADDY_REVISION} \
   && composer require bacon/bacon-qr-code:~1.0.3 \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
+  && npm config set unsafe-perm true \
   && npm install --global cross-env \
   && npm install \
   && npm run production \
