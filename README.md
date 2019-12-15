@@ -5,7 +5,7 @@
   <a href="https://github.com/crazy-max/docker-anonaddy/actions?workflow=build"><img src="https://github.com/crazy-max/docker-anonaddy/workflows/build/badge.svg" alt="Build Status"></a>
   <a href="https://hub.docker.com/r/crazymax/anonaddy/"><img src="https://img.shields.io/docker/stars/crazymax/anonaddy.svg?style=flat-square" alt="Docker Stars"></a>
   <a href="https://hub.docker.com/r/crazymax/anonaddy/"><img src="https://img.shields.io/docker/pulls/crazymax/anonaddy.svg?style=flat-square" alt="Docker Pulls"></a>
-  <a href="https://www.codacy.com/app/crazy-max/docker-anonaddy"><img src="https://img.shields.io/codacy/grade/c214f6492b864734a41a9922360ee4d8.svg?style=flat-square" alt="Code Quality"></a>
+  <a href="https://www.codacy.com/app/crazy-max/docker-anonaddy"><img src="https://img.shields.io/codacy/grade/2816d13dcb64417eb71783a16e12a777.svg?style=flat-square" alt="Code Quality"></a>
   <br /><a href="https://github.com/sponsors/crazy-max"><img src="https://img.shields.io/badge/sponsor-crazy--max-181717.svg?logo=github&style=flat-square" alt="Become a sponsor"></a>
   <a href="https://www.paypal.me/crazyws"><img src="https://img.shields.io/badge/donate-paypal-00457c.svg?logo=paypal&style=flat-square" alt="Donate Paypal"></a>
 </p>
