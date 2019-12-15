@@ -42,7 +42,6 @@ Image: crazymax/anonaddy:latest
    - linux/arm/v7
    - linux/arm64
    - linux/386
-   - linux/ppc64le
 ```
 
 ### Environment variables
