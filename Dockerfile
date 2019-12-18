@@ -26,6 +26,7 @@ RUN apk --update --no-cache add \
     curl \
     gnupg \
     gpgme \
+    imagemagick \
     libgd \
     libressl \
     mysql-client \
@@ -106,7 +107,6 @@ RUN apk --update --no-cache add -t build-dependencies \
   && git clone https://github.com/anonaddy/anonaddy /var/www/anonaddy \
   && cd /var/www/anonaddy \
   && git checkout ${ANONADDY_REVISION} \
-  && composer require bacon/bacon-qr-code:~1.0.3 \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
   && npm install --global cross-env \
