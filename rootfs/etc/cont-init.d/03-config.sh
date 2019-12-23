@@ -136,7 +136,7 @@ echo "Database ready!"
 
 # Postfix
 echo "Setting Postfix master configuration..."
-sed -i "s|smtp.*|2500 inet n - - - - smtpd -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|2500 inet n - - - - smtpd -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
@@ -145,6 +145,7 @@ EOL
 echo "Setting Postfix main configuration..."
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
+maillog_file = /dev/stdout
 myhostname = ${ANONADDY_DOMAIN}
 smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination, check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf
 local_recipient_maps =
