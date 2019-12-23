@@ -146,10 +146,14 @@ echo "Setting Postfix main configuration..."
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
 maillog_file = /dev/stdout
-myhostname = ${ANONADDY_DOMAIN}
 smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination, check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf
 local_recipient_maps =
 EOL
+if [ "${ANONADDY_DOMAIN}" != "null" ]; then
+  cat >> /etc/postfix/main.cf <<EOL
+myhostname = ${ANONADDY_DOMAIN}
+EOL
+fi
 
 echo "Creating recipient access configuration..."
 cat > /etc/postfix/mysql-recipient-access.cf <<EOL
