@@ -97,13 +97,8 @@ Image: crazymax/anonaddy:latest
 
 #### Mail
 
-* `MAIL_HOST`: SMTP hostname / IP address
-* `MAIL_PORT`: SMTP port (default `25`)
-* `MAIL_USERNAME`: SMTP username
-* `MAIL_PASSWORD`: SMTP password
-* `MAIL_ENCRYPTION`: SMTP encryption protocol
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
-* `MAIL_FROM_ADDRESS`: Frtom email address
+* `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
 
 ### Volumes
 
