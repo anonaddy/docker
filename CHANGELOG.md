@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-RC4 (2019/12/23)
+
+* Fix trusted proxies (#1)
+
 ## 0.1.0-RC3 (2019/12/23)
 
 * Use sendmail (#5)

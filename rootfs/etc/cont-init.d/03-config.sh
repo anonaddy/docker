@@ -255,6 +255,10 @@ unset APP_KEY \
   ANONADDY_SECRET \
   ANONADDY_SIGNING_KEY_FINGERPRINT
 
+# Trust all proxies
+su-exec anonaddy:anonaddy php artisan vendor:publish --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
+sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
+
 # Migrate
 su-exec anonaddy:anonaddy php artisan migrate
 su-exec anonaddy:anonaddy php artisan cache:clear
