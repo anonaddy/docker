@@ -89,7 +89,7 @@ RUN apk --update --no-cache add \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"\
-  ANONADDY_REVISION="bd7884174158ad3aa58105994413fea44a0c2488" \
+  ANONADDY_VERSION="v0.1.0" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"
@@ -104,9 +104,8 @@ RUN apk --update --no-cache add -t build-dependencies \
   && addgroup -g ${PGID} anonaddy \
   && adduser -D -h /var/www/anonaddy -u ${PUID} -G anonaddy -s /bin/sh -D anonaddy \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-  && git clone https://github.com/anonaddy/anonaddy /var/www/anonaddy \
+  && git clone --branch ${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy /var/www/anonaddy \
   && cd /var/www/anonaddy \
-  && git checkout ${ANONADDY_REVISION} \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
   && npm install --global cross-env \
