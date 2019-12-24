@@ -1,5 +1,21 @@
 #!/usr/bin/with-contenv bash
 
+SIDECAR_CRON=${SIDECAR_CRON:-0}
+
+if [ "$SIDECAR_CRON" = "1" ]; then
+  exit 0
+fi
+
+# Migrate
+su-exec anonaddy:anonaddy php artisan migrate
+su-exec anonaddy:anonaddy php artisan cache:clear
+su-exec anonaddy:anonaddy php artisan config:cache
+
+# Install passport
+if [ ! -f "/data/storage/oauth-private.key" ] && [ ! -f "/data/storage/oauth-public.key" ]; then
+  su-exec anonaddy:anonaddy php artisan passport:install
+fi
+
 mkdir -p /etc/services.d/nginx
 cat > /etc/services.d/nginx/run <<EOL
 #!/usr/bin/execlineb -P

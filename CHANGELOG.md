@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.0-RC5 (2019/12/24)
+
+* Add sidecar cron service for scheduled tasks
+
 ## 0.1.0-RC4 (2019/12/23)
 
 * Fix trusted proxies (#1)

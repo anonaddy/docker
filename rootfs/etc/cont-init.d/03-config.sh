@@ -258,13 +258,3 @@ unset APP_KEY \
 # Trust all proxies
 su-exec anonaddy:anonaddy php artisan vendor:publish --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
-
-# Migrate
-su-exec anonaddy:anonaddy php artisan migrate
-su-exec anonaddy:anonaddy php artisan cache:clear
-su-exec anonaddy:anonaddy php artisan config:cache
-
-# Install passport
-if [ ! -f "/data/storage/oauth-private.key" ] && [ ! -f "/data/storage/oauth-public.key" ]; then
-  su-exec anonaddy:anonaddy php artisan passport:install
-fi

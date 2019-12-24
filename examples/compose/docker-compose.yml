@@ -45,3 +45,24 @@ services:
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "REDIS_HOST=redis"
     restart: always
+
+  cron:
+    image: crazymax/anonaddy:latest
+    container_name: anonaddy_cron
+    depends_on:
+      - anonaddy
+    volumes:
+      - "./data:/data"
+    env_file:
+      - "./anonaddy.env"
+    environment:
+      - "TZ"
+      - "PUID"
+      - "PGID"
+      - "DB_HOST=db"
+      - "DB_DATABASE=${MYSQL_DATABASE}"
+      - "DB_USERNAME=${MYSQL_USER}"
+      - "DB_PASSWORD=${MYSQL_PASSWORD}"
+      - "REDIS_HOST=redis"
+      - "SIDECAR_CRON=1"
+    restart: always
