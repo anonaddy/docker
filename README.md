@@ -62,6 +62,7 @@ Image: crazymax/anonaddy:latest
 
 #### App
 
+* `APP_NAME`: Name of the application (default `AnonAddy`)
 * `APP_KEY`: Application key for encrypter service. You can generate one through `php artisan key:generate --show` command **required**
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
 * `APP_URL`: The URL of your AnonAddy installation

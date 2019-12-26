@@ -31,6 +31,7 @@ REAL_IP_FROM=${REAL_IP_FROM:-0.0.0.0/32}
 REAL_IP_HEADER=${REAL_IP_HEADER:-X-Forwarded-For}
 LOG_IP_VAR=${LOG_IP_VAR:-remote_addr}
 
+APP_NAME=${APP_NAME:-AnonAddy}
 #APP_KEY=${APP_KEY:-base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=}
 APP_DEBUG=${APP_DEBUG:-false}
 APP_URL=${APP_URL:-null}
@@ -193,7 +194,7 @@ file_env 'PUSHER_APP_SECRET'
 
 echo "Creating AnonAddy env file..."
 cat > /var/www/anonaddy/.env <<EOL
-APP_NAME=AnonAddy
+APP_NAME=${APP_NAME}
 APP_ENV=local
 APP_KEY=${APP_KEY}
 APP_DEBUG=${APP_DEBUG}
