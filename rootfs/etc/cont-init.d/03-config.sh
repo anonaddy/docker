@@ -195,7 +195,7 @@ file_env 'PUSHER_APP_SECRET'
 echo "Creating AnonAddy env file..."
 cat > /var/www/anonaddy/.env <<EOL
 APP_NAME=${APP_NAME}
-APP_ENV=local
+APP_ENV=production
 APP_KEY=${APP_KEY}
 APP_DEBUG=${APP_DEBUG}
 APP_URL=${APP_URL}
@@ -257,5 +257,5 @@ unset APP_KEY \
   ANONADDY_SIGNING_KEY_FINGERPRINT
 
 # Trust all proxies
-su-exec anonaddy:anonaddy php artisan vendor:publish --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
+su-exec anonaddy:anonaddy php artisan vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php

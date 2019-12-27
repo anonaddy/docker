@@ -141,7 +141,7 @@ docker-compose up -d
 On first launch you have to create an admin user with the following command:
 
 ```
-docker-compose exec --user anonaddy anonaddy php artisan db:seed
+docker-compose exec --user anonaddy anonaddy php artisan db:seed --force
 ```
 
 Then try to connect to your AnonAddy instance with `anonaddy`/`anonaddy` credentials.
