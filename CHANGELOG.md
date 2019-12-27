@@ -2,6 +2,7 @@
 
 ## 0.1.0-RC6 (2019/12/27)
 
+* Postfix as sidecar container (#8)
 * Use production env (#7)
 * Add APP_NAME env var (#6)
 

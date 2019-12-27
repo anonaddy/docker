@@ -55,10 +55,6 @@ services:
     depends_on:
       - db
       - redis
-    ports:
-      - target: 2500
-        published: 2500
-        protocol: tcp
     volumes:
       - "./data:/data"
     labels:
@@ -69,14 +65,33 @@ services:
     env_file:
       - "./anonaddy.env"
     environment:
-      - "TZ"
-      - "PUID"
-      - "PGID"
       - "DB_HOST=db"
       - "DB_DATABASE=${MYSQL_DATABASE}"
       - "DB_USERNAME=${MYSQL_USER}"
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "REDIS_HOST=redis"
+    restart: always
+
+  postfix:
+    image: crazymax/anonaddy:latest
+    container_name: anonaddy_postfix
+    depends_on:
+      - anonaddy
+    ports:
+      - target: 2500
+        published: 2500
+        protocol: tcp
+    volumes:
+      - "./data:/data"
+    env_file:
+      - "./anonaddy.env"
+    environment:
+      - "DB_HOST=db"
+      - "DB_DATABASE=${MYSQL_DATABASE}"
+      - "DB_USERNAME=${MYSQL_USER}"
+      - "DB_PASSWORD=${MYSQL_PASSWORD}"
+      - "REDIS_HOST=redis"
+      - "SIDECAR_POSTFIX=1"
     restart: always
 
   cron:
@@ -89,9 +104,6 @@ services:
     env_file:
       - "./anonaddy.env"
     environment:
-      - "TZ"
-      - "PUID"
-      - "PGID"
       - "DB_HOST=db"
       - "DB_DATABASE=${MYSQL_DATABASE}"
       - "DB_USERNAME=${MYSQL_USER}"

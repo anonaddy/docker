@@ -30,6 +30,8 @@ OPCACHE_MEM_SIZE=${OPCACHE_MEM_SIZE:-128}
 REAL_IP_FROM=${REAL_IP_FROM:-0.0.0.0/32}
 REAL_IP_HEADER=${REAL_IP_HEADER:-X-Forwarded-For}
 LOG_IP_VAR=${LOG_IP_VAR:-remote_addr}
+SIDECAR_CRON=${SIDECAR_CRON:-0}
+SIDECAR_POSTFIX=${SIDECAR_POSTFIX:-0}
 
 APP_NAME=${APP_NAME:-AnonAddy}
 #APP_KEY=${APP_KEY:-base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=}
@@ -130,56 +132,6 @@ while ! ${dbcmd} -e "show databases;" > /dev/null 2>&1; do
 done
 echo "Database ready!"
 
-# Postfix
-echo "Setting Postfix master configuration..."
-sed -i "s|^smtp.*inet.*|2500 inet n - - - - smtpd -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
-cat >> /etc/postfix/master.cf <<EOL
-anonaddy unix - n n - - pipe
-  flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
-EOL
-
-echo "Setting Postfix main configuration..."
-sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
-cat >> /etc/postfix/main.cf <<EOL
-maillog_file = /dev/stdout
-smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination, check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf
-local_recipient_maps =
-EOL
-if [ "${ANONADDY_DOMAIN}" != "null" ]; then
-  cat >> /etc/postfix/main.cf <<EOL
-myhostname = ${ANONADDY_DOMAIN}
-EOL
-fi
-
-echo "Creating recipient access configuration..."
-cat > /etc/postfix/mysql-recipient-access.cf <<EOL
-user = ${DB_USERNAME}
-password = ${DB_PASSWORD}
-hosts = ${DB_HOST}:${DB_PORT}
-dbname = ${DB_DATABASE}
-query = CALL block_alias('%s')
-EOL
-chmod o= /etc/postfix/mysql-recipient-access.cf
-chgrp postfix /etc/postfix/mysql-recipient-access.cf
-
-echo "Creating stored procedure..."
-mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
-DELIMITER //
-
-DROP PROCEDURE IF EXISTS \`block_alias\`//
-
-CREATE PROCEDURE \`block_alias\`(alias_email VARCHAR(254))
-BEGIN
-  UPDATE aliases SET
-    emails_blocked = emails_blocked + 1
-  WHERE email = alias_email AND active = 0 LIMIT 1;
-  SELECT IF(deleted_at IS NULL,'DISCARD','REJECT') AS alias_action
-  FROM aliases WHERE email = alias_email AND (active = 0 OR deleted_at IS NOT NULL) LIMIT 1;
-END//
-
-DELIMITER ;
-EOL
-
 file_env 'APP_KEY'
 if [ -z "$APP_KEY" ]; then
   >&2 echo "ERROR: Either APP_KEY or APP_KEY_FILE must be defined"
@@ -246,15 +198,6 @@ ANONADDY_ADDITIONAL_USERNAME_LIMIT=${ANONADDY_ADDITIONAL_USERNAME_LIMIT}
 ANONADDY_SIGNING_KEY_FINGERPRINT=${ANONADDY_SIGNING_KEY_FINGERPRINT}
 EOL
 chown anonaddy. /var/www/anonaddy/.env
-
-# Unset sensitive vars
-unset APP_KEY \
-  DB_USERNAME \
-  DB_PASSWORD \
-  REDIS_PASSWORD \
-  PUSHER_APP_SECRET \
-  ANONADDY_SECRET \
-  ANONADDY_SIGNING_KEY_FINGERPRINT
 
 # Trust all proxies
 su-exec anonaddy:anonaddy php artisan vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
