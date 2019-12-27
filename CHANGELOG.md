@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.0-RC6 (2019/12/27)
+
+* Use production env (#7)
+* Add APP_NAME env var (#6)
+
 ## 0.1.0-RC5 (2019/12/24)
 
 * Add sidecar cron service for scheduled tasks
