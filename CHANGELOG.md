@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3-RC1 (2020/01/19)
+
+* AnonAddy 0.1.3
+
 ## 0.1.0-RC6 (2019/12/27)
 
 * Postfix as sidecar container (#8)

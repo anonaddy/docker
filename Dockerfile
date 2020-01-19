@@ -89,7 +89,7 @@ RUN apk --update --no-cache add \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"\
-  ANONADDY_VERSION="v0.1.0" \
+  ANONADDY_VERSION="v0.1.3" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"
