@@ -9,5 +9,4 @@ chown -R anonaddy. \
   /var/log/php7 \
   /var/run/nginx \
   /var/run/php-fpm \
-  /var/tmp/nginx \
   /var/www/anonaddy/database
