@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4-RC1 (2020/01/30)
+
+* AnonAddy 0.1.4
+
 ## 0.1.3-RC2 (2020/01/24)
 
 * Move Nginx temp folders to `/tmp`
