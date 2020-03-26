@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Start postfix in `anonaddy` container (#10)
+
 ## 0.2.4-RC1 (2020/02/29)
 
 * AnonAddy 0.2.4

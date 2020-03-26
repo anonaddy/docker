@@ -7,6 +7,9 @@ if [ "$SIDECAR_CRON" = "1" ] || [ "$SIDECAR_POSTFIX" = "1" ]; then
   exit 0
 fi
 
+# Start the postfix service to be able to send mail
+postfix start
+
 # Migrate
 su-exec anonaddy:anonaddy php artisan migrate --no-interaction --force
 su-exec anonaddy:anonaddy php artisan cache:clear --no-interaction
