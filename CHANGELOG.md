@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.5-RC1 (2020/03/27)
+
+* AnonAddy 0.2.5
+* Fix folder creation
+
 ## 0.2.4-RC1 (2020/02/29)
 
 * AnonAddy 0.2.4
