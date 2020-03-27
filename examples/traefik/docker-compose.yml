@@ -79,7 +79,7 @@ services:
       - anonaddy
     ports:
       - target: 2500
-        published: 2500
+        published: 25
         protocol: tcp
     volumes:
       - "./data:/data"
