@@ -101,8 +101,14 @@ Image: crazymax/anonaddy:latest
 
 #### Mail
 
+* `MAIL_HOST`: Host address of the SMTP server (default `postfix`)
+* `MAIL_PORT`: SMTP port (default `2500`)
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
 * `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
+
+#### SMTP
+
+* `SMTP_NETWORKS`: Additional, comma seperated, subnets to use (default `172.16.0.0/12`)
 
 ### Volumes
 

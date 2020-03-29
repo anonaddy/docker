@@ -38,6 +38,8 @@ services:
       - "DB_USERNAME=${MYSQL_USER}"
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "REDIS_HOST=redis"
+      - "MAIL_HOST=postfix"
+      - "MAIL_PORT=2500"
     restart: always
 
   postfix:
@@ -78,4 +80,6 @@ services:
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "REDIS_HOST=redis"
       - "SIDECAR_CRON=1"
+      - "MAIL_HOST=postfix"
+      - "MAIL_PORT=2500"
     restart: always

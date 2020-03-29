@@ -33,6 +33,8 @@ DB_USERNAME=${DB_USERNAME:-anonaddy}
 
 ANONADDY_DOMAIN=${ANONADDY_DOMAIN:-null}
 
+SMTP_NETWORKS=${SMTP_NETWORKS:-172.16.0.0/12}
+
 # Continue only if sidecar Postfix container
 if [ "$SIDECAR_POSTFIX" != "1" ]; then
   exit 0
@@ -56,6 +58,7 @@ EOL
 echo "Setting Postfix main configuration..."
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 ${SMTP_NETWORKS}
 maillog_file = /dev/stdout
 smtpd_recipient_restrictions = permit_mynetworks, reject_unauth_destination, check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf
 local_recipient_maps =

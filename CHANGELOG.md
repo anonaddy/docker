@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5-RC2 (2020/03/29)
+
+* Use SMTP driver (#10)
+
 ## 0.2.5-RC1 (2020/03/27)
 
 * AnonAddy 0.2.5
