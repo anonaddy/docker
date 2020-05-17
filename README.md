@@ -37,6 +37,10 @@ ___
 * [Usage](#usage)
   * [Docker Compose](#docker-compose)
 * [Upgrade](#upgrade)
+* [Notes](#notes)
+  * [First launch](#first-launch)
+  * [Cron](#cron)
+  * [Postfix](#postfix)
 * [How can I help?](#how-can-i-help)
 * [License](#license)
 
