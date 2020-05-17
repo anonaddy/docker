@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.5-RC3 (2020/05/17)
+
+* Add `LISTEN_IPV6` env var
+
 ## 0.2.5-RC2 (2020/03/29)
 
 * Use SMTP driver (#10)
