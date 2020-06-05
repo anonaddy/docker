@@ -15,25 +15,24 @@
 ## About
 
 🐳 [AnonAddy](https://anonaddy.com/) Docker image based on Alpine Linux.<br />
-If you are interested, [check out](https://hub.docker.com/r/crazymax/) my other 🐳 Docker images!
+If you are interested, [check out](https://hub.docker.com/r/crazymax/) my other Docker images!
 
 💡 Want to be notified of new releases? Check out 🔔 [Diun (Docker Image Update Notifier)](https://github.com/crazy-max/diun) project!
 
 ___
 
 * [Features](#features)
-* [Docker](#docker)
-  * [Multi-platform image](#multi-platform-image)
-  * [Environment variables](#environment-variables)
-    * [General](#general)
-    * [App](#app)
-    * [AnonAddy](#anonaddy)
-    * [Database](#database)
-    * [Redis](#redis)
-    * [Mail](#mail)
-    * [SMTP](#smtp)
-  * [Volumes](#volumes)
-  * [Ports](#ports)
+* [Multi-platform image](#multi-platform-image)
+* [Environment variables](#environment-variables)
+  * [General](#general)
+  * [App](#app)
+  * [AnonAddy](#anonaddy)
+  * [Database](#database)
+  * [Redis](#redis)
+  * [Mail](#mail)
+  * [SMTP](#smtp)
+* [Volumes](#volumes)
+* [Ports](#ports)
 * [Usage](#usage)
   * [Docker Compose](#docker-compose)
 * [Upgrade](#upgrade)
@@ -52,9 +51,7 @@ ___
 * [Traefik](https://github.com/containous/traefik-library-image) as reverse proxy and creation/renewal of Let's Encrypt certificates (see [this template](examples/traefik))
 * Scheduled tasks through a ["sidecar" container](#cron)
 
-## Docker
-
-### Multi-platform image
+## Multi-platform image
 
 Following platforms for this image are available:
 
@@ -70,9 +67,9 @@ Image: crazymax/anonaddy:latest
    - linux/386
 ```
 
-### Environment variables
+## Environment variables
 
-#### General
+### General
 
 * `TZ`: The timezone assigned to the container (default `UTC`)
 * `PUID`: AnonAddy user id (default `1000`)
@@ -87,14 +84,16 @@ Image: crazymax/anonaddy:latest
 * `SIDECAR_CRON` : Mark the container as a [sidecar cron container](#cron) (default `0`)
 * `SIDECAR_POSTFIX` : Mark the container as a [sidecar Postfix container](#postfix) (default `0`)
 
-#### App
+### App
 
 * `APP_NAME`: Name of the application (default `AnonAddy`)
 * `APP_KEY`: Application key for encrypter service. You can generate one through `php artisan key:generate --show` command **required**
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
 * `APP_URL`: The URL of your AnonAddy installation
 
-#### AnonAddy
+> 💡 `APP_KEY_FILE` can be used to fill in the value from a file, especially for Docker's secrets feature.
+
+### AnonAddy
 
 * `ANONADDY_RETURN_PATH`: Return-path header for outbound emails
 * `ANONADDY_ADMIN_USERNAME`: If set this value will be used and allow you to receive forwarded emails at the root domain
@@ -110,7 +109,9 @@ Image: crazymax/anonaddy:latest
 * `ANONADDY_ADDITIONAL_USERNAME_LIMIT`: Number of additional usernames a user can add to their account (default `3`)
 * `ANONADDY_SIGNING_KEY_FINGERPRINT`: GPG key used to sign forwarded emails. Should be the same as your mail from email address
 
-#### Database
+> 💡 `ANONADDY_SECRET_FILE` can be used to fill in the value from a file, especially for Docker's secrets feature.
+
+### Database
 
 * `DB_HOST`: MySQL database hostname / IP address **required**
 * `DB_PORT`: MySQL database port (default `3306`)
@@ -119,30 +120,32 @@ Image: crazymax/anonaddy:latest
 * `DB_PASSWORD`: MySQL password
 * `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
 
-#### Redis
+> 💡 `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value from a file, especially for Docker's secrets feature.
+
+### Redis
 
 * `REDIS_HOST`: Redis hostname / IP address
 * `REDIS_PORT`: Redis port (default `6379`)
 * `REDIS_PASSWORD`: Redis password
 
-#### Mail
+### Mail
 
 * `MAIL_HOST`: Host address of the SMTP server (default `postfix`)
 * `MAIL_PORT`: SMTP port (default `2500`)
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
 * `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
 
-#### SMTP
+### SMTP
 
 * `SMTP_NETWORKS`: Additional, comma seperated, subnets to use (default `172.16.0.0/12`)
 
-### Volumes
+## Volumes
 
 * `/data`: Contains storage
 
 > :warning: Note that the volume should be owned by the user/group with the specified `PUID` and `PGID`. If you don't give the volume correct permissions, the container may not start.
 
-### Ports
+## Ports
 
 * `2500`: SMTP port
 * `8000`: HTTP port
