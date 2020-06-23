@@ -48,14 +48,14 @@ if [ -z "$DB_PASSWORD" ]; then
 fi
 
 # Master config
-echo "Setting Postfix master configuration..."
+echo "Setting Postfix master configuration"
 sed -i "s|^smtp.*inet.*|2500 inet n - - - - smtpd -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
 EOL
 
-echo "Setting Postfix main configuration..."
+echo "Setting Postfix main configuration"
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 ${SMTP_NETWORKS}
@@ -69,7 +69,7 @@ myhostname = ${ANONADDY_DOMAIN}
 EOL
 fi
 
-echo "Creating recipient access configuration..."
+echo "Creating recipient access configuration"
 cat > /etc/postfix/mysql-recipient-access.cf <<EOL
 user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
@@ -80,7 +80,7 @@ EOL
 chmod o= /etc/postfix/mysql-recipient-access.cf
 chgrp postfix /etc/postfix/mysql-recipient-access.cf
 
-echo "Creating stored procedure..."
+echo "Creating stored procedure"
 mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
 DELIMITER //
 

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+su-exec anonaddy:anonaddy php /var/www/anonaddy/artisan "$@"

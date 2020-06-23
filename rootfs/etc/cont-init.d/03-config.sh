@@ -37,7 +37,7 @@ SIDECAR_POSTFIX=${SIDECAR_POSTFIX:-0}
 APP_NAME=${APP_NAME:-AnonAddy}
 #APP_KEY=${APP_KEY:-base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=}
 APP_DEBUG=${APP_DEBUG:-false}
-APP_URL=${APP_URL:-null}
+APP_URL=${APP_URL:-http://localhost}
 
 #DB_HOST=${DB_HOST:-localhost}
 DB_PORT=${DB_PORT:-3306}
@@ -80,22 +80,22 @@ ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
 echo ${TZ} > /etc/timezone
 
 # PHP
-echo "Setting PHP-FPM configuration..."
+echo "Setting PHP-FPM configuration"
 sed -e "s/@MEMORY_LIMIT@/$MEMORY_LIMIT/g" \
   -e "s/@UPLOAD_MAX_SIZE@/$UPLOAD_MAX_SIZE/g" \
   /tpls/etc/php7/php-fpm.d/www.conf > /etc/php7/php-fpm.d/www.conf
 
-echo "Setting PHP INI configuration..."
+echo "Setting PHP INI configuration"
 sed -i "s|memory_limit.*|memory_limit = ${MEMORY_LIMIT}|g" /etc/php7/php.ini
 sed -i "s|;date\.timezone.*|date\.timezone = ${TZ}|g" /etc/php7/php.ini
 
 # OpCache
-echo "Setting OpCache configuration..."
+echo "Setting OpCache configuration"
 sed -e "s/@OPCACHE_MEM_SIZE@/$OPCACHE_MEM_SIZE/g" \
   /tpls/etc/php7/conf.d/opcache.ini > /etc/php7/conf.d/opcache.ini
 
 # Nginx
-echo "Setting Nginx configuration..."
+echo "Setting Nginx configuration"
 sed -e "s#@UPLOAD_MAX_SIZE@#$UPLOAD_MAX_SIZE#g" \
   -e "s#@REAL_IP_FROM@#$REAL_IP_FROM#g" \
   -e "s#@REAL_IP_HEADER@#$REAL_IP_HEADER#g" \
@@ -106,7 +106,7 @@ if [ "$LISTEN_IPV6" != "true" ]; then
   sed -e '/listen \[::\]:/d' -i /etc/nginx/nginx.conf
 fi
 
-echo "Initializing files and folders..."
+echo "Initializing files and folders"
 mkdir -p /data/storage
 cp -Rf /var/www/anonaddy/storage /data
 rm -rf /var/www/anonaddy/storage
@@ -151,7 +151,7 @@ if [ -z "$ANONADDY_SECRET" ]; then
 fi
 file_env 'PUSHER_APP_SECRET'
 
-echo "Creating AnonAddy env file..."
+echo "Creating AnonAddy env file"
 cat > /var/www/anonaddy/.env <<EOL
 APP_NAME=${APP_NAME}
 APP_ENV=production
@@ -211,6 +211,6 @@ ANONADDY_SIGNING_KEY_FINGERPRINT=${ANONADDY_SIGNING_KEY_FINGERPRINT}
 EOL
 chown anonaddy. /var/www/anonaddy/.env
 
-# Trust all proxies
-su-exec anonaddy:anonaddy php artisan vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
+echo "Trust all proxies"
+anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php

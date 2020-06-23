@@ -87,7 +87,7 @@ Image: crazymax/anonaddy:latest
 ### App
 
 * `APP_NAME`: Name of the application (default `AnonAddy`)
-* `APP_KEY`: Application key for encrypter service. You can generate one through `php artisan key:generate --show` command **required**
+* `APP_KEY`: Application key for encrypter service. You can generate one through `anonaddy key:generate --show` command **required**
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
 * `APP_URL`: The URL of your AnonAddy installation
 
@@ -172,12 +172,26 @@ docker-compose up -d
 
 ## Notes
 
+### `anonaddy` command
+
+If you want to use the artisan command to perform common server operations like manage users, passwords and more, type:
+
+```bash
+docker-compose exec anonaddy anonaddy <command>
+```
+
+For example to list all available commands:
+
+```bash
+docker-compose exec anonaddy anonaddy list
+```
+
 ### First launch
 
 On first launch you have to create an admin user with the following command:
 
 ```
-docker-compose exec --user anonaddy anonaddy php artisan db:seed --force
+docker-compose exec anonaddy anonaddy db:seed --force
 ```
 
 Then try to connect to your AnonAddy instance with `anonaddy`/`anonaddy` credentials.

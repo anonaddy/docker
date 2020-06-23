@@ -7,14 +7,17 @@ if [ "$SIDECAR_CRON" = "1" ] || [ "$SIDECAR_POSTFIX" = "1" ]; then
   exit 0
 fi
 
-# Migrate
-su-exec anonaddy:anonaddy php artisan migrate --no-interaction --force
-su-exec anonaddy:anonaddy php artisan cache:clear --no-interaction
-su-exec anonaddy:anonaddy php artisan config:cache --no-interaction
+echo "DB migration"
+anonaddy migrate --no-interaction --force
+
+echo "Clear cache"
+anonaddy cache:clear --no-interaction
+anonaddy config:cache --no-interaction
 
 # Install passport
 if [ ! -f "/data/storage/oauth-private.key" ] && [ ! -f "/data/storage/oauth-public.key" ]; then
-  su-exec anonaddy:anonaddy php artisan passport:install --no-interaction
+  echo "Install passport"
+  anonaddy passport:install --no-interaction
 fi
 
 mkdir -p /etc/services.d/nginx

@@ -11,7 +11,7 @@ fi
 # Init
 rm -rf ${CRONTAB_PATH}
 mkdir -m 0644 -p ${CRONTAB_PATH}
-echo "* * * * * cd /var/www/anonaddy && php artisan schedule:run --no-ansi --no-interaction --quiet" >> ${CRONTAB_PATH}/anonaddy
+echo "* * * * * anonaddy schedule:run --no-ansi --no-interaction --quiet" >> ${CRONTAB_PATH}/anonaddy
 
 # Fix perms
 echo "Fixing crontabs permissions..."
