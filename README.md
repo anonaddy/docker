@@ -37,6 +37,7 @@ ___
   * [Docker Compose](#docker-compose)
 * [Upgrade](#upgrade)
 * [Notes](#notes)
+  * [`anonaddy` command](#anonaddy-command)
   * [First launch](#first-launch)
   * [Cron](#cron)
   * [Postfix](#postfix)
