@@ -87,7 +87,7 @@ RUN apk --update --no-cache add \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"\
-  ANONADDY_VERSION="v0.2.5" \
+  ANONADDY_VERSION="v0.2.8" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"
@@ -114,6 +114,8 @@ RUN apk --update --no-cache add -t build-dependencies \
   && rm -rf /root/.composer /root/.config /root/.npm /var/cache/apk/* /var/www/anonaddy/node_modules /tmp/*
 
 COPY rootfs /
+
+RUN chmod a+x /usr/local/bin/*
 
 EXPOSE 2500 8000
 WORKDIR /var/www/anonaddy

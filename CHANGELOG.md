@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.8-RC1 (2020/06/24)
+
+* AnonAddy 0.2.8
+* Create anonaddy command
+* Alpine Linux 3.12
+
 ## 0.2.5-RC3 (2020/05/17)
 
 * Add `LISTEN_IPV6` env var
