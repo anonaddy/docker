@@ -134,8 +134,6 @@ Image: crazymax/anonaddy:latest
 * `MAIL_PORT`: SMTP port (default `2500`)
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
 * `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
-* `MAIL_ALLOW_SELF_SIGNED`: Allow self signed certificate (default `false`)
-* `MAIL_VERIFY_PEER`: Verify peer (default `true`)
 
 ### SMTP
 
