@@ -53,7 +53,7 @@ fi
 
 # Master config
 echo "Setting Postfix master configuration"
-sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd -o${SMTPD_DEBUG} content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${SMTPD_DEBUG} -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
