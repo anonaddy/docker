@@ -70,7 +70,9 @@ ANONADDY_ADDITIONAL_USERNAME_LIMIT=${ANONADDY_ADDITIONAL_USERNAME_LIMIT:-3}
 MAIL_FROM_NAME=${MAIL_FROM_NAME:-AnonAddy}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-anonaddy@${ANONADDY_DOMAIN}}
 
-SMTP_DEBUG=${SMTP_DEBUG:-false}
+POSTFIX_DEBUG=${POSTFIX_DEBUG:-false}
+POSTFIX_SMTPD_TLS=${POSTFIX_SMTPD_TLS:-false}
+POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
 
 # Timezone
 echo "Setting timezone to ${TZ}..."
@@ -212,52 +214,32 @@ echo "Trust all proxies"
 anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
 
-SMTPD_DEBUG=""
-if [ "$SMTP_DEBUG" = "true" ]; then
-  SMTPD_DEBUG=" -v"
+POSTFIX_DEBUG_ARG=""
+if [ "$POSTFIX_DEBUG" = "true" ]; then
+  POSTFIX_DEBUG_ARG=" -v"
 fi
 
 echo "Setting Postfix master configuration"
-sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${SMTPD_DEBUG} -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${POSTFIX_DEBUG_ARG} -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
 EOL
 
 echo "[postfix] Setting Postfix main configuration"
-sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
-cat > /etc/postfix/main.cf <<EOL
-smtpd_banner = \$myhostname ESMTP
-biff = no
-
-# appending .domain is the MUA's job.
-append_dot_mydomain = no
-
-readme_directory = no
-
-# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 2 on
-# fresh installs.
-compatibility_level = 2
-
-# SMTP
-smtp_tls_CApath = /etc/ssl/certs
-smtp_use_tls=yes
-smtp_tls_loglevel = 1
-smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
-smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
-smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1
-smtp_tls_mandatory_ciphers = high
-smtp_tls_ciphers = high
-smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
-smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
-smtp_tls_security_level = may
-
+cat >> /etc/postfix/main.cf <<EOL
 myhostname = mail.${ANONADDY_DOMAIN}
 mydomain = ${ANONADDY_DOMAIN}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 myorigin = /etc/mailname
 mydestination = localhost.\$mydomain, localhost
+
+smtpd_banner = \$myhostname ESMTP
+biff = no
+readme_directory = no
+compatibility_level = 2
+append_dot_mydomain = no
 
 virtual_transport = anonaddy:
 virtual_mailbox_domains = \$mydomain, unsubscribe.\$mydomain, mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
@@ -290,7 +272,7 @@ smtpd_recipient_restrictions =
    permit_mynetworks,
    reject_unauth_destination,
    check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf, mysql:/etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf,
-   check_policy_service unix:private/policyd-spf
+   #check_policy_service unix:private/policyd-spf
    reject_rhsbl_helo dbl.spamhaus.org,
    reject_rhsbl_reverse_client dbl.spamhaus.org,
    reject_rhsbl_sender dbl.spamhaus.org,
@@ -304,6 +286,53 @@ disable_vrfy_command = yes
 strict_rfc821_envelopes = yes
 maillog_file = /dev/stdout
 EOL
+
+if [ "$POSTFIX_SMTPD_TLS" = "true" ]; then
+  cat >> /etc/postfix/main.cf <<EOL
+
+# SMTPD
+smtpd_use_tls=yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_CApath = /etc/ssl/certs
+smtpd_tls_security_level = may
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1
+smtpd_tls_loglevel = 1
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtpd_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
+smtpd_tls_mandatory_ciphers = high
+smtpd_tls_ciphers = high
+smtpd_tls_eecdh_grade = ultra
+tls_high_cipherlist=EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS
+tls_preempt_cipherlist = yes
+tls_ssl_options = NO_COMPRESSION
+EOL
+  if [ -n "$POSTFIX_SMTPD_TLS_CERT_FILE" ]; then
+    echo "smtpd_tls_cert_file=${POSTFIX_SMTPD_TLS_CERT_FILE}" >> /etc/postfix/main.cf
+  fi
+  if [ -n "$POSTFIX_SMTPD_TLS_KEY_FILE" ]; then
+    echo "smtpd_tls_cert_file=${POSTFIX_SMTPD_TLS_KEY_FILE}" >> /etc/postfix/main.cf
+  fi
+fi
+
+if [ "$POSTFIX_SMTP_TLS" = "true" ]; then
+  cat >> /etc/postfix/main.cf <<EOL
+
+# SMTP
+smtp_tls_CApath = /etc/ssl/certs
+smtp_use_tls=yes
+smtp_tls_loglevel = 1
+smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1
+smtp_tls_mandatory_ciphers = high
+smtp_tls_ciphers = high
+smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtp_tls_security_level = may
+EOL
+fi
 
 echo "Creating Postfix virtual alias domains and subdomains configuration"
 cat > /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf <<EOL

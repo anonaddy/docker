@@ -30,7 +30,7 @@ ___
   * [Database](#database)
   * [Redis](#redis)
   * [Mail](#mail)
-  * [SMTP](#smtp)
+  * [Postfix](#postfix)
 * [Volumes](#volumes)
 * [Ports](#ports)
 * [Usage](#usage)
@@ -39,8 +39,6 @@ ___
 * [Notes](#notes)
   * [`anonaddy` command](#anonaddy-command)
   * [First launch](#first-launch)
-  * [Cron](#cron)
-  * [Postfix](#postfix)
 * [How can I help?](#how-can-i-help)
 * [License](#license)
 
@@ -131,9 +129,13 @@ Image: crazymax/anonaddy:latest
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
 * `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
 
-### SMTP
+### Postfix
 
-* `SMTP_DEBUG`: Enable debug for Postfix (default `false`)
+* `POSTFIX_DEBUG`: Enable debug (default `false`)
+* `POSTFIX_SMTPD_TLS`: Enabling TLS in the Postfix SMTP server (default `false`)
+* `POSTFIX_SMTPD_TLS_CERT_FILE`: File with the Postfix SMTP server RSA certificate in PEM format
+* `POSTFIX_SMTPD_TLS_KEY_FILE`: File with the Postfix SMTP server RSA private key in PEM format
+* `POSTFIX_SMTP_TLS`: Enabling TLS in the Postfix SMTP client (default `false`)
 
 ## Volumes
 
