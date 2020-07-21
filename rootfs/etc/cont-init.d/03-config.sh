@@ -226,7 +226,9 @@ anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
 EOL
 
-echo "[postfix] Setting Postfix main configuration"
+echo "Setting Postfix main configuration"
+sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
+sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
 myhostname = mail.${ANONADDY_DOMAIN}
 mydomain = ${ANONADDY_DOMAIN}
@@ -248,8 +250,6 @@ relayhost =
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
 recipient_delimiter = +
-inet_interfaces = all
-inet_protocols = all
 
 local_recipient_maps =
 
@@ -292,12 +292,12 @@ if [ "$POSTFIX_SMTPD_TLS" = "true" ]; then
 
 # SMTPD
 smtpd_use_tls=yes
-smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
 smtpd_tls_CApath = /etc/ssl/certs
 smtpd_tls_security_level = may
 smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1
 smtpd_tls_loglevel = 1
-smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
 smtpd_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtpd_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
