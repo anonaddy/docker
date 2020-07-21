@@ -33,6 +33,7 @@ DB_USERNAME=${DB_USERNAME:-anonaddy}
 
 ANONADDY_DOMAIN=${ANONADDY_DOMAIN:-null}
 
+SMTP_PORT=${SMTP_PORT:-25}
 SMTP_NETWORKS=${SMTP_NETWORKS:-172.16.0.0/12}
 
 # Continue only if sidecar Postfix container
@@ -49,7 +50,7 @@ fi
 
 # Master config
 echo "Setting Postfix master configuration"
-sed -i "s|^smtp.*inet.*|2500 inet n - - - - smtpd -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|${SMTP_PORT} inet n - - - - smtpd -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
