@@ -117,7 +117,7 @@ COPY rootfs /
 
 RUN chmod a+x /usr/local/bin/*
 
-EXPOSE 8000
+EXPOSE 25 8000
 WORKDIR /var/www/anonaddy
 VOLUME [ "/data" ]
 
