@@ -99,7 +99,7 @@ Image: crazymax/anonaddy:latest
 * `ANONADDY_RETURN_PATH`: Return-path header for outbound emails
 * `ANONADDY_ADMIN_USERNAME`: If set this value will be used and allow you to receive forwarded emails at the root domain
 * `ANONADDY_ENABLE_REGISTRATION`: If set to false this will prevent new users from registering on the site (default `false`)
-* `ANONADDY_DOMAIN`: Root domain to receive email from
+* `ANONADDY_DOMAIN`: Root domain to receive email from **required**
 * `ANONADDY_HOSTNAME`: FQDN hostname for your server used to validate records on custom domains that are added by users
 * `ANONADDY_DNS_RESOLVER`: Custom domains that are added by users to validate records (default `127.0.0.1`)
 * `ANONADDY_ALL_DOMAINS`: Other domains to use

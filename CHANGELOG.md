@@ -1,9 +1,5 @@
 # Changelog
 
-## 0.2.8-RC2 (2020/07/21)
-
-* Change SMTP default port to `25`
-
 ## 0.2.8-RC1 (2020/06/24)
 
 * AnonAddy 0.2.8
