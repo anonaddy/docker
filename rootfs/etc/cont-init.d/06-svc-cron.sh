@@ -1,12 +1,6 @@
 #!/usr/bin/with-contenv sh
 
 CRONTAB_PATH="/var/spool/cron/crontabs"
-SIDECAR_CRON=${SIDECAR_CRON:-0}
-
-# Continue only if sidecar cron container
-if [ "$SIDECAR_CRON" != "1" ]; then
-  exit 0
-fi
 
 # Init
 rm -rf ${CRONTAB_PATH}

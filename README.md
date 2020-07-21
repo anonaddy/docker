@@ -50,7 +50,6 @@ ___
 * Multi-platform image
 * [s6-overlay](https://github.com/just-containers/s6-overlay/) as process supervisor
 * [Traefik](https://github.com/containous/traefik-library-image) as reverse proxy and creation/renewal of Let's Encrypt certificates (see [this template](examples/traefik))
-* Scheduled tasks through a ["sidecar" container](#cron)
 
 ## Multi-platform image
 
@@ -82,8 +81,6 @@ Image: crazymax/anonaddy:latest
 * `REAL_IP_FROM`: Trusted addresses that are known to send correct replacement addresses (default `0.0.0.0/32`)
 * `REAL_IP_HEADER`: Request header field whose value will be used to replace the client address (default `X-Forwarded-For`)
 * `LOG_IP_VAR`: Use another variable to retrieve the remote IP address for access [log_format](http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format) on Nginx. (default `remote_addr`)
-* `SIDECAR_CRON` : Mark the container as a [sidecar cron container](#cron) (default `0`)
-* `SIDECAR_POSTFIX` : Mark the container as a [sidecar Postfix container](#postfix) (default `0`)
 
 ### App
 
@@ -131,13 +128,11 @@ Image: crazymax/anonaddy:latest
 
 ### Mail
 
-* `MAIL_HOST`: Host address of the SMTP server (default `postfix`)
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
 * `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
 
 ### SMTP
 
-* `SMTP_NETWORKS`: Additional, comma seperated, subnets to use (default `172.16.0.0/12`)
 * `SMTP_DEBUG`: Enable debug for Postfix (default `false`)
 
 ## Volumes
@@ -196,14 +191,6 @@ docker-compose exec anonaddy anonaddy db:seed --force
 ```
 
 Then try to connect to your AnonAddy instance with `anonaddy`/`anonaddy` credentials.
-
-### Cron
-
-Some [scheduled tasks](https://laravel.com/docs/master/scheduling) are set up by AnonAddy. You have to run a "sidecar" container like in the [docker compose template](examples/compose/docker-compose.yml) to run them.
-
-### Postfix
-
-A "sidecar" container for Postfix is required to handle emails through AnonAddy. See the [docker compose template](examples/compose/docker-compose.yml).
 
 ## How can I help?
 

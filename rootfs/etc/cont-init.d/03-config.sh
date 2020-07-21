@@ -31,8 +31,6 @@ LISTEN_IPV6=${LISTEN_IPV6:-true}
 REAL_IP_FROM=${REAL_IP_FROM:-0.0.0.0/32}
 REAL_IP_HEADER=${REAL_IP_HEADER:-X-Forwarded-For}
 LOG_IP_VAR=${LOG_IP_VAR:-remote_addr}
-SIDECAR_CRON=${SIDECAR_CRON:-0}
-SIDECAR_POSTFIX=${SIDECAR_POSTFIX:-0}
 
 APP_NAME=${APP_NAME:-AnonAddy}
 #APP_KEY=${APP_KEY:-base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=}
@@ -69,9 +67,10 @@ ANONADDY_NEW_ALIAS_LIMIT=${ANONADDY_NEW_ALIAS_LIMIT:-10}
 ANONADDY_ADDITIONAL_USERNAME_LIMIT=${ANONADDY_ADDITIONAL_USERNAME_LIMIT:-3}
 #ANONADDY_SIGNING_KEY_FINGERPRINT=${ANONADDY_SIGNING_KEY_FINGERPRINT:-your-signing-key-fingerprint}
 
-MAIL_HOST=${MAIL_HOST:-postfix}
 MAIL_FROM_NAME=${MAIL_FROM_NAME:-AnonAddy}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-anonaddy@${ANONADDY_DOMAIN}}
+
+SMTP_DEBUG=${SMTP_DEBUG:-false}
 
 # Timezone
 echo "Setting timezone to ${TZ}..."
@@ -181,12 +180,7 @@ REDIS_HOST=${REDIS_HOST}
 REDIS_PASSWORD=${REDIS_PASSWORD}
 REDIS_PORT=${REDIS_PORT}
 
-MAIL_DRIVER=smtp
-MAIL_HOST=${MAIL_HOST}
-MAIL_PORT=25
-MAIL_USERNAME=
-MAIL_PASSWORD=
-MAIL_ENCRYPTION=null
+MAIL_DRIVER=sendmail
 MAIL_FROM_NAME=${MAIL_FROM_NAME}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
 
@@ -217,3 +211,150 @@ chown anonaddy. /var/www/anonaddy/.env
 echo "Trust all proxies"
 anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
+
+SMTPD_DEBUG=""
+if [ "$SMTP_DEBUG" = "true" ]; then
+  SMTPD_DEBUG=" -v"
+fi
+
+echo "Setting Postfix master configuration"
+sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${SMTPD_DEBUG} -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+cat >> /etc/postfix/master.cf <<EOL
+anonaddy unix - n n - - pipe
+  flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
+EOL
+
+echo "[postfix] Setting Postfix main configuration"
+sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
+cat > /etc/postfix/main.cf <<EOL
+smtpd_banner = \$myhostname ESMTP
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+readme_directory = no
+
+# See http://www.postfix.org/COMPATIBILITY_README.html -- default to 2 on
+# fresh installs.
+compatibility_level = 2
+
+# SMTP
+smtp_tls_CApath = /etc/ssl/certs
+smtp_use_tls=yes
+smtp_tls_loglevel = 1
+smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1
+smtp_tls_mandatory_ciphers = high
+smtp_tls_ciphers = high
+smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtp_tls_security_level = may
+
+myhostname = mail.${ANONADDY_DOMAIN}
+mydomain = ${ANONADDY_DOMAIN}
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+myorigin = /etc/mailname
+mydestination = localhost.\$mydomain, localhost
+
+virtual_transport = anonaddy:
+virtual_mailbox_domains = \$mydomain, unsubscribe.\$mydomain, mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
+
+relayhost =
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+inet_protocols = all
+
+local_recipient_maps =
+
+smtpd_helo_required = yes
+smtpd_helo_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+    reject_invalid_helo_hostname
+    reject_non_fqdn_helo_hostname
+    reject_unknown_helo_hostname
+
+smtpd_sender_restrictions =
+   permit_mynetworks
+   permit_sasl_authenticated
+   reject_non_fqdn_sender
+   reject_unknown_sender_domain
+   reject_unknown_reverse_client_hostname
+
+smtpd_recipient_restrictions =
+   permit_mynetworks,
+   reject_unauth_destination,
+   check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf, mysql:/etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf,
+   check_policy_service unix:private/policyd-spf
+   reject_rhsbl_helo dbl.spamhaus.org,
+   reject_rhsbl_reverse_client dbl.spamhaus.org,
+   reject_rhsbl_sender dbl.spamhaus.org,
+   reject_rbl_client zen.spamhaus.org
+   reject_rbl_client dul.dnsbl.sorbs.net
+
+# Block clients that speak too early.
+smtpd_data_restrictions = reject_unauth_pipelining
+
+disable_vrfy_command = yes
+strict_rfc821_envelopes = yes
+maillog_file = /dev/stdout
+EOL
+
+echo "Creating Postfix virtual alias domains and subdomains configuration"
+cat > /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf <<EOL
+user = ${DB_USERNAME}
+password = ${DB_PASSWORD}
+hosts = ${DB_HOST}:${DB_PORT}
+dbname = ${DB_DATABASE}
+query = SELECT (SELECT 1 FROM users WHERE CONCAT(username, '.${ANONADDY_DOMAIN}') = '%s') AS users, (SELECT 1 FROM additional_usernames WHERE CONCAT(additional_usernames.username, '.${ANONADDY_DOMAIN}') = '%s') AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
+EOL
+chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
+chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
+
+echo "Creating Postfix recipient access configuration"
+cat > /etc/postfix/mysql-recipient-access.cf <<EOL
+user = ${DB_USERNAME}
+password = ${DB_PASSWORD}
+hosts = ${DB_HOST}:${DB_PORT}
+dbname = ${DB_DATABASE}
+query = CALL block_alias('%s')
+EOL
+chmod o= /etc/postfix/mysql-recipient-access.cf
+chgrp postfix /etc/postfix/mysql-recipient-access.cf
+
+echo "Creating Postfix recipient access domains and additional usernames configuration"
+cat > /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf <<EOL
+user = ${DB_USERNAME}
+password = ${DB_PASSWORD}
+hosts = ${DB_HOST}:${DB_PORT}
+dbname = ${DB_DATABASE}
+query = SELECT (SELECT 'DISCARD' FROM additional_usernames WHERE (CONCAT(username, '.${ANONADDY_DOMAIN}') = SUBSTRING_INDEX('%s','@',-1)) AND active = 0) AS usernames, (SELECT 'DISCARD' FROM domains WHERE domain = SUBSTRING_INDEX('%s','@',-1) AND active = 0) AS domains LIMIT 1;
+EOL
+chmod o= /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
+chgrp postfix /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
+
+echo "Checking Postfix hostname"
+postconf myhostname
+
+echo "Creating stored procedure"
+mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS \`block_alias\`//
+
+CREATE PROCEDURE \`block_alias\`(alias_email VARCHAR(254))
+BEGIN
+  UPDATE aliases SET
+    emails_blocked = emails_blocked + 1
+  WHERE email = alias_email AND active = 0 LIMIT 1;
+  SELECT IF(deleted_at IS NULL,'DISCARD','REJECT') AS alias_action
+  FROM aliases WHERE email = alias_email AND (active = 0 OR deleted_at IS NOT NULL) LIMIT 1;
+END//
+
+DELIMITER ;
+EOL

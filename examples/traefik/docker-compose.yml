@@ -4,8 +4,6 @@ services:
   traefik:
     image: traefik:1.7-alpine
     container_name: traefik
-    networks:
-      - web
     command:
       - "--logLevel=INFO"
       - "--defaultentrypoints=http,https"
@@ -37,8 +35,6 @@ services:
   db:
     image: mariadb:10.4
     container_name: anonaddy_db
-    networks:
-      - anonaddy
     volumes:
       - "./db:/var/lib/mysql"
     environment:
@@ -51,19 +47,18 @@ services:
   redis:
     image: redis:4.0-alpine
     container_name: anonaddy_redis
-    networks:
-      - anonaddy
     restart: always
 
   anonaddy:
     image: crazymax/anonaddy:latest
     container_name: anonaddy
-    networks:
-      - web
-      - anonaddy
     depends_on:
       - db
       - redis
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
     volumes:
       - "./data:/data"
     labels:
@@ -79,60 +74,4 @@ services:
       - "DB_USERNAME=${MYSQL_USER}"
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "REDIS_HOST=redis"
-      - "MAIL_HOST=postfix"
     restart: always
-
-  postfix:
-    image: crazymax/anonaddy:latest
-    container_name: anonaddy_postfix
-    networks:
-      - anonaddy
-    depends_on:
-      - anonaddy
-    ports:
-      - target: 25
-        published: 25
-        protocol: tcp
-    volumes:
-      - "./data:/data"
-    env_file:
-      - "./anonaddy.env"
-    environment:
-      - "DB_HOST=db"
-      - "DB_DATABASE=${MYSQL_DATABASE}"
-      - "DB_USERNAME=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
-      - "REDIS_HOST=redis"
-      - "SIDECAR_POSTFIX=1"
-    restart: always
-
-  cron:
-    image: crazymax/anonaddy:latest
-    container_name: anonaddy_cron
-    networks:
-      - anonaddy
-    depends_on:
-      - anonaddy
-    volumes:
-      - "./data:/data"
-    env_file:
-      - "./anonaddy.env"
-    environment:
-      - "DB_HOST=db"
-      - "DB_DATABASE=${MYSQL_DATABASE}"
-      - "DB_USERNAME=${MYSQL_USER}"
-      - "DB_PASSWORD=${MYSQL_PASSWORD}"
-      - "REDIS_HOST=redis"
-      - "SIDECAR_CRON=1"
-      - "MAIL_HOST=postfix"
-    restart: always
-
-networks:
-  web:
-    ipam:
-      config:
-        - subnet: 172.19.0.0/24
-  anonaddy:
-    ipam:
-      config:
-        - subnet: 172.20.0.0/24

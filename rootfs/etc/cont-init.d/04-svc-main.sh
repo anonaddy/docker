@@ -1,12 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-SIDECAR_CRON=${SIDECAR_CRON:-0}
-SIDECAR_POSTFIX=${SIDECAR_POSTFIX:-0}
-
-if [ "$SIDECAR_CRON" = "1" ] || [ "$SIDECAR_POSTFIX" = "1" ]; then
-  exit 0
-fi
-
 echo "DB migration"
 anonaddy migrate --no-interaction --force
 
