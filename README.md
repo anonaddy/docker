@@ -140,6 +140,7 @@ Image: crazymax/anonaddy:latest
 
 * `SMTP_PORT`: Postfix SMTP port (default `25`)
 * `SMTP_NETWORKS`: Additional, comma seperated, subnets to use (default `172.16.0.0/12`)
+* `SMTP_DEBUG`: Enable debug for Postfix (default `false`)
 
 ## Volumes
 
