@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.8-RC2 (2020/07/21)
+
+* Add `SMTP_DEBUG` env var
+* Fix Postfix main configuration
+* Force SMTP port to `25`
+* Remove `MAIL_PORT` and `SMTP_PORT` env vars
+* `ANONADDY_DOMAIN` env var required
+
 ## 0.2.8-RC1 (2020/06/24)
 
 * AnonAddy 0.2.8
