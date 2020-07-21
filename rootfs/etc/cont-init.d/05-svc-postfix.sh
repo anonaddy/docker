@@ -31,7 +31,6 @@ DB_DATABASE=${DB_DATABASE:-anonaddy}
 DB_USERNAME=${DB_USERNAME:-anonaddy}
 #DB_PASSWORD=${DB_PASSWORD:-asupersecretpassword}
 
-SMTP_PORT=${SMTP_PORT:-25}
 SMTP_NETWORKS=${SMTP_NETWORKS:-172.16.0.0/12}
 SMTP_DEBUG=${SMTP_DEBUG:-false}
 
@@ -54,7 +53,7 @@ fi
 
 # Master config
 echo "Setting Postfix master configuration"
-sed -i "s|^smtp.*inet.*|${SMTP_PORT} inet n - - - - smtpd -o${SMTPD_DEBUG} content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd -o${SMTPD_DEBUG} content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
