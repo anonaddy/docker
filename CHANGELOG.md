@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.8-RC3 (2020/07/21)
+
+* Switch to single container
+* Use `sendmail` SMTP driver
+* Rename `SMTP_DEBUG` to `POSTFIX_DEBUG`
+* Add `POSTFIX_SMTPD_TLS`, `POSTFIX_SMTPD_TLS_CERT_FILE`, `POSTFIX_SMTPD_TLS_KEY_FILE` and `POSTFIX_SMTP_TLS` env vars
+
 ## 0.2.8-RC2 (2020/07/21)
 
 * Add `SMTP_DEBUG` env var

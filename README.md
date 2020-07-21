@@ -10,8 +10,6 @@
   <a href="https://www.paypal.me/crazyws"><img src="https://img.shields.io/badge/donate-paypal-00457c.svg?logo=paypal&style=flat-square" alt="Donate Paypal"></a>
 </p>
 
-> :warning: **This repository is a draft to make it possible to port AnonAddy to a Docker image. Some features have not yet been tested or are missing. Therefore, this image is not ready for production.**
-
 ## About
 
 🐳 [AnonAddy](https://anonaddy.com/) Docker image based on Alpine Linux.<br />
