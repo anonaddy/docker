@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.8-RC4 (2020/07/22)
+
+* Typo
+
 ## 0.2.8-RC3 (2020/07/21)
 
 * Switch to single container
