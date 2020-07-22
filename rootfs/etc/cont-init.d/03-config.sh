@@ -312,7 +312,7 @@ EOL
     echo "smtpd_tls_cert_file=${POSTFIX_SMTPD_TLS_CERT_FILE}" >> /etc/postfix/main.cf
   fi
   if [ -n "$POSTFIX_SMTPD_TLS_KEY_FILE" ]; then
-    echo "smtpd_tls_cert_file=${POSTFIX_SMTPD_TLS_KEY_FILE}" >> /etc/postfix/main.cf
+    echo "smtpd_tls_key_file=${POSTFIX_SMTPD_TLS_KEY_FILE}" >> /etc/postfix/main.cf
   fi
 fi
 
