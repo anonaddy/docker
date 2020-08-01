@@ -2,7 +2,7 @@
 
 ## 0.2.8-RC5 (2020/08/01)
 
-* 
+* Remove database seed and enable registration by default
 
 ## 0.2.8-RC4 (2020/07/22)
 
