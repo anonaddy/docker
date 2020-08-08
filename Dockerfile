@@ -1,4 +1,4 @@
-FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine:3.12
+FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.12
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -71,18 +71,6 @@ RUN apk --update --no-cache add \
     php7-dev \
     php7-pear \
   && pecl install gnupg \
-  && S6_ARCH=$(case ${TARGETPLATFORM:-linux/amd64} in \
-    "linux/amd64")   echo "amd64"   ;; \
-    "linux/arm/v6")  echo "arm"     ;; \
-    "linux/arm/v7")  echo "armhf"   ;; \
-    "linux/arm64")   echo "aarch64" ;; \
-    "linux/386")     echo "x86"     ;; \
-    "linux/ppc64le") echo "ppc64le" ;; \
-    *)               echo ""        ;; esac) \
-  && echo "S6_ARCH=$S6_ARCH" \
-  && wget -q "https://github.com/just-containers/s6-overlay/releases/latest/download/s6-overlay-${S6_ARCH}.tar.gz" -qO "/tmp/s6-overlay-${S6_ARCH}.tar.gz" \
-  && tar xzf /tmp/s6-overlay-${S6_ARCH}.tar.gz -C / \
-  && s6-echo "s6-overlay installed" \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 

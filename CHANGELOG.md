@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.8-RC6 (2020/08/08)
+
+* Now based on [Alpine Linux 3.12 with s6 overlay](https://github.com/crazy-max/docker-alpine-s6/)
+
 ## 0.2.8-RC5 (2020/08/01)
 
 * Remove database seed and enable registration by default
