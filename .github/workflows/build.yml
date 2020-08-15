@@ -22,7 +22,6 @@ jobs:
         name: Prepare
         id: prepare
         run: |
-          DOCKER_USERNAME=crazymax
           DOCKER_IMAGE=crazymax/anonaddy
           DOCKER_PLATFORMS=linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/386,linux/ppc64le,linux/s390x
           VERSION=edge
@@ -37,7 +36,6 @@ jobs:
             TAGS="$TAGS --tag ${DOCKER_IMAGE}:latest"
           fi
 
-          echo ::set-output name=docker_username::${DOCKER_USERNAME}
           echo ::set-output name=docker_image::${DOCKER_IMAGE}
           echo ::set-output name=version::${VERSION}
           echo ::set-output name=buildx_args::--platform ${DOCKER_PLATFORMS} \
