@@ -50,7 +50,7 @@ services:
     restart: always
 
   anonaddy:
-    image: crazymax/anonaddy:latest
+    image: anonaddy/anonaddy:latest
     container_name: anonaddy
     depends_on:
       - db

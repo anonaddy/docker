@@ -3,6 +3,7 @@
 ## 0.2.9-RC1 (2020/08/18)
 
 * AnonAddy 0.2.9
+* Repo moved to [anonaddy/docker](https://github.com/anonaddy/docker)
 
 ## 0.2.8-RC6 (2020/08/08)
 

@@ -1,11 +1,10 @@
-<p align="center"><a href="https://github.com/crazy-max/docker-anonaddy" target="_blank"><img height="128" src="https://raw.githubusercontent.com/crazy-max/docker-anonaddy/master/.res/docker-anonaddy.jpg"></a></p>
+<p align="center"><a href="https://github.com/anonaddy/docker" target="_blank"><img height="128" src="https://raw.githubusercontent.com/anonaddy/docker/master/.res/docker-anonaddy.jpg"></a></p>
 
 <p align="center">
-  <a href="https://hub.docker.com/r/crazymax/anonaddy/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/github/v/tag/crazy-max/docker-anonaddy?label=version&style=flat-square" alt="Latest Version"></a>
-  <a href="https://github.com/crazy-max/docker-anonaddy/actions?workflow=build"><img src="https://img.shields.io/github/workflow/status/crazy-max/docker-anonaddy/build?label=build&logo=github&style=flat-square" alt="Build Status"></a>
-  <a href="https://hub.docker.com/r/crazymax/anonaddy/"><img src="https://img.shields.io/docker/stars/crazymax/anonaddy.svg?style=flat-square&logo=docker" alt="Docker Stars"></a>
-  <a href="https://hub.docker.com/r/crazymax/anonaddy/"><img src="https://img.shields.io/docker/pulls/crazymax/anonaddy.svg?style=flat-square&logo=docker" alt="Docker Pulls"></a>
-  <a href="https://www.codacy.com/app/crazy-max/docker-anonaddy"><img src="https://img.shields.io/codacy/grade/2816d13dcb64417eb71783a16e12a777.svg?style=flat-square" alt="Code Quality"></a>
+  <a href="https://hub.docker.com/r/anonaddy/anonaddy/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/github/v/tag/anonaddy/docker?label=version&style=flat-square" alt="Latest Version"></a>
+  <a href="https://github.com/anonaddy/docker/actions?workflow=build"><img src="https://img.shields.io/github/workflow/status/anonaddy/docker/build?label=build&logo=github&style=flat-square" alt="Build Status"></a>
+  <a href="https://hub.docker.com/r/anonaddy/anonaddy/"><img src="https://img.shields.io/docker/stars/anonaddy/anonaddy.svg?style=flat-square&logo=docker" alt="Docker Stars"></a>
+  <a href="https://hub.docker.com/r/anonaddy/anonaddy/"><img src="https://img.shields.io/docker/pulls/anonaddy/anonaddy.svg?style=flat-square&logo=docker" alt="Docker Pulls"></a>
   <br /><a href="https://github.com/sponsors/crazy-max"><img src="https://img.shields.io/badge/sponsor-crazy--max-181717.svg?logo=github&style=flat-square" alt="Become a sponsor"></a>
   <a href="https://www.paypal.me/crazyws"><img src="https://img.shields.io/badge/donate-paypal-00457c.svg?logo=paypal&style=flat-square" alt="Donate Paypal"></a>
 </p>
@@ -36,7 +35,6 @@ ___
 * [Upgrade](#upgrade)
 * [Notes](#notes)
   * [`anonaddy` command](#anonaddy-command)
-  * [First launch](#first-launch)
 * [How can I help?](#how-can-i-help)
 * [License](#license)
 
@@ -52,8 +50,8 @@ ___
 Following platforms for this image are available:
 
 ```
-$ docker run --rm mplatform/mquery crazymax/anonaddy:latest
-Image: crazymax/anonaddy:latest
+$ docker run --rm mplatform/mquery anonaddy/anonaddy:latest
+Image: anonaddy/anonaddy:latest
  * Manifest List: Yes
  * Supported platforms:
    - linux/amd64
