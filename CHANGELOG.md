@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9-RC1 (2020/08/18)
+
+* AnonAddy 0.2.9
+
 ## 0.2.8-RC6 (2020/08/08)
 
 * Now based on [Alpine Linux 3.12 with s6 overlay](https://github.com/crazy-max/docker-alpine-s6/)
