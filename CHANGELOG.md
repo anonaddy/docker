@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.9-RC3 (2020/08/19)
+
+* Fix UID/GID perms (#21)
+
 ## 0.2.9-RC2 (2020/08/19)
 
 * Fix perms (#20)
