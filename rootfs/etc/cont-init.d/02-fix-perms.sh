@@ -11,5 +11,4 @@ chown -R anonaddy. \
   /var/log/nginx \
   /var/log/php7 \
   /var/run/nginx \
-  /var/run/php-fpm \
-  /var/www/anonaddy/database
+  /var/run/php-fpm

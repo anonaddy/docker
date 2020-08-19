@@ -98,7 +98,7 @@ RUN apk --update --no-cache add -t build-dependencies \
   && npm install --global cross-env \
   && npm install \
   && npm run production \
-  && chown -R anonaddy. /var/www/anonaddy \
+  && chown -R nobody.nogroup /var/www/anonaddy \
   && apk del build-dependencies \
   && rm -rf /root/.composer /root/.config /root/.npm /var/cache/apk/* /var/www/anonaddy/node_modules /tmp/*
 
