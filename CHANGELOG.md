@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.10-RC1 (2020/08/20)
+
+* AnonAddy 0.2.10
+
 ## 0.2.9-RC3 (2020/08/19)
 
 * Fix UID/GID perms (#21)
