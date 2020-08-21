@@ -247,7 +247,7 @@ virtual_transport = anonaddy:
 virtual_mailbox_domains = \$mydomain, unsubscribe.\$mydomain, mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 
 relayhost =
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
 mailbox_size_limit = 0
 recipient_delimiter = +
 
