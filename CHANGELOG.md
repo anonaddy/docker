@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.11-RC1 (2020/08/25)
+
+* AnonAddy 0.2.11
+
 ## 0.2.10-RC2 (2020/08/21)
 
 * Add private CIDR to the list of "trusted" remote SMTP clients for Postfix (#22)
