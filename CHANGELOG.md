@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.11-RC2 (2020/09/10)
+
+* Remove permit_mynetworks from smtpd_recipient_restrictions (anonaddy/anonaddy#72)
+* Switch to Docker actions
+
 ## 0.2.11-RC1 (2020/08/25)
 
 * AnonAddy 0.2.11
