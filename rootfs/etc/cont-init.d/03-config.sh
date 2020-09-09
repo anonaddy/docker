@@ -255,21 +255,20 @@ local_recipient_maps =
 
 smtpd_helo_required = yes
 smtpd_helo_restrictions =
-    permit_mynetworks
-    permit_sasl_authenticated
-    reject_invalid_helo_hostname
-    reject_non_fqdn_helo_hostname
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_invalid_helo_hostname,
+    reject_non_fqdn_helo_hostname,
     reject_unknown_helo_hostname
 
 smtpd_sender_restrictions =
-   permit_mynetworks
-   permit_sasl_authenticated
-   reject_non_fqdn_sender
-   reject_unknown_sender_domain
+   permit_mynetworks,
+   permit_sasl_authenticated,
+   reject_non_fqdn_sender,
+   reject_unknown_sender_domain,
    reject_unknown_reverse_client_hostname
 
 smtpd_recipient_restrictions =
-   permit_mynetworks,
    reject_unauth_destination,
    check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf, mysql:/etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf,
    #check_policy_service unix:private/policyd-spf
