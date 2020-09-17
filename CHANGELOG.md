@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.12-RC1 (2020/09/17)
+
+* AnonAddy 0.2.12
+
 ## 0.2.11-RC2 (2020/09/10)
 
 * Remove permit_mynetworks from smtpd_recipient_restrictions (anonaddy/anonaddy#72)
