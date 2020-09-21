@@ -59,7 +59,7 @@ ANONADDY_ENABLE_REGISTRATION=${ANONADDY_ENABLE_REGISTRATION:-true}
 #ANONADDY_DOMAIN=${ANONADDY_DOMAIN:-null}
 ANONADDY_HOSTNAME=${ANONADDY_HOSTNAME:-null}
 ANONADDY_DNS_RESOLVER=${ANONADDY_DNS_RESOLVER:-127.0.0.1}
-ANONADDY_ALL_DOMAINS=${ANONADDY_ALL_DOMAINS:-null}
+ANONADDY_ALL_DOMAINS=${ANONADDY_ALL_DOMAINS:-$ANONADDY_DOMAIN}
 #ANONADDY_SECRET=${ANONADDY_SECRET:-long-random-string}
 ANONADDY_LIMIT=${ANONADDY_LIMIT:-200}
 ANONADDY_BANDWIDTH_LIMIT=${ANONADDY_BANDWIDTH_LIMIT:-104857600}
@@ -334,12 +334,22 @@ EOL
 fi
 
 echo "Creating Postfix virtual alias domains and subdomains configuration"
+QUERY_USERS=""
+QUERY_USERNAMES=""
+IFS=","
+for domain in $ANONADDY_ALL_DOMAINS;
+do
+  if [ -n "$QUERY_USERS" ]; then QUERY_USERS="${QUERY_USERS} OR "; fi
+  if [ -n "$QUERY_USERNAMES" ]; then QUERY_USERNAMES="${QUERY_USERNAMES} OR "; fi
+  QUERY_USERS="${QUERY_USERS}CONCAT(username, '.${domain}') = '%s'"
+  QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(additional_usernames.username, '.${domain}') = '%s'"
+done
 cat > /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf <<EOL
 user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = SELECT (SELECT 1 FROM users WHERE CONCAT(username, '.${ANONADDY_DOMAIN}') = '%s') AS users, (SELECT 1 FROM additional_usernames WHERE CONCAT(additional_usernames.username, '.${ANONADDY_DOMAIN}') = '%s') AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
+query = SELECT (SELECT 1 FROM users WHERE ${QUERY_USERS}) AS users, (SELECT 1 FROM additional_usernames WHERE ${QUERY_USERNAMES}) AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
@@ -356,12 +366,19 @@ chmod o= /etc/postfix/mysql-recipient-access.cf
 chgrp postfix /etc/postfix/mysql-recipient-access.cf
 
 echo "Creating Postfix recipient access domains and additional usernames configuration"
+QUERY_USERNAMES=""
+IFS=","
+for domain in $ANONADDY_ALL_DOMAINS;
+do
+  if [ -n "$QUERY_USERNAMES" ]; then QUERY_USERNAMES="${QUERY_USERNAMES} OR "; fi
+  QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(username, '.${domain}') = SUBSTRING_INDEX('%s','@',-1)"
+done
 cat > /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf <<EOL
 user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = SELECT (SELECT 'DISCARD' FROM additional_usernames WHERE (CONCAT(username, '.${ANONADDY_DOMAIN}') = SUBSTRING_INDEX('%s','@',-1)) AND active = 0) AS usernames, (SELECT 'DISCARD' FROM domains WHERE domain = SUBSTRING_INDEX('%s','@',-1) AND active = 0) AS domains LIMIT 1;
+query = SELECT (SELECT 'DISCARD' FROM additional_usernames WHERE (${QUERY_USERNAMES}) AND active = 0) AS usernames, (SELECT 'DISCARD' FROM domains WHERE domain = SUBSTRING_INDEX('%s','@',-1) AND active = 0) AS domains LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
 chgrp postfix /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
