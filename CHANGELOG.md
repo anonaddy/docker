@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.13-RC1 (2020/09/21)
+
+* AnonAddy 0.2.13
+* Handle multi domains (anonaddy/anonaddy#49)
+* Set `ANONADDY_DOMAIN` as default value of `ANONADDY_ALL_DOMAINS` (#24)
+
 ## 0.2.12-RC1 (2020/09/17)
 
 * AnonAddy 0.2.12
