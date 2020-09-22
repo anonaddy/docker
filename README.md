@@ -81,7 +81,7 @@ Image: anonaddy/anonaddy:latest
 ### App
 
 * `APP_NAME`: Name of the application (default `AnonAddy`)
-* `APP_KEY`: Application key for encrypter service. You can generate one through `anonaddy key:generate --show` command **required**
+* `APP_KEY`: Application key for encrypter service. You can generate one through `anonaddy key:generate --show` or `echo "base64:$(openssl rand -base64 32)"`. **required**
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
 * `APP_URL`: The URL of your AnonAddy installation
 
