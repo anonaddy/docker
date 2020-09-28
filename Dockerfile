@@ -48,6 +48,7 @@ RUN apk --update --no-cache add \
     php7-pdo \
     php7-pdo_mysql \
     php7-phar \
+    php7-redis \
     php7-session \
     php7-simplexml \
     php7-tokenizer \
