@@ -379,7 +379,7 @@ user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = SELECT (SELECT 'DISCARD' FROM additional_usernames WHERE (${QUERY_USERNAMES}) AND active = 0) AS usernames, (SELECT 'DISCARD' FROM domains WHERE domain = SUBSTRING_INDEX('%s','@',-1) AND active = 0) AS domains LIMIT 1;
+query = SELECT (SELECT 'DISCARD' FROM additional_usernames WHERE (${QUERY_USERNAMES}) AND active = 0) AS usernames, (SELECT CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email='%s') AND catch_all = 0 THEN 'REJECT' WHEN active=0 THEN 'DISCARD' ELSE NULL END FROM domains WHERE domain = SUBSTRING_INDEX('%s','@',-1)) AS domains LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
 chgrp postfix /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
