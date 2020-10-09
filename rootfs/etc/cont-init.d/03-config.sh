@@ -371,15 +371,15 @@ QUERY_USERNAMES=""
 IFS=","
 for domain in $ANONADDY_ALL_DOMAINS;
 do
-  if [ -n "$QUERY_USERNAMES" ]; then QUERY_USERNAMES="${QUERY_USERNAMES} OR "; fi
-  QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(username, '.${domain}') = SUBSTRING_INDEX('%s','@',-1)"
+  if [ -n "$QUERY_USERNAMES" ]; then QUERY_USERNAMES="${QUERY_USERNAMES},"; fi
+  QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(additional_usernames.username, '.${domain}')"
 done
 cat > /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf <<EOL
 user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = SELECT (SELECT 'DISCARD' FROM additional_usernames WHERE (${QUERY_USERNAMES}) AND active = 0) AS usernames, (SELECT CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email='%s') AND catch_all = 0 THEN 'REJECT' WHEN active=0 THEN 'DISCARD' ELSE NULL END FROM domains WHERE domain = SUBSTRING_INDEX('%s','@',-1)) AS domains LIMIT 1;
+query = SELECT (SELECT CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email = '%s') AND additional_usernames.catch_all = 0 OR domains.catch_all = 0 THEN 'REJECT' WHEN additional_usernames.active = 0 OR domains.active = 0 THEN 'DISCARD' ELSE NULL END FROM additional_usernames, domains WHERE SUBSTRING_INDEX('%s','@',-1) IN (${QUERY_USERNAMES}) OR domains.domain = SUBSTRING_INDEX('%s','@',-1) LIMIT 1) AS result LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
 chgrp postfix /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
