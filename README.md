@@ -1,4 +1,4 @@
-<p align="center"><a href="https://github.com/anonaddy/docker" target="_blank"><img height="128" src="https://raw.githubusercontent.com/anonaddy/docker/master/.res/docker-anonaddy.jpg"></a></p>
+<p align="center"><a href="https://github.com/anonaddy/docker" target="_blank"><img height="128" src="https://raw.githubusercontent.com/anonaddy/docker/master/.github/docker-anonaddy.jpg"></a></p>
 
 <p align="center">
   <a href="https://hub.docker.com/r/anonaddy/anonaddy/tags?page=1&ordering=last_updated"><img src="https://img.shields.io/github/v/tag/anonaddy/docker?label=version&style=flat-square" alt="Latest Version"></a>
@@ -11,7 +11,7 @@
 
 ## About
 
-🐳 [AnonAddy](https://anonaddy.com/) Docker image based on Alpine Linux.<br />
+[AnonAddy](https://anonaddy.com/) Docker image based on Alpine Linux.<br />
 If you are interested, [check out](https://hub.docker.com/r/crazymax/) my other Docker images!
 
 💡 Want to be notified of new releases? Check out 🔔 [Diun (Docker Image Update Notifier)](https://github.com/crazy-max/diun) project!
