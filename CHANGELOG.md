@@ -1,5 +1,8 @@
 # Changelog
 
+
+* Add env var to clear environment in FPM workers
+
 ## 0.5.0-RC1 (2020/10/09)
 
 * AnonAddy 0.5.0
