@@ -109,7 +109,6 @@ if [ "$LISTEN_IPV6" != "true" ]; then
 fi
 
 echo "Initializing files and folders"
-mkdir -p /data/storage
 cp -Rf /var/www/anonaddy/storage /data
 rm -rf /var/www/anonaddy/storage
 ln -sf /data/storage /var/www/anonaddy/storage
@@ -273,7 +272,7 @@ smtpd_sender_restrictions =
 
 smtpd_recipient_restrictions =
    reject_unauth_destination,
-   check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf, mysql:/etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf,
+   check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf, mysql:/etc/postfix/mysql-recipient-access.cf,
    #check_policy_service unix:private/policyd-spf
    reject_rhsbl_helo dbl.spamhaus.org,
    reject_rhsbl_reverse_client dbl.spamhaus.org,
@@ -352,7 +351,7 @@ user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = SELECT (SELECT 1 FROM users WHERE ${QUERY_USERS}) AS users, (SELECT 1 FROM additional_usernames WHERE ${QUERY_USERNAMES}) AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
+query = SELECT (SELECT 1 FROM users WHERE '%s' IN (${QUERY_USERS})) AS users, (SELECT 1 FROM additional_usernames WHERE '%s' IN (${QUERY_USERNAMES})) AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
@@ -363,46 +362,107 @@ user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = CALL block_alias('%s')
+query = CALL check_access('%s')
 EOL
 chmod o= /etc/postfix/mysql-recipient-access.cf
 chgrp postfix /etc/postfix/mysql-recipient-access.cf
 
-echo "Creating Postfix recipient access domains and additional usernames configuration"
+echo "Checking Postfix hostname"
+postconf myhostname
+
+echo "Creating check_access stored procedure"
 QUERY_USERNAMES=""
 IFS=","
 for domain in $ANONADDY_ALL_DOMAINS;
 do
   if [ -n "$QUERY_USERNAMES" ]; then QUERY_USERNAMES="${QUERY_USERNAMES},"; fi
-  QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(additional_usernames.username, '.${domain}')"
+  QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(username, '.${domain}')"
 done
-cat > /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf <<EOL
-user = ${DB_USERNAME}
-password = ${DB_PASSWORD}
-hosts = ${DB_HOST}:${DB_PORT}
-dbname = ${DB_DATABASE}
-query = SELECT (SELECT CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email = '%s') AND additional_usernames.catch_all = 0 OR domains.catch_all = 0 THEN 'REJECT' WHEN additional_usernames.active = 0 OR domains.active = 0 THEN 'DISCARD' ELSE NULL END FROM additional_usernames, domains WHERE SUBSTRING_INDEX('%s','@',-1) IN (${QUERY_USERNAMES}) OR domains.domain = SUBSTRING_INDEX('%s','@',-1) LIMIT 1) AS result LIMIT 1;
-EOL
-chmod o= /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
-chgrp postfix /etc/postfix/mysql-recipient-access-domains-and-additional-usernames.cf
-
-echo "Checking Postfix hostname"
-postconf myhostname
-
-echo "Creating stored procedure"
 mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
 DELIMITER //
 
-DROP PROCEDURE IF EXISTS \`block_alias\`//
+DROP PROCEDURE IF EXISTS \`check_access\`//
 
-CREATE PROCEDURE \`block_alias\`(alias_email VARCHAR(254))
+CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254) charset utf8)
 BEGIN
-  UPDATE aliases SET
-    emails_blocked = emails_blocked + 1
-  WHERE email = alias_email AND active = 0 LIMIT 1;
-  SELECT IF(deleted_at IS NULL,'DISCARD','REJECT') AS alias_action
-  FROM aliases WHERE email = alias_email AND (active = 0 OR deleted_at IS NOT NULL) LIMIT 1;
-END//
+    DECLARE alias_action varchar(7) charset utf8;
+    DECLARE no_alias_exists int(1);
+    DECLARE alias_domain varchar(254) charset utf8;
+    SET alias_domain = SUBSTRING_INDEX(alias_email, '@', -1);
+
+    # We only want to carry out the checks if it is a full RCPT TO address without any + extension
+    IF LOCATE('@',alias_email) > 1 AND LOCATE('+',alias_email) = 0 AND LENGTH(alias_domain) > 0 THEN
+
+        SET no_alias_exists = CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email = alias_email) THEN 1 ELSE 0 END;
+
+        # If there is an alias, check if it is deactivated or deleted
+        IF NOT no_alias_exists THEN
+            SET alias_action = (SELECT
+                IF(deleted_at IS NULL,
+                'DISCARD',
+                'REJECT')
+            FROM
+                aliases
+            WHERE
+                email = alias_email
+                AND (active = 0
+                OR deleted_at IS NOT NULL) LIMIT 1);
+        END IF;
+
+        # If the alias is deactivated or deleted then increment its blocked count and return the alias_action
+        IF alias_action IN('DISCARD','REJECT') THEN
+            UPDATE
+                aliases
+            SET
+                emails_blocked = emails_blocked + 1
+            WHERE
+                email = alias_email
+            LIMIT 1;
+
+            SELECT alias_action;
+        ELSE
+            SELECT
+            (
+            SELECT
+                CASE
+                    WHEN no_alias_exists
+                    AND catch_all = 0 THEN "REJECT"
+                    ELSE NULL
+                END
+            FROM
+                users
+            WHERE
+                alias_domain IN (${QUERY_USERNAMES}) ) AS users,
+            (
+            SELECT
+                CASE
+                    WHEN no_alias_exists
+                    AND catch_all = 0 THEN "REJECT"
+                    WHEN active = 0 THEN "DISCARD"
+                    ELSE NULL
+                END
+            FROM
+                additional_usernames
+            WHERE
+                alias_domain IN (${QUERY_USERNAMES}) ) AS usernames,
+            (
+            SELECT
+                CASE
+                    WHEN no_alias_exists
+                    AND catch_all = 0 THEN "REJECT"
+                    WHEN active = 0 THEN "DISCARD"
+                    ELSE NULL
+                END
+            FROM
+                domains
+            WHERE
+                domain = alias_domain) AS domains
+            LIMIT 1;
+        END IF;
+    ELSE
+        SELECT NULL;
+    END IF;
+ END//
 
 DELIMITER ;
 EOL
