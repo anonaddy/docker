@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0-RC2 (2020/10/16)
+
+* Fix stored procedure
+
 ## 0.6.0-RC1 (2020/10/16)
 
 * AnonAddy 0.6.0
