@@ -272,7 +272,7 @@ smtpd_sender_restrictions =
 
 smtpd_recipient_restrictions =
    reject_unauth_destination,
-   check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf, mysql:/etc/postfix/mysql-recipient-access.cf,
+   check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf,
    #check_policy_service unix:private/policyd-spf
    reject_rhsbl_helo dbl.spamhaus.org,
    reject_rhsbl_reverse_client dbl.spamhaus.org,
@@ -351,7 +351,7 @@ user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
-query = SELECT (SELECT 1 FROM users WHERE '%s' IN (${QUERY_USERS})) AS users, (SELECT 1 FROM additional_usernames WHERE '%s' IN (${QUERY_USERNAMES})) AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
+query = SELECT (SELECT 1 FROM users WHERE ${QUERY_USERS}) AS users, (SELECT 1 FROM additional_usernames WHERE ${QUERY_USERNAMES}) AS usernames, (SELECT 1 FROM domains WHERE domains.domain = '%s' AND domains.domain_verified_at IS NOT NULL) AS domains LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
@@ -381,6 +381,7 @@ done
 mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
 DELIMITER //
 
+DROP PROCEDURE IF EXISTS \`block_alias\`//
 DROP PROCEDURE IF EXISTS \`check_access\`//
 
 CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254) charset utf8)
