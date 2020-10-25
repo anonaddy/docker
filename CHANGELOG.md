@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0-RC3 (2020/10/25)
+
+* Fix mail forwarding (#29 #30)
+
 ## 0.6.0-RC2 (2020/10/16)
 
 * Fix stored procedure
