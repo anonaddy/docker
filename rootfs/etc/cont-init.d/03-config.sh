@@ -229,7 +229,7 @@ anonaddy unix - n n - - pipe
 EOL
 
 echo "Setting Postfix main configuration"
-VBOX_DOMAINS="\$mydomain,unsubscribe.\$mydomain,"
+VBOX_DOMAINS=""
 IFS=","
 for domain in $ANONADDY_ALL_DOMAINS;
 do
