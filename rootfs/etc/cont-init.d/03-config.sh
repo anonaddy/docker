@@ -229,6 +229,13 @@ anonaddy unix - n n - - pipe
 EOL
 
 echo "Setting Postfix main configuration"
+VBOX_DOMAINS="\$mydomain,unsubscribe.\$mydomain,"
+IFS=","
+for domain in $ANONADDY_ALL_DOMAINS;
+do
+  if [ -n "$VBOX_DOMAINS" ]; then VBOX_DOMAINS="${VBOX_DOMAINS},"; fi
+  VBOX_DOMAINS="${VBOX_DOMAINS}${domain},unsubscribe.${domain}"
+done
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
@@ -246,7 +253,7 @@ compatibility_level = 2
 append_dot_mydomain = no
 
 virtual_transport = anonaddy:
-virtual_mailbox_domains = \$mydomain, unsubscribe.\$mydomain, mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
+virtual_mailbox_domains = ${VBOX_DOMAINS},mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 
 relayhost =
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
