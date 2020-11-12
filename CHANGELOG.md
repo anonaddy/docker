@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0-RC4 (2020/11/12)
+
+* Handle domains in virtual_mailbox_domains (#32)
+
 ## 0.6.0-RC3 (2020/10/25)
 
 * Fix mail forwarding (#29 #30)
