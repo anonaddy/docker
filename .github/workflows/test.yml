@@ -54,7 +54,7 @@ jobs:
             -e "MYSQL_DATABASE=anonaddy" \
             -e "MYSQL_USER=anonaddy" \
             -e "MYSQL_PASSWORD=anonaddy" \
-            mariadb:10.4
+            mariadb:10.5
       -
         name: Start container
         run: |
