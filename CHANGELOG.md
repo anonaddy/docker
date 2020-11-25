@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0-RC5 (2020/11/25)
+
+* Enable gnupg extension (#34)
+
 ## 0.6.0-RC4 (2020/11/12)
 
 * Handle domains in virtual_mailbox_domains (#32)
