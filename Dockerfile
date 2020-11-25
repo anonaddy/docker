@@ -92,7 +92,8 @@ RUN apk --update --no-cache add -t build-dependencies \
 
 COPY rootfs /
 
-RUN chmod a+x /usr/local/bin/*
+RUN chmod a+x /usr/local/bin/* \
+  && cp -Rf /tpls/etc/php7/conf.d /etc/php7
 
 EXPOSE 25 8000
 WORKDIR /var/www/anonaddy
