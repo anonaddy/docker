@@ -10,6 +10,7 @@ RUN apk --update --no-cache add \
     bash \
     ca-certificates \
     curl \
+    gnupg \
     gpgme \
     imagemagick \
     libgd \
@@ -68,9 +69,7 @@ ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"\
   PUID="1000" \
   PGID="1000"
 
-RUN apk --update --no-cache add \
-    gnupg \
-  && apk --update --no-cache add -t build-dependencies \
+RUN apk --update --no-cache add -t build-dependencies \
     git \
     nodejs \
     npm \
