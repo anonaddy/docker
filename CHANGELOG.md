@@ -3,6 +3,7 @@
 ## 0.6.2-RC1 (2021/01/06)
 
 * AnonAddy 0.6.2
+* Alpine Linux edge (need PHP 7.4)
 
 ## 0.6.0-RC5 (2020/11/25)
 
