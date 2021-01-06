@@ -1,9 +1,4 @@
 FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.12
-
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN printf "I am running on ${BUILDPLATFORM:-linux/amd64}, building for ${TARGETPLATFORM:-linux/amd64}\n$(uname -a)\n"
-
 LABEL maintainer="CrazyMax"
 
 RUN apk --update --no-cache add \
@@ -25,6 +20,7 @@ RUN apk --update --no-cache add \
     php7-fileinfo \
     php7-fpm \
     php7-gd \
+    php7-gmp \
     php7-iconv \
     php7-imagick \
     php7-intl \
@@ -64,7 +60,7 @@ RUN apk --update --no-cache add \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"\
-  ANONADDY_VERSION="v0.6.0" \
+  ANONADDY_VERSION="v0.6.2" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.2-RC1 (2021/01/06)
+
+* AnonAddy 0.6.2
+
 ## 0.6.0-RC5 (2020/11/25)
 
 * Enable gnupg extension (#34)
