@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0-RC1 (2021/01/08)
+
+* AnonAddy 0.7.0
+* Add support for DKIM and DMARC (#35)
+
 ## 0.6.2-RC1 (2021/01/06)
 
 * AnonAddy 0.6.2
