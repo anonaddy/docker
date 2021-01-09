@@ -3,7 +3,7 @@
 DMARC_ENABLE=${DMARC_ENABLE:-false}
 
 if [ "$DMARC_ENABLE" != "true" ]; then
-  echo "WRN: OpenDMARC service disabled."
+  echo "INFO: OpenDMARC service disabled."
   exit 0
 fi
 

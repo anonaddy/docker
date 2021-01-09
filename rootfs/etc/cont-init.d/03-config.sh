@@ -75,6 +75,7 @@ POSTFIX_DEBUG=${POSTFIX_DEBUG:-false}
 POSTFIX_SMTPD_TLS=${POSTFIX_SMTPD_TLS:-false}
 POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
 
+DKIM_ENABLE=${DKIM_ENABLE:-false}
 DKIM_PRIVATE_KEY=${DKIM_PRIVATE_KEY:-/data/dkim/${ANONADDY_DOMAIN}.private}
 DKIM_REPORT_ADDRESS=${DKIM_REPORT_ADDRESS:-postmaster@${ANONADDY_DOMAIN}}
 
@@ -223,7 +224,7 @@ echo "Trust all proxies"
 anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
 
-if [ -f "$DKIM_PRIVATE_KEY" ]; then
+if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
   echo "Copying OpenDKIM private key"
   mkdir -p /var/db/dkim
   cp -f "${DKIM_PRIVATE_KEY}" "/var/db/dkim/${ANONADDY_DOMAIN}.private"
@@ -381,18 +382,34 @@ smtpd_recipient_restrictions =
 # Block clients that speak too early.
 smtpd_data_restrictions = reject_unauth_pipelining
 
-# Milter configuration
-milter_default_action = accept
-milter_protocol = 6
-smtpd_milters = local:opendkim/opendkim.sock,local:opendmarc/opendmarc.sock
-non_smtpd_milters = \$smtpd_milters
-
 disable_vrfy_command = yes
 strict_rfc821_envelopes = yes
 maillog_file = /dev/stdout
 EOL
 
+SMTPD_MILTERS=""
+if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
+  if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
+  SMTPD_MILTERS="${SMTPD_MILTERS}local:opendkim/opendkim.sock"
+fi
+if [ "$DMARC_ENABLE" = "true" ]; then
+  if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
+  SMTPD_MILTERS="${SMTPD_MILTERS}local:opendmarc/opendmarc.sock"
+fi
+if [ -n "$SMTPD_MILTERS" ]; then
+  echo "Setting Postfix milter configuration"
+  cat >> /etc/postfix/main.cf <<EOL
+
+# Milter configuration
+milter_default_action = accept
+milter_protocol = 6
+smtpd_milters = ${SMTPD_MILTERS}
+non_smtpd_milters = \$smtpd_milters
+EOL
+fi
+
 if [ "$POSTFIX_SMTPD_TLS" = "true" ]; then
+  echo "Setting Postfix smtpd TLS configuration"
   cat >> /etc/postfix/main.cf <<EOL
 
 # SMTPD
@@ -422,6 +439,7 @@ EOL
 fi
 
 if [ "$POSTFIX_SMTP_TLS" = "true" ]; then
+  echo "Setting Postfix smtp TLS configuration"
   cat >> /etc/postfix/main.cf <<EOL
 
 # SMTP

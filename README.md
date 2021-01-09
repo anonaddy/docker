@@ -141,6 +141,7 @@ Image: anonaddy/anonaddy:latest
 
 ### DKIM
 
+* `DKIM_ENABLE`: Enable OpenDKIM service. (default `false`)
 * `DKIM_PRIVATE_KEY`: Path to the private key to be used for signing all messages. (default `/data/dkim/${ANONADDY_DOMAIN}.private`)
 * `DKIM_REPORT_ADDRESS`: Specifies the string to use in the `From:` header field for outgoing reports (default `postmaster@${ANONADDY_DOMAIN}`)
 
