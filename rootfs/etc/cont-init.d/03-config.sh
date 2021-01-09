@@ -246,8 +246,8 @@ SigningTable          refile:/etc/opendkim/signing.table
 ExternalIgnoreList    /etc/opendkim/trusted.hosts
 InternalHosts         /etc/opendkim/trusted.hosts
 
-Socket                local:opendkim.sock
-PidFile               opendkim.pid
+Socket                local:/var/spool/postfix/opendkim/opendkim.sock
+PidFile               /var/spool/postfix/opendkim/opendkim.pid
 UserID                opendkim
 
 ReportAddress         ${DKIM_REPORT_ADDRESS}
@@ -298,8 +298,8 @@ MilterDebug                 ${DMARC_MILTER_DEBUG}
 RejectFailures              true
 RequiredHeaders             true
 
-Socket                      local:opendmarc.sock
-PidFile                     opendmarc.pid
+Socket                      local:/var/spool/postfix/opendmarc/opendmarc.sock
+PidFile                     /var/spool/postfix/opendmarc/opendmarc.pid
 UserID                      opendmarc
 
 SoftwareHeader              true
