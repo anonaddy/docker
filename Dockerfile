@@ -84,7 +84,7 @@ RUN apk --update --no-cache add -t build-dependencies \
   && addgroup -g ${PGID} anonaddy \
   && adduser -D -h /var/www/anonaddy -u ${PUID} -G anonaddy -s /bin/sh -D anonaddy \
   && addgroup anonaddy opendkim \
-  && addgroup anonaddy opendmarc \
+  && addgroup anonaddy mail \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
   && git clone --branch ${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy /var/www/anonaddy \
   && cd /var/www/anonaddy \
