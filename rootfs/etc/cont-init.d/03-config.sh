@@ -75,6 +75,9 @@ POSTFIX_DEBUG=${POSTFIX_DEBUG:-false}
 POSTFIX_SMTPD_TLS=${POSTFIX_SMTPD_TLS:-false}
 POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
 
+DKIM_PRIVATE_KEY=${DKIM_PRIVATE_KEY:-/data/dkim/${ANONADDY_DOMAIN}.private}
+DKIM_REPORT_ADDRESS=${DKIM_REPORT_ADDRESS:-postmaster@${ANONADDY_DOMAIN}}
+
 # Timezone
 echo "Setting timezone to ${TZ}..."
 ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
@@ -216,12 +219,60 @@ echo "Trust all proxies"
 anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
 
+if [ -f "$DKIM_PRIVATE_KEY" ]; then
+  echo "Copying OpenDKIM private key"
+  mkdir -p /var/db/dkim
+  cp -f "${DKIM_PRIVATE_KEY}" "/var/db/dkim/${ANONADDY_DOMAIN}.private"
+
+  echo "Setting OpenDKIM configuration"
+cat > /etc/opendkim/opendkim.conf <<EOL
+BaseDirectory         /var/spool/postfix/opendkim
+
+LogWhy                yes
+Syslog                yes
+SyslogSuccess         yes
+
+Canonicalization      simple
+Mode                  sv
+SubDomains            yes
+
+KeyTable              refile:/etc/opendkim/key.table
+SigningTable          refile:/etc/opendkim/signing.table
+
+ExternalIgnoreList    /etc/opendkim/trusted.hosts
+InternalHosts         /etc/opendkim/trusted.hosts
+
+Socket                local:opendkim.sock
+PidFile               opendkim.pid
+UserID                opendkim
+
+ReportAddress         ${DKIM_REPORT_ADDRESS}
+SendReports           yes
+EOL
+
+echo "Setting OpenDKIM trusted hosts"
+cat > /etc/opendkim/trusted.hosts <<EOL
+127.0.0.1
+localhost
+*.${ANONADDY_DOMAIN}
+EOL
+
+echo "Setting OpenDKIM signing table"
+cat > /etc/opendkim/signing.table <<EOL
+*.${ANONADDY_DOMAIN}    default._domainkey.${ANONADDY_DOMAIN}
+EOL
+
+echo "Setting OpenDKIM key table"
+cat > /etc/opendkim/key.table <<EOL
+default._domainkey.${ANONADDY_DOMAIN}    ${ANONADDY_DOMAIN}:default:${DKIM_KEYFILE}
+EOL
+fi
+
+echo "Setting Postfix master configuration"
 POSTFIX_DEBUG_ARG=""
 if [ "$POSTFIX_DEBUG" = "true" ]; then
   POSTFIX_DEBUG_ARG=" -v"
 fi
-
-echo "Setting Postfix master configuration"
 sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${POSTFIX_DEBUG_ARG} -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
@@ -289,6 +340,12 @@ smtpd_recipient_restrictions =
 
 # Block clients that speak too early.
 smtpd_data_restrictions = reject_unauth_pipelining
+
+# Milter configuration
+milter_default_action = accept
+milter_protocol = 6
+smtpd_milters = local:opendkim/opendkim.sock
+non_smtpd_milters = \$smtpd_milters
 
 disable_vrfy_command = yes
 strict_rfc821_envelopes = yes

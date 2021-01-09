@@ -28,6 +28,7 @@ ___
   * [Redis](#redis)
   * [Mail](#mail)
   * [Postfix](#postfix)
+  * [DKIM](#dkim)
 * [Volumes](#volumes)
 * [Ports](#ports)
 * [Usage](#usage)
@@ -35,6 +36,7 @@ ___
 * [Upgrade](#upgrade)
 * [Notes](#notes)
   * [`anonaddy` command](#anonaddy-command)
+  * [Generate DKIM private/public keypair](#generate-dkim-privatepublic-keypair)
 * [How can I help?](#how-can-i-help)
 * [License](#license)
 
@@ -136,6 +138,13 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_SMTPD_TLS_KEY_FILE`: File with the Postfix SMTP server RSA private key in PEM format
 * `POSTFIX_SMTP_TLS`: Enabling TLS in the Postfix SMTP client (default `false`)
 
+### DKIM
+
+* `DKIM_PRIVATE_KEY`: Path to the private key to be used for signing all messages. (default `/data/dkim/${ANONADDY_DOMAIN}.private`)
+* `DKIM_REPORT_ADDRESS`: Specifies the string to use in the `From:` header field for outgoing reports (default `postmaster@${ANONADDY_DOMAIN}`)
+
+> :warning: OpenDKIM service is disabled if `DKIM_PRIVATE_KEY` is not found
+
 ## Volumes
 
 * `/data`: Contains storage
@@ -182,6 +191,20 @@ For example to list all available commands:
 ```bash
 docker-compose exec anonaddy anonaddy list
 ```
+
+### Generate DKIM private/public keypair
+
+```shell
+docker-compose run --entrypoint '' anonaddy gen-dkim
+```
+```text
+opendkim-genkey: generating private key
+opendkim-genkey: private key written to example.com.private
+opendkim-genkey: extracting public key
+opendkim-genkey: DNS TXT record written to example.com.txt
+```
+
+The keypair will be available in `/data/dkim`.
 
 ## How can I help?
 

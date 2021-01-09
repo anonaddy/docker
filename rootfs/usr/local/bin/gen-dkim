@@ -1,0 +1,16 @@
+#!/bin/sh
+
+DKIM_PRIVATE_KEY=${DKIM_PRIVATE_KEY:-/data/dkim/${ANONADDY_DOMAIN}.private}
+
+if [ -z "$ANONADDY_DOMAIN" ]; then
+  >&2 echo "ERROR: ANONADDY_DOMAIN must be defined"
+  exit 1
+fi
+if [ -f "$DKIM_PRIVATE_KEY" ]; then
+  >&2 echo "ERROR: $DKIM_PRIVATE_KEY already exists"
+  exit 1
+fi
+
+mkdir -p /data/dkim
+opendkim-genkey -b 2048 -d "${ANONADDY_DOMAIN}" -D /data/dkim -s "${ANONADDY_DOMAIN}" -v
+chown -R anonaddy. /data/dkim

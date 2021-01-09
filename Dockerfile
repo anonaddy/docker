@@ -12,6 +12,9 @@ RUN apk --update --no-cache add \
     libressl \
     mysql-client \
     nginx \
+    opendkim \
+    opendkim-libs \
+    opendkim-utils \
     php7 \
     php7-cli \
     php7-ctype \
@@ -56,6 +59,7 @@ RUN apk --update --no-cache add \
     php7-dev \
     php7-pear \
   && pecl install gnupg \
+  && addgroup opendkim postfix \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 
