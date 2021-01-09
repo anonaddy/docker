@@ -248,6 +248,7 @@ ExternalIgnoreList    /etc/opendkim/trusted.hosts
 InternalHosts         /etc/opendkim/trusted.hosts
 
 Socket                local:/var/spool/postfix/opendkim/opendkim.sock
+UMask                 007
 PidFile               /var/spool/postfix/opendkim/opendkim.pid
 UserID                opendkim
 
@@ -283,7 +284,6 @@ TrustedAuthservIDs          mail.${ANONADDY_DOMAIN}
 
 Syslog                      yes
 DNSTimeout                  10
-UMask                       007
 
 FailureReports              ${DMARC_FAILURE_REPORTS}
 FailureReportsOnNone        false
@@ -300,6 +300,7 @@ RejectFailures              true
 RequiredHeaders             true
 
 Socket                      local:/var/spool/postfix/opendmarc/opendmarc.sock
+UMask                       007
 PidFile                     /var/spool/postfix/opendmarc/opendmarc.pid
 UserID                      opendmarc
 
@@ -390,11 +391,11 @@ EOL
 SMTPD_MILTERS=""
 if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
   if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
-  SMTPD_MILTERS="${SMTPD_MILTERS}local:opendkim/opendkim.sock"
+  SMTPD_MILTERS="${SMTPD_MILTERS}unix:opendkim/opendkim.sock"
 fi
 if [ "$DMARC_ENABLE" = "true" ]; then
   if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
-  SMTPD_MILTERS="${SMTPD_MILTERS}local:opendmarc/opendmarc.sock"
+  SMTPD_MILTERS="${SMTPD_MILTERS}unix:opendmarc/opendmarc.sock"
 fi
 if [ -n "$SMTPD_MILTERS" ]; then
   echo "Setting Postfix milter configuration"
