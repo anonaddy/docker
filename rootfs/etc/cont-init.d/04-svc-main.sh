@@ -6,6 +6,9 @@ anonaddy migrate --no-interaction --force
 echo "Clear cache"
 anonaddy cache:clear --no-interaction
 anonaddy config:cache --no-interaction
+anonaddy view:cache --no-interaction
+anonaddy route:cache --no-interaction
+anonaddy queue:restart --no-interaction
 
 # Install passport
 if [ ! -f "/data/storage/oauth-private.key" ] && [ ! -f "/data/storage/oauth-public.key" ]; then
