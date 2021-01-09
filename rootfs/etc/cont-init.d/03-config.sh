@@ -78,6 +78,10 @@ POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
 DKIM_PRIVATE_KEY=${DKIM_PRIVATE_KEY:-/data/dkim/${ANONADDY_DOMAIN}.private}
 DKIM_REPORT_ADDRESS=${DKIM_REPORT_ADDRESS:-postmaster@${ANONADDY_DOMAIN}}
 
+DMARC_ENABLE=${DMARC_ENABLE:-false}
+DMARC_FAILURE_REPORTS=${DMARC_FAILURE_REPORTS:-false}
+DMARC_MILTER_DEBUG=${DMARC_MILTER_DEBUG:-0}
+
 # Timezone
 echo "Setting timezone to ${TZ}..."
 ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
@@ -225,7 +229,7 @@ if [ -f "$DKIM_PRIVATE_KEY" ]; then
   cp -f "${DKIM_PRIVATE_KEY}" "/var/db/dkim/${ANONADDY_DOMAIN}.private"
 
   echo "Setting OpenDKIM configuration"
-cat > /etc/opendkim/opendkim.conf <<EOL
+  cat > /etc/opendkim/opendkim.conf <<EOL
 BaseDirectory         /var/spool/postfix/opendkim
 
 LogWhy                yes
@@ -250,21 +254,57 @@ ReportAddress         ${DKIM_REPORT_ADDRESS}
 SendReports           yes
 EOL
 
-echo "Setting OpenDKIM trusted hosts"
-cat > /etc/opendkim/trusted.hosts <<EOL
+  echo "Setting OpenDKIM trusted hosts"
+  cat > /etc/opendkim/trusted.hosts <<EOL
 127.0.0.1
 localhost
 *.${ANONADDY_DOMAIN}
 EOL
 
-echo "Setting OpenDKIM signing table"
-cat > /etc/opendkim/signing.table <<EOL
+  echo "Setting OpenDKIM signing table"
+  cat > /etc/opendkim/signing.table <<EOL
 *.${ANONADDY_DOMAIN}    default._domainkey.${ANONADDY_DOMAIN}
 EOL
 
-echo "Setting OpenDKIM key table"
-cat > /etc/opendkim/key.table <<EOL
+  echo "Setting OpenDKIM key table"
+  cat > /etc/opendkim/key.table <<EOL
 default._domainkey.${ANONADDY_DOMAIN}    ${ANONADDY_DOMAIN}:default:${DKIM_KEYFILE}
+EOL
+fi
+
+if [ "$DMARC_ENABLE" = "true" ]; then
+  echo "Setting OpenDMARC configuration"
+  cat > /etc/opendmarc/opendmarc.conf <<EOL
+BaseDirectory               /var/spool/postfix/opendmarc
+
+AuthservID                  OpenDMARC
+TrustedAuthservIDs          mail.${ANONADDY_DOMAIN}
+
+Syslog                      yes
+DNSTimeout                  10
+UMask                       007
+
+FailureReports              ${DMARC_FAILURE_REPORTS}
+FailureReportsOnNone        false
+FailureReportsSentBy        postmaster@${ANONADDY_DOMAIN}
+
+HistoryFile                 /data/dmarc/opendmarc.dat
+RecordAllMessages           false
+
+IgnoreAuthenticatedClients  true
+
+MilterDebug                 ${DMARC_MILTER_DEBUG}
+
+RejectFailures              true
+RequiredHeaders             true
+
+Socket                      local:opendmarc.sock
+PidFile                     opendmarc.pid
+UserID                      opendmarc
+
+SoftwareHeader              true
+SPFIgnoreResults            true
+SPFSelfValidate             true
 EOL
 fi
 
@@ -344,7 +384,7 @@ smtpd_data_restrictions = reject_unauth_pipelining
 # Milter configuration
 milter_default_action = accept
 milter_protocol = 6
-smtpd_milters = local:opendkim/opendkim.sock
+smtpd_milters = local:opendkim/opendkim.sock,local:opendmarc/opendmarc.sock
 non_smtpd_milters = \$smtpd_milters
 
 disable_vrfy_command = yes

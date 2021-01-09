@@ -29,6 +29,7 @@ ___
   * [Mail](#mail)
   * [Postfix](#postfix)
   * [DKIM](#dkim)
+  * [DMARC](#dmarc)
 * [Volumes](#volumes)
 * [Ports](#ports)
 * [Usage](#usage)
@@ -144,6 +145,12 @@ Image: anonaddy/anonaddy:latest
 * `DKIM_REPORT_ADDRESS`: Specifies the string to use in the `From:` header field for outgoing reports (default `postmaster@${ANONADDY_DOMAIN}`)
 
 > :warning: OpenDKIM service is disabled if `DKIM_PRIVATE_KEY` is not found
+
+### DMARC
+
+* `DMARC_ENABLE`: Enable OpenDMARC service. (default `false`)
+* `DMARC_FAILURE_REPORTS`: Enables generation of failure reports when the DMARC test fails (default `false`)
+* `DMARC_MILTER_DEBUG`: Sets the debug level to be requested from the milter library (default `0`)
 
 ## Volumes
 

@@ -49,6 +49,9 @@ RUN apk --update --no-cache add \
     su-exec \
     tar \
     tzdata \
+  && apk --update-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing add \
+    opendmarc \
+    opendmarc-libs \
   && apk --update --no-cache add -t build-dependencies \
     autoconf \
     automake \
@@ -60,6 +63,7 @@ RUN apk --update --no-cache add \
     php7-pear \
   && pecl install gnupg \
   && addgroup opendkim postfix \
+  && addgroup opendmarc postfix \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 

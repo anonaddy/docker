@@ -12,7 +12,7 @@ mkdir -m o-rwx /var/spool/postfix/opendkim
 chown opendkim:postfix /var/spool/postfix/opendkim
 
 # Fix perms
-chown -R opendkim. /etc/opendkim /var/db/dkim
+chown -R opendkim. /data/dkim /etc/opendkim /var/db/dkim
 
 # Create service
 mkdir -p /etc/services.d/opendkim
