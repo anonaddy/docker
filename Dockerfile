@@ -63,6 +63,7 @@ RUN apk --update --no-cache add \
     php7-pear \
   && pecl install gnupg \
   && addgroup opendkim postfix \
+  && addgroup postfix opendkim \
   && addgroup opendmarc postfix \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
