@@ -229,6 +229,11 @@ if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
   mkdir -p /var/db/dkim
   cp -f "${DKIM_PRIVATE_KEY}" "/var/db/dkim/${ANONADDY_DOMAIN}.private"
 
+  echo "Update ANONADDY_DKIM_SIGNING_KEY env var"
+  cat > /var/www/anonaddy/.env <<EOL
+ANONADDY_DKIM_SIGNING_KEY=/var/db/dkim/${ANONADDY_DOMAIN}.private
+EOL
+
   echo "Setting OpenDKIM configuration"
   cat > /etc/opendkim/opendkim.conf <<EOL
 BaseDirectory         /var/spool/postfix/opendkim
@@ -243,6 +248,7 @@ SubDomains            yes
 
 KeyTable              refile:/etc/opendkim/key.table
 SigningTable          refile:/etc/opendkim/signing.table
+RequireSafeKeys       false
 
 ExternalIgnoreList    /etc/opendkim/trusted.hosts
 InternalHosts         /etc/opendkim/trusted.hosts
