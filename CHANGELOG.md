@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.0-RC3 (2021/01/10)
+
+* Display postfix logs through socklog
+* Disable socklog timestamp
+
 ## 0.7.0-RC2 (2021/01/10)
 
 * Fix DKIM key table

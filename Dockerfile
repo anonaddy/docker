@@ -68,7 +68,8 @@ RUN apk --update --no-cache add \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/cache/apk/* /var/www/*
 
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"\
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
+  SOCKLOG_TIMESTAMP_FORMAT="" \
   ANONADDY_VERSION="v0.7.0" \
   TZ="UTC" \
   PUID="1000" \
