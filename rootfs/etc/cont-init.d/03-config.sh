@@ -271,7 +271,7 @@ EOL
 
   echo "Setting OpenDKIM key table"
   cat > /etc/opendkim/key.table <<EOL
-default._domainkey.${ANONADDY_DOMAIN}    ${ANONADDY_DOMAIN}:default:${DKIM_PRIVATE_KEY}
+default._domainkey.${ANONADDY_DOMAIN}    ${ANONADDY_DOMAIN}:default:/var/db/dkim/${ANONADDY_DOMAIN}.private
 EOL
 fi
 
