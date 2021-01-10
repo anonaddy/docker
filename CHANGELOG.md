@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0-RC2 (2021/01/10)
+
+* Fix DKIM key table
+* Clear view and route cache
+* Add `DKIM_ENABLE` env var
+* Review milter configuration
+* Fix openDMARC and openDKIM sockets
+* Fix openDKIM permissions
+
 ## 0.7.0-RC1 (2021/01/08)
 
 * AnonAddy 0.7.0
