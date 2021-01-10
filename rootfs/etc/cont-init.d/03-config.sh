@@ -76,7 +76,7 @@ POSTFIX_SMTPD_TLS=${POSTFIX_SMTPD_TLS:-false}
 POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
 
 DKIM_ENABLE=${DKIM_ENABLE:-false}
-DKIM_PRIVATE_KEY=${DKIM_PRIVATE_KEY:-/data/dkim/${ANONADDY_DOMAIN}.private}
+DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
 DKIM_REPORT_ADDRESS=${DKIM_REPORT_ADDRESS:-postmaster@${ANONADDY_DOMAIN}}
 
 DMARC_ENABLE=${DMARC_ENABLE:-false}
@@ -231,7 +231,7 @@ if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
 
   echo "Update ANONADDY_DKIM_SIGNING_KEY env var"
   cat > /var/www/anonaddy/.env <<EOL
-ANONADDY_DKIM_SIGNING_KEY=/var/db/dkim/${ANONADDY_DOMAIN}.private
+ANONADDY_DKIM_SIGNING_KEY=${DKIM_PRIVATE_KEY}
 EOL
 
   echo "Setting OpenDKIM configuration"

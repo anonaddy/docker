@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
 DKIM_ENABLE=${DKIM_ENABLE:-false}
-DKIM_PRIVATE_KEY=${DKIM_PRIVATE_KEY:-/data/dkim/${ANONADDY_DOMAIN}.private}
+DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
 
 if [ "$DKIM_ENABLE" != "true" ]; then
   echo "INFO: OpenDKIM service disabled."
@@ -17,7 +17,7 @@ mkdir -m o-rwx /var/spool/postfix/opendkim
 chown opendkim. /var/spool/postfix/opendkim
 
 # Fix perms
-chown -R opendkim. /data/dkim /etc/opendkim /var/db/dkim
+chown -R opendkim. /etc/opendkim /var/db/dkim
 
 # Create service
 mkdir -p /etc/services.d/opendkim

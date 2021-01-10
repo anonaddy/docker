@@ -8,6 +8,7 @@ mkdir -p /data \
   /var/run/php-fpm
 chown anonaddy. /data
 chown -R anonaddy. \
+  /data/dkim \
   /tpls \
   /var/lib/nginx \
   /var/log/nginx \
