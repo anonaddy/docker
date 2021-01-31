@@ -19,7 +19,8 @@ If you are interested, [check out](https://hub.docker.com/r/crazymax/) my other 
 ___
 
 * [Features](#features)
-* [Multi-platform image](#multi-platform-image)
+* [Build locally](#build-locally)
+* [Image](#Image)
 * [Environment variables](#environment-variables)
   * [General](#general)
   * [App](#app)
@@ -48,7 +49,20 @@ ___
 * [s6-overlay](https://github.com/just-containers/s6-overlay/) as process supervisor
 * [Traefik](https://github.com/containous/traefik-library-image) as reverse proxy and creation/renewal of Let's Encrypt certificates (see [this template](examples/traefik))
 
-## Multi-platform image
+## Build locally
+
+```shell
+git clone https://github.com/anonaddy/docker.git docker-anonaddy
+cd docker-anonaddy
+
+# Build image and output to docker (default)
+docker buildx bake
+
+# Build multi-platform image
+docker buildx bake image-all
+```
+
+## Image
 
 Following platforms for this image are available:
 
