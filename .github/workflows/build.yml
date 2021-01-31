@@ -25,6 +25,11 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Update libseccomp
+        run: |
+          # https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.13.0#time64_requirements
+          sudo apt-get install -y libseccomp2
+      -
         name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1

@@ -20,6 +20,11 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
+        name: Update libseccomp
+        run: |
+          # https://wiki.alpinelinux.org/wiki/Release_Notes_for_Alpine_3.13.0#time64_requirements
+          sudo apt-get install -y libseccomp2
+      -
         name: Prepare
         id: prep
         run: |
