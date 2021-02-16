@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0-r4 (2021/02/16)
+
+* Alpine Linux 3.13
+* alpine-s6 2.2.0.3
+* Switch to buildx bake
+
 ## 0.7.0-RC3 (2021/01/10)
 
 * Display postfix logs through socklog
