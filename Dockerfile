@@ -1,4 +1,6 @@
-FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.13-2.2.0.3
+ARG ANONADDY_VERSION=0.7.1
+
+FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.13-2.1.0.2
 LABEL maintainer="CrazyMax"
 
 RUN apk --update --no-cache add \
@@ -9,12 +11,12 @@ RUN apk --update --no-cache add \
     gpgme \
     imagemagick \
     libgd \
-    libressl \
     mysql-client \
     nginx \
     opendkim \
     opendkim-libs \
     opendkim-utils \
+    openssl \
     php7 \
     php7-cli \
     php7-ctype \
@@ -37,6 +39,7 @@ RUN apk --update --no-cache add \
     php7-redis \
     php7-session \
     php7-simplexml \
+    php7-sodium \
     php7-tokenizer \
     php7-xml \
     php7-xmlreader \
@@ -70,25 +73,24 @@ RUN apk --update --no-cache add \
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
   SOCKLOG_TIMESTAMP_FORMAT="" \
-  ANONADDY_VERSION="v0.7.0" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"
 
+ARG ANONADDY_VERSION
+WORKDIR /var/www/anonaddy
 RUN apk --update --no-cache add -t build-dependencies \
     git \
     nodejs \
     npm \
   && node --version \
   && npm -- version \
-  && mkdir -p /var/www \
   && addgroup -g ${PGID} anonaddy \
   && adduser -D -h /var/www/anonaddy -u ${PUID} -G anonaddy -s /bin/sh -D anonaddy \
   && addgroup anonaddy opendkim \
   && addgroup anonaddy mail \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-  && git clone --branch ${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy /var/www/anonaddy \
-  && cd /var/www/anonaddy \
+  && git clone --branch v${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
   && npm install --global cross-env \
@@ -96,15 +98,17 @@ RUN apk --update --no-cache add -t build-dependencies \
   && npm run production \
   && chown -R nobody.nogroup /var/www/anonaddy \
   && apk del build-dependencies \
-  && rm -rf /root/.composer /root/.config /root/.npm /var/cache/apk/* /var/www/anonaddy/node_modules /tmp/*
+  && rm -rf /root/.composer \
+    /root/.config \
+    /root/.npm \
+    /var/cache/apk/* \
+    /var/www/anonaddy/.git \
+    /var/www/anonaddy/node_modules \
+    /tmp/*
 
 COPY rootfs /
 
-RUN chmod a+x /usr/local/bin/* \
-  && cp -Rf /tpls/etc/php7/conf.d /etc/php7
-
 EXPOSE 25 8000
-WORKDIR /var/www/anonaddy
 VOLUME [ "/data" ]
 
 ENTRYPOINT [ "/init" ]
