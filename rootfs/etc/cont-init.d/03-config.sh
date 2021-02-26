@@ -89,6 +89,9 @@ ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
 echo ${TZ} > /etc/timezone
 
 # PHP
+echo "Init PHP extensions"
+cp -Rf /tpls/etc/php7/conf.d /etc/php7
+
 echo "Setting PHP-FPM configuration"
 sed -e "s/@MEMORY_LIMIT@/$MEMORY_LIMIT/g" \
   -e "s/@UPLOAD_MAX_SIZE@/$UPLOAD_MAX_SIZE/g" \
