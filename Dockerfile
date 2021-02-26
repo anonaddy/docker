@@ -1,6 +1,6 @@
 ARG ANONADDY_VERSION=0.7.1
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.12-2.1.0.2
+FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.13-2.1.0.2
 LABEL maintainer="CrazyMax"
 
 RUN apk --update --no-cache add \
@@ -39,6 +39,7 @@ RUN apk --update --no-cache add \
     php7-redis \
     php7-session \
     php7-simplexml \
+    php7-sodium \
     php7-tokenizer \
     php7-xml \
     php7-xmlreader \
@@ -89,7 +90,7 @@ RUN apk --update --no-cache add -t build-dependencies \
   && addgroup anonaddy opendkim \
   && addgroup anonaddy mail \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
-  && git clone --branch ${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
+  && git clone --branch v${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
   && npm install --global cross-env \
