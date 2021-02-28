@@ -38,6 +38,7 @@ ___
 * [Upgrade](#upgrade)
 * [Notes](#notes)
   * [`anonaddy` command](#anonaddy-command)
+  * [Create user](#create-user)
   * [Generate DKIM private/public keypair](#generate-dkim-privatepublic-keypair)
 * [How can I help?](#how-can-i-help)
 * [License](#license)
@@ -132,7 +133,8 @@ Image: anonaddy/anonaddy:latest
 * `DB_PASSWORD`: MySQL password
 * `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
 
-> 💡 `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value from a file, especially for Docker's secrets feature.
+> 💡 `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value from a file, especially for Docker's
+> secrets feature.
 
 ### Redis
 
@@ -173,7 +175,8 @@ Image: anonaddy/anonaddy:latest
 
 * `/data`: Contains storage
 
-> :warning: Note that the volume should be owned by the user/group with the specified `PUID` and `PGID`. If you don't give the volume correct permissions, the container may not start.
+> :warning: Note that the volume should be owned by the user/group with the specified `PUID` and `PGID`. If you don't
+> give the volume correct permissions, the container may not start.
 
 ## Ports
 
@@ -184,7 +187,8 @@ Image: anonaddy/anonaddy:latest
 
 ### Docker Compose
 
-Docker compose is the recommended way to run this image. You can use the following [docker compose template](examples/compose/docker-compose.yml), then run the container:
+Docker compose is the recommended way to run this image. You can use the following
+[docker compose template](examples/compose/docker-compose.yml), then run the container:
 
 ```bash
 docker-compose up -d
@@ -193,7 +197,8 @@ docker-compose logs -f
 
 ## Upgrade
 
-You can upgrade AnonAddy automatically through the UI, it works well. But I recommend to recreate the container whenever I push an update:
+You can upgrade AnonAddy automatically through the UI, it works well. But I recommend to recreate the container
+whenever I push an update:
 
 ```bash
 docker-compose pull
@@ -216,6 +221,12 @@ For example to list all available commands:
 docker-compose exec anonaddy anonaddy list
 ```
 
+### Create user
+
+```shell
+docker-compose exec anonaddy anonaddy anonaddy:create-user "username" "webmaster@example.com"
+```
+
 ### Generate DKIM private/public keypair
 
 ```shell
@@ -232,7 +243,10 @@ The keypair will be available in `/data/dkim`.
 
 ## How can I help?
 
-All kinds of contributions are welcome :raised_hands:! The most basic way to show your support is to star :star2: the project, or to raise issues :speech_balloon: You can also support this project by [**becoming a sponsor on GitHub**](https://github.com/sponsors/crazy-max) :clap: or by making a [Paypal donation](https://www.paypal.me/crazyws) to ensure this journey continues indefinitely! :rocket:
+All kinds of contributions are welcome :raised_hands:! The most basic way to show your support is to star :star2:
+the project, or to raise issues :speech_balloon: You can also support this project by
+[**becoming a sponsor on GitHub**](https://github.com/sponsors/crazy-max) :clap: or by making a
+[Paypal donation](https://www.paypal.me/crazyws) to ensure this journey continues indefinitely! :rocket:
 
 Thanks again for your support, it is much appreciated! :pray:
 
