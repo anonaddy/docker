@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1-r1 (2021/02/28)
+
+* Fix permissions
+
 ## 0.7.1-r0 (2021/02/26)
 
 * AnonAddy 0.7.1
