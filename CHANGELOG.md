@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1-r2 (2021/03/02)
+
+* Switch to `gosu`
+
 ## 0.7.1-r1 (2021/02/28)
 
 * Fix permissions

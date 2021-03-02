@@ -1,8 +1,11 @@
 ARG ANONADDY_VERSION=0.7.1
 
+FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/gosu:latest AS gosu
 FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.13-2.1.0.2
 LABEL maintainer="CrazyMax"
 
+ARG TARGETPLATFORM
+COPY --from=gosu / /
 RUN apk --update --no-cache add \
     bash \
     ca-certificates \
@@ -49,7 +52,6 @@ RUN apk --update --no-cache add \
     postfix \
     postfix-mysql \
     shadow \
-    su-exec \
     tar \
     tzdata \
   && apk --update-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/testing add \
