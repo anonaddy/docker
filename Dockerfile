@@ -1,7 +1,7 @@
 ARG ANONADDY_VERSION=0.7.1
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/gosu:latest AS gosu
-FROM --platform=${TARGETPLATFORM:-linux/amd64} crazymax/alpine-s6:3.13-2.1.0.2
+FROM crazymax/gosu:latest AS gosu
+FROM crazymax/alpine-s6:3.13-2.1.0.2
 LABEL maintainer="CrazyMax"
 
 COPY --from=gosu / /
