@@ -1,3 +1,3 @@
 #!/bin/sh
 
-gosu anonaddy:anonaddy php /var/www/anonaddy/artisan "$@"
+yasu anonaddy:anonaddy php /var/www/anonaddy/artisan "$@"

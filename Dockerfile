@@ -1,10 +1,10 @@
 ARG ANONADDY_VERSION=0.7.1
 
-FROM crazymax/gosu:latest AS gosu
+FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.13-2.1.0.2
 LABEL maintainer="CrazyMax"
 
-COPY --from=gosu / /
+COPY --from=yasu / /
 RUN apk --update --no-cache add \
     bash \
     ca-certificates \
