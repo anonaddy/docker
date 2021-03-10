@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2-r0 (2021/03/10)
+
+* AnonAddy 0.7.2
+
 ## 0.7.1-r3 (2021/03/02)
 
 * Renamed `yasu` (more info https://github.com/crazy-max/yasu#yet-another)
