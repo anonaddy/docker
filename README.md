@@ -154,6 +154,10 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_SMTPD_TLS_CERT_FILE`: File with the Postfix SMTP server RSA certificate in PEM format
 * `POSTFIX_SMTPD_TLS_KEY_FILE`: File with the Postfix SMTP server RSA private key in PEM format
 * `POSTFIX_SMTP_TLS`: Enabling TLS in the Postfix SMTP client (default `false`)
+* `POSTFIX_RELAYHOST`: Default host to send mail to (default empty, direct delivery to destination)
+* `POSTFIX_RELAYHOST_AUTH_ENABLE`: Enable client-side authentication for relayhost (default `false`)
+* `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
+* `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
 
 ### DKIM
 
