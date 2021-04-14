@@ -74,6 +74,9 @@ MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-anonaddy@${ANONADDY_DOMAIN}}
 POSTFIX_DEBUG=${POSTFIX_DEBUG:-false}
 POSTFIX_SMTPD_TLS=${POSTFIX_SMTPD_TLS:-false}
 POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
+POSTFIX_RELAYHOST_AUTH_ENABLE=${POSTFIX_RELAYHOST_AUTH_ENABLE:-false}
+POSTFIX_RELAYHOST_USERNAME=${POSTFIX_RELAYHOST_USERNAME:-null}
+POSTFIX_RELAYHOST_PASSWORD=${POSTFIX_RELAYHOST_PASSWORD:-null}
 
 DKIM_ENABLE=${DKIM_ENABLE:-false}
 DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
@@ -470,7 +473,6 @@ smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = texthash:/etc/postfix/sasl_passwd
 smtp_sasl_security_options = noanonymous
 smtp_sasl_tls_security_options = noanonymous
-smtp_tls_security_level = encrypt
 header_size_limit = 4096000
 EOL
 
