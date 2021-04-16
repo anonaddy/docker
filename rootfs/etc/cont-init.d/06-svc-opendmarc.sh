@@ -18,6 +18,7 @@ chown -R opendmarc. /data/dmarc /etc/opendmarc
 mkdir -p /etc/services.d/opendmarc
 cat > /etc/services.d/opendmarc/run <<EOL
 #!/usr/bin/execlineb -P
+with-contenv
 /usr/sbin/opendmarc -f -u opendmarc -c /etc/opendmarc/opendmarc.conf
 EOL
 chmod +x /etc/services.d/opendmarc/run
