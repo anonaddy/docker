@@ -74,6 +74,9 @@ MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-anonaddy@${ANONADDY_DOMAIN}}
 POSTFIX_DEBUG=${POSTFIX_DEBUG:-false}
 POSTFIX_SMTPD_TLS=${POSTFIX_SMTPD_TLS:-false}
 POSTFIX_SMTP_TLS=${POSTFIX_SMTP_TLS:-false}
+POSTFIX_RELAYHOST_AUTH_ENABLE=${POSTFIX_RELAYHOST_AUTH_ENABLE:-false}
+POSTFIX_RELAYHOST_USERNAME=${POSTFIX_RELAYHOST_USERNAME:-null}
+POSTFIX_RELAYHOST_PASSWORD=${POSTFIX_RELAYHOST_PASSWORD:-null}
 
 DKIM_ENABLE=${DKIM_ENABLE:-false}
 DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
@@ -353,7 +356,7 @@ append_dot_mydomain = no
 virtual_transport = anonaddy:
 virtual_mailbox_domains = ${VBOX_DOMAINS},mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 
-relayhost =
+relayhost = ${POSTFIX_RELAYHOST}
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
 mailbox_size_limit = 0
 recipient_delimiter = +
@@ -461,6 +464,27 @@ smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, 
 smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtp_tls_security_level = may
 EOL
+fi
+
+if [ "$POSTFIX_RELAYHOST_AUTH_ENABLE" = "true" ]; then
+  echo "Setting Postfix SASL configuration"
+  cat >> /etc/postfix/main.cf <<EOL
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = texthash:/etc/postfix/sasl_passwd
+smtp_sasl_security_options = noanonymous
+smtp_sasl_tls_security_options = noanonymous
+header_size_limit = 4096000
+EOL
+
+  cat >> /etc/postfix/sasl_passwd <<EOL
+
+${POSTFIX_RELAYHOST} ${POSTFIX_RELAYHOST_USERNAME}:${POSTFIX_RELAYHOST_PASSWORD}
+EOL
+
+chmod 600 /etc/postfix/sasl_passwd
+postmap /etc/postfix/sasl_passwd
+
 fi
 
 echo "Creating Postfix virtual alias domains and subdomains configuration"
