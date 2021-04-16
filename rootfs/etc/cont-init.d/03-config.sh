@@ -128,6 +128,11 @@ rm -rf /var/www/anonaddy/storage
 ln -sf /data/storage /var/www/anonaddy/storage
 chown -h anonaddy. /var/www/anonaddy/storage
 chown -R anonaddy. /data/storage
+mkdir -p /data/.gnupg
+ln -sf /data/.gnupg /var/www/anonaddy/.gnupg
+chown -h anonaddy. /var/www/anonaddy/.gnupg
+chown -R anonaddy. /data/.gnupg
+chmod 700 /data/.gnupg
 
 echo "Checking database connection..."
 if [ -z "$DB_HOST" ]; then

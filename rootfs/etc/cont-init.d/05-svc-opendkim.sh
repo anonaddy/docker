@@ -23,6 +23,7 @@ chown -R opendkim. /etc/opendkim /var/db/dkim
 mkdir -p /etc/services.d/opendkim
 cat > /etc/services.d/opendkim/run <<EOL
 #!/usr/bin/execlineb -P
+with-contenv
 /usr/sbin/opendkim -f -u opendkim -x /etc/opendkim/opendkim.conf
 EOL
 chmod +x /etc/services.d/opendkim/run

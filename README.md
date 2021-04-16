@@ -40,6 +40,7 @@ ___
   * [`anonaddy` command](#anonaddy-command)
   * [Create user](#create-user)
   * [Generate DKIM private/public keypair](#generate-dkim-privatepublic-keypair)
+  * [Generate GPG key](#generate-gpg-key)
 * [How can I help?](#how-can-i-help)
 * [License](#license)
 
@@ -244,6 +245,16 @@ opendkim-genkey: DNS TXT record written to example.com.txt
 ```
 
 The keypair will be available in `/data/dkim`.
+
+### Generate GPG key
+
+If you don't have an existing GPG key, you can generate a new GPG key with the following command:
+
+```shell
+docker-compose exec --user anonaddy anonaddy gpg --full-gen-key
+```
+
+Keys will be stored in `/data/.gnupg` folder.
 
 ## How can I help?
 
