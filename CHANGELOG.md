@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.2-r2 (2021/04/16)
+
+* alpine-s6 3.13-2.2.0.3 (#54)
+* Handle GPG keys (#53)
+* Add Postfix relayhost configuration variables (#50)
+* Add apex domain to signing table (#51)
+
 ## 0.7.2-r1 (2021/03/18)
 
 * Upstream Alpine update
