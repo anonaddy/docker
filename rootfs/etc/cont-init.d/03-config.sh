@@ -269,7 +269,8 @@ EOL
 
   echo "Setting OpenDKIM signing table"
   cat > /etc/opendkim/signing.table <<EOL
-*.${ANONADDY_DOMAIN}    default._domainkey.${ANONADDY_DOMAIN}
+*@${ANONADDY_DOMAIN}    default._domainkey.${ANONADDY_DOMAIN}
+*@*.${ANONADDY_DOMAIN}    default._domainkey.${ANONADDY_DOMAIN}
 EOL
 
   echo "Setting OpenDKIM key table"
