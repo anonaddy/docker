@@ -1,7 +1,7 @@
 ARG ANONADDY_VERSION=0.7.2
 
 FROM crazymax/yasu:latest AS yasu
-FROM crazymax/alpine-s6:3.13-2.1.0.2
+FROM crazymax/alpine-s6:3.13-2.2.0.3
 LABEL maintainer="CrazyMax"
 
 COPY --from=yasu / /
