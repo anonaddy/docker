@@ -1,22 +1,8 @@
-version: '3.5'
+version: "3.5"
+
 services:
-  dockerproxy:
-    image: tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy
-    environment:
-      # Needed for Traefik
-      - "CONTAINERS=1"
-      # Needed for certdumper
-      - "POST=1"
-      - "ALLOW_RESTARTS=1"
-    ports:
-      - '30000:2375'
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    networks:
-      - dockerproxy
   traefik:
-    image: traefik:2.4
+    image: traefik:2.3
     container_name: traefik
     command:
       - "--global.checknewversion=false"
@@ -31,14 +17,12 @@ services:
       - "--entrypoints.https.address=:443"
       - "--certificatesresolvers.letsencrypt"
       - "--certificatesresolvers.letsencrypt.acme.storage=acme.json"
-      - "--certificatesresolvers.letsencrypt.acme.email=webmaster@example.com"  # <-- REPLACE
+      - "--certificatesresolvers.letsencrypt.acme.email=webmaster@example.com"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
       - "--providers.docker"
       - "--providers.docker.watch=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=anonaddy_default"  # default: <STACKNAME_NETWORK>, otherwise assign explicit network name
-      - "--providers.docker.endpoint=tcp://dockerproxy:2375"
     ports:
       - target: 80
         published: 80
@@ -46,45 +30,47 @@ services:
       - target: 443
         published: 443
         protocol: tcp
-    networks:
-      default:
-        #ipv4_address: 172.20.0.2  <-- OPTIONAL, this can be customized when manually creating the network via `docker network create` CLI
-      dockerproxy:
-    depends_on:
-      - dockerproxy
     volumes:
-      - "./letsencrypt/acme.json:/acme.json"
+      - "./acme.json:/acme.json"
+      - "/var/run/docker.sock:/var/run/docker.sock"
     restart: always
-  certdumper:
-    image: humenius/traefik-certs-dumper:latest
-    depends_on:
-      - dockerproxy
-      - traefik
-    command: --restart-containers anonaddy
+
+  db:
+    image: mariadb:10.5
+    container_name: anonaddy_db
     volumes:
-      - "./letsencrypt:/traefik:ro"
-      - "./data/output:/output:rw"
+      - "./db:/var/lib/mysql"
     environment:
-      - "DOCKER_HOST=dockerproxy:2375"
-      - "DOMAIN=anonaddy.example.com"  # <-- REPLACE
-      - "OVERRIDE_UID=1000"
-      - "OVERRIDE_GID=1000"
-    networks:
-      - dockerproxy
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+      - "MYSQL_DATABASE"
+      - "MYSQL_USER"
+      - "MYSQL_PASSWORD"
     restart: always
+
+  redis:
+    image: redis:4.0-alpine
+    container_name: anonaddy_redis
+    restart: always
+
   anonaddy:
     image: anonaddy/anonaddy:latest
+    container_name: anonaddy
     depends_on:
       - db
       - redis
-    container_name: anonaddy
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+    volumes:
+      - "./data:/data"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.anonaddy.entrypoints=https"
-      - "traefik.http.routers.anonaddy.rule=Host(`anonaddy.example.com`)"  # <-- REPLACE
+      - "traefik.http.routers.anonaddy.rule=Host(`anonaddy.example.com`)"
       - "traefik.http.routers.anonaddy.tls=true"
       - "traefik.http.routers.anonaddy.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.anonaddy.tls.domains[0].main=anonaddy.example.com"  # <-- REPLACE
+      - "traefik.http.routers.anonaddy.tls.domains[0].main=anonaddy.example.com"
       - "traefik.http.services.anonaddy.loadbalancer.server.port=8000"
     env_file:
       - "./anonaddy.env"
@@ -94,26 +80,4 @@ services:
       - "DB_USERNAME=${MYSQL_USER}"
       - "DB_PASSWORD=${MYSQL_PASSWORD}"
       - "REDIS_HOST=redis"
-    ports:
-      - '25:25'
-    volumes:
-      - "./data:/data"
-  db:
-    image: mariadb:10.5
-    container_name: anonaddy_db
-    environment:
-      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
-      - "MYSQL_DATABASE"
-      - "MYSQL_PASSWORD"
-      - "MYSQL_USER"
-    volumes:
-      - "./db:/var/lib/mysql"
     restart: always
-  redis:
-    image: redis:4.0-alpine
-    container_name: anonaddy_redis
-    restart: always
-networks:
-  dockerproxy:
-    driver: bridge
-    internal: true
