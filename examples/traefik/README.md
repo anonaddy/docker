@@ -1,8 +1,24 @@
+## Features
+ - Automatic creation of ACME SSL Certificates
+ - [Tecnativa's Docker Socket Proxy](https://github.com/Tecnativa/docker-socket-proxy) (minimize risk of Docker socket exposure)
+ - Automatic Postfix TLS management using [traefik-certs-dumper](https://github.com/kereis/traefik-certs-dumper)
+   - Auto-dumping of Let's Encrypt certificates to Postfix cert directory
+   - Watch & restart AnonAddy container on certificate renewal
+
+**Note**: Does not ensure Zero Downtime deployment!
+
 ## Usage
 
+Use `anonaddy-full.env` for full SMTP(D) TLS/ DKIM/ DMARC/ PGP signing functionalities. \
+Use `anonaddy-min.env` for basic setup.
+
 ```bash
-touch acme.json
-chmod 600 acme.json
+# Rename template to anonaddy.env:
+mv anonaddy-xxx.env anonaddy.env
+
+mkdir letsencrypt
+touch letsencrypt/acme.json
+chmod 600 letsencrypt/acme.json
 docker-compose up -d
 docker-compose logs -f
 ```
