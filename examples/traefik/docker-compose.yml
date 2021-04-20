@@ -30,7 +30,7 @@ services:
       - "--entrypoints.https=true"
       - "--entrypoints.https.address=:443"
       - "--certificatesresolvers.letsencrypt"
-      - "--certificatesresolvers.letsencrypt.acme.storage=./letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.storage=acme.json"
       - "--certificatesresolvers.letsencrypt.acme.email=webmaster@example.com"  # <-- REPLACE
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
