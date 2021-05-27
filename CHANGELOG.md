@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3-r0 (2021/05/27)
+
+* AnonAddy 0.7.3
+
 ## 0.7.2-r1 (2021/03/18)
 
 * Upstream Alpine update
