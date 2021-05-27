@@ -538,18 +538,21 @@ done
 mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
 DELIMITER //
 
-DROP PROCEDURE IF EXISTS \`block_alias\`//
 DROP PROCEDURE IF EXISTS \`check_access\`//
 
-CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254) charset utf8)
+CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254))
 BEGIN
-    DECLARE alias_action varchar(7) charset utf8;
     DECLARE no_alias_exists int(1);
-    DECLARE alias_domain varchar(254) charset utf8;
+    DECLARE alias_action varchar(7);
+    DECLARE username_action varchar(7);
+    DECLARE additional_username_action varchar(7);
+    DECLARE domain_action varchar(7);
+    DECLARE alias_domain varchar(254);
+
     SET alias_domain = SUBSTRING_INDEX(alias_email, '@', -1);
 
     # We only want to carry out the checks if it is a full RCPT TO address without any + extension
-    IF LOCATE('@',alias_email) > 1 AND LOCATE('+',alias_email) = 0 AND LENGTH(alias_domain) > 0 THEN
+    IF LOCATE('+',alias_email) = 0 THEN
 
         SET no_alias_exists = CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email = alias_email) THEN 1 ELSE 0 END;
 
@@ -564,7 +567,7 @@ BEGIN
             WHERE
                 email = alias_email
                 AND (active = 0
-                OR deleted_at IS NOT NULL) LIMIT 1);
+                OR deleted_at IS NOT NULL));
         END IF;
 
         # If the alias is deactivated or deleted then increment its blocked count and return the alias_action
@@ -574,8 +577,7 @@ BEGIN
             SET
                 emails_blocked = emails_blocked + 1
             WHERE
-                email = alias_email
-            LIMIT 1;
+                email = alias_email;
 
             SELECT alias_action;
         ELSE
@@ -614,10 +616,21 @@ BEGIN
             FROM
                 domains
             WHERE
-                domain = alias_domain) AS domains
-            LIMIT 1;
+                domain = alias_domain) INTO username_action, additional_username_action, domain_action;
+
+            # If all actions are NULL then we can return 'DUNNO' which will prevent Postfix from trying substrings of the alias
+            IF username_action IS NULL AND additional_username_action IS NULL AND domain_action IS NULL THEN
+                SELECT 'DUNNO';
+            ELSEIF username_action IN('DISCARD','REJECT') THEN
+                SELECT username_action;
+            ELSEIF additional_username_action IN('DISCARD','REJECT') THEN
+                SELECT additional_username_action;
+            ELSE
+                SELECT domain_action;
+            END IF;
         END IF;
     ELSE
+        # This means the alias must have a + extension so we will ignore it
         SELECT NULL;
     END IF;
  END//
