@@ -538,6 +538,7 @@ done
 mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
 DELIMITER //
 
+DROP PROCEDURE IF EXISTS \`block_alias\`//
 DROP PROCEDURE IF EXISTS \`check_access\`//
 
 CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254))
