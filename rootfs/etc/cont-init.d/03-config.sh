@@ -544,11 +544,11 @@ DROP PROCEDURE IF EXISTS \`check_access\`//
 CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254))
 BEGIN
     DECLARE no_alias_exists int(1);
-    DECLARE alias_action varchar(7);
-    DECLARE username_action varchar(7);
-    DECLARE additional_username_action varchar(7);
-    DECLARE domain_action varchar(7);
-    DECLARE alias_domain varchar(254);
+    DECLARE alias_action varchar(7) charset utf8;
+    DECLARE username_action varchar(7) charset utf8;
+    DECLARE additional_username_action varchar(7) charset utf8;
+    DECLARE domain_action varchar(7) charset utf8;
+    DECLARE alias_domain varchar(254) charset utf8;
 
     SET alias_domain = SUBSTRING_INDEX(alias_email, '@', -1);
 
