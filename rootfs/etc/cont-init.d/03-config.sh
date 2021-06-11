@@ -541,7 +541,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS \`block_alias\`//
 DROP PROCEDURE IF EXISTS \`check_access\`//
 
-CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254))
+CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254) charset utf8)
 BEGIN
     DECLARE no_alias_exists int(1);
     DECLARE alias_action varchar(7) charset utf8;
