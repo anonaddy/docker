@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.4-r0 (2021/06/13)
+
+* AnonAddy 0.7.4 (#63)
+* Fix charset (#62)
+* Drop `block_alias` procedure (#58)
+* Fix `opendmarc` and `php7-imagick` pkg (#60)
+* Remove `linux/386` support (#61)
+
 ## 0.7.3-r0 (2021/05/27)
 
 * AnonAddy 0.7.3
