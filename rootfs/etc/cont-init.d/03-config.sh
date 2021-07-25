@@ -345,7 +345,7 @@ done
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
-myhostname = mail.${ANONADDY_DOMAIN}
+myhostname = ${ANONADDY_HOSTNAME}
 mydomain = ${ANONADDY_DOMAIN}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
