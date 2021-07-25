@@ -93,22 +93,22 @@ echo ${TZ} > /etc/timezone
 
 # PHP
 echo "Init PHP extensions"
-cp -Rf /tpls/etc/php7/conf.d /etc/php7
+cp -Rf /tpls/etc/php8/conf.d /etc/php8
 
 echo "Setting PHP-FPM configuration"
 sed -e "s/@MEMORY_LIMIT@/$MEMORY_LIMIT/g" \
   -e "s/@UPLOAD_MAX_SIZE@/$UPLOAD_MAX_SIZE/g" \
   -e "s/@CLEAR_ENV@/$CLEAR_ENV/g" \
-  /tpls/etc/php7/php-fpm.d/www.conf > /etc/php7/php-fpm.d/www.conf
+  /tpls/etc/php8/php-fpm.d/www.conf > /etc/php8/php-fpm.d/www.conf
 
 echo "Setting PHP INI configuration"
-sed -i "s|memory_limit.*|memory_limit = ${MEMORY_LIMIT}|g" /etc/php7/php.ini
-sed -i "s|;date\.timezone.*|date\.timezone = ${TZ}|g" /etc/php7/php.ini
+sed -i "s|memory_limit.*|memory_limit = ${MEMORY_LIMIT}|g" /etc/php8/php.ini
+sed -i "s|;date\.timezone.*|date\.timezone = ${TZ}|g" /etc/php8/php.ini
 
 # OpCache
 echo "Setting OpCache configuration"
 sed -e "s/@OPCACHE_MEM_SIZE@/$OPCACHE_MEM_SIZE/g" \
-  /tpls/etc/php7/conf.d/opcache.ini > /etc/php7/conf.d/opcache.ini
+  /tpls/etc/php8/conf.d/opcache.ini > /etc/php8/conf.d/opcache.ini
 
 # Nginx
 echo "Setting Nginx configuration"
@@ -203,9 +203,11 @@ REDIS_HOST=${REDIS_HOST}
 REDIS_PASSWORD=${REDIS_PASSWORD}
 REDIS_PORT=${REDIS_PORT}
 
-MAIL_DRIVER=sendmail
 MAIL_FROM_NAME=${MAIL_FROM_NAME}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+MAIL_DRIVER=smtp
+MAIL_HOST=localhost
+MAIL_PORT=25
 
 PUSHER_APP_ID=${PUSHER_APP_ID}
 PUSHER_APP_KEY=${PUSHER_APP_KEY}
@@ -328,7 +330,7 @@ POSTFIX_DEBUG_ARG=""
 if [ "$POSTFIX_DEBUG" = "true" ]; then
   POSTFIX_DEBUG_ARG=" -v"
 fi
-sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${POSTFIX_DEBUG_ARG} -o content_filter=anonaddy:dummy|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|25 inet n - y - - smtpd${POSTFIX_DEBUG_ARG}|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
@@ -355,7 +357,6 @@ mydestination = localhost.\$mydomain, localhost
 smtpd_banner = \$myhostname ESMTP
 biff = no
 readme_directory = no
-compatibility_level = 2
 append_dot_mydomain = no
 
 virtual_transport = anonaddy:

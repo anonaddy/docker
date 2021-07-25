@@ -12,7 +12,7 @@ chown -R anonaddy. \
   /tpls \
   /var/lib/nginx \
   /var/log/nginx \
-  /var/log/php7 \
+  /var/log/php8 \
   /var/run/nginx \
   /var/run/php-fpm \
   /var/www/anonaddy/bootstrap/cache \

@@ -30,6 +30,6 @@ cat > /etc/services.d/php-fpm/run <<EOL
 #!/usr/bin/execlineb -P
 with-contenv
 s6-setuidgid ${PUID}:${PGID}
-php-fpm7 -F
+php-fpm8 -F
 EOL
 chmod +x /etc/services.d/php-fpm/run
