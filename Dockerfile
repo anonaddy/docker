@@ -1,7 +1,7 @@
-ARG ANONADDY_VERSION=0.7.5
+ARG ANONADDY_VERSION=0.8.0
 
 FROM crazymax/yasu:latest AS yasu
-FROM crazymax/alpine-s6:3.13-2.2.0.3
+FROM crazymax/alpine-s6:3.14-2.2.0.3
 
 COPY --from=yasu / /
 RUN apk --update --no-cache add \
@@ -17,44 +17,43 @@ RUN apk --update --no-cache add \
     opendkim \
     opendkim-libs \
     opendkim-utils \
+    opendmarc \
+    opendmarc-libs \
     openssl \
-    php7 \
-    php7-cli \
-    php7-ctype \
-    php7-curl \
-    php7-dom \
-    php7-fileinfo \
-    php7-fpm \
-    php7-gd \
-    php7-gmp \
-    php7-iconv \
-    php7-intl \
-    php7-json \
-    php7-mailparse \
-    php7-opcache \
-    php7-openssl \
-    php7-pdo \
-    php7-pdo_mysql \
-    php7-pecl-imagick \
-    php7-phar \
-    php7-redis \
-    php7-session \
-    php7-simplexml \
-    php7-sodium \
-    php7-tokenizer \
-    php7-xml \
-    php7-xmlreader \
-    php7-xmlwriter \
-    php7-zip \
-    php7-zlib \
+    php8 \
+    php8-cli \
+    php8-ctype \
+    php8-curl \
+    php8-dom \
+    php8-fileinfo \
+    php8-fpm \
+    php8-gd \
+    php8-gmp \
+    php8-iconv \
+    php8-intl \
+    php8-json \
+    php8-opcache \
+    php8-openssl \
+    php8-pdo \
+    php8-pdo_mysql \
+    php8-pecl-imagick \
+    php8-pecl-mailparse \
+    php8-phar \
+    php8-redis \
+    php8-session \
+    php8-simplexml \
+    php8-sodium \
+    php8-tokenizer \
+    php8-xml \
+    php8-xmlreader \
+    php8-xmlwriter \
+    php8-zip \
+    php8-zlib \
     postfix \
     postfix-mysql \
     shadow \
     tar \
     tzdata \
-  && apk --update-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community add \
-    opendmarc \
-    opendmarc-libs \
   && apk --update --no-cache add -t build-dependencies \
     autoconf \
     automake \
@@ -62,9 +61,10 @@ RUN apk --update --no-cache add \
     gpgme-dev \
     libtool \
     pcre-dev \
-    php7-dev \
-    php7-pear \
-  && pecl install gnupg \
+    php8-dev \
+    php8-pear \
+  && ln -s /usr/bin/php8 /usr/bin/php \
+  && pecl8 install gnupg \
   && addgroup opendkim postfix \
   && addgroup postfix opendkim \
   && addgroup opendmarc postfix \
@@ -93,6 +93,7 @@ RUN apk --update --no-cache add -t build-dependencies \
   && git clone --branch v${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
+  && chown -R anonaddy. /var/www/anonaddy \
   && npm install --global cross-env \
   && npm install \
   && npm run production \
