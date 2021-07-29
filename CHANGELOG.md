@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0-r0 (2021/07/29)
+
+* AnonAddy 0.8.0 (#65)
+* Fix Postfix hostname (#67)
+* Drop `linux/ppc64le` and `linux/s390x` platforms support
+
 ## 0.7.5-r0 (2021/07/04)
 
 * AnonAddy 0.7.5 (#64)
