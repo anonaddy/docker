@@ -344,6 +344,7 @@ do
   if [ -n "$VBOX_DOMAINS" ]; then VBOX_DOMAINS="${VBOX_DOMAINS},"; fi
   VBOX_DOMAINS="${VBOX_DOMAINS}${domain},unsubscribe.${domain}"
 done
+sed -i 's/compatibility_level.*/compatibility_level = 2/g' /etc/postfix/main.cf
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 cat >> /etc/postfix/main.cf <<EOL
@@ -429,12 +430,12 @@ if [ "$POSTFIX_SMTPD_TLS" = "true" ]; then
 
 # SMTPD
 smtpd_use_tls=yes
-smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
+smtpd_tls_session_cache_database = lmdb:\${data_directory}/smtpd_scache
 smtpd_tls_CApath = /etc/ssl/certs
 smtpd_tls_security_level = may
 smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1
 smtpd_tls_loglevel = 1
-smtpd_tls_session_cache_database = btree:\${data_directory}/smtpd_scache
+smtpd_tls_session_cache_database = lmdb:\${data_directory}/smtpd_scache
 smtpd_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtpd_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
@@ -461,7 +462,7 @@ if [ "$POSTFIX_SMTP_TLS" = "true" ]; then
 smtp_tls_CApath = /etc/ssl/certs
 smtp_use_tls=yes
 smtp_tls_loglevel = 1
-smtp_tls_session_cache_database = btree:\${data_directory}/smtp_scache
+smtp_tls_session_cache_database = lmdb:\${data_directory}/smtp_scache
 smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
 smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1
 smtp_tls_mandatory_ciphers = high
