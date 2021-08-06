@@ -144,6 +144,7 @@ Image: anonaddy/anonaddy:latest
 
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
 * `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
+* `MAIL_ENCRYPTION`: Encryption protocol to send e-mail messages (default `null`)
 
 ### Postfix
 
