@@ -332,7 +332,7 @@ POSTFIX_DEBUG_ARG=""
 if [ "$POSTFIX_DEBUG" = "true" ]; then
   POSTFIX_DEBUG_ARG=" -v"
 fi
-sed -i "s|^smtp.*inet.*|25 inet n - y - - smtpd${POSTFIX_DEBUG_ARG}|g" /etc/postfix/master.cf
+sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${POSTFIX_DEBUG_ARG}|g" /etc/postfix/master.cf
 cat >> /etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
@@ -354,7 +354,7 @@ myhostname = ${ANONADDY_HOSTNAME}
 mydomain = ${ANONADDY_DOMAIN}
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
-myorigin = /etc/mailname
+myorigin = \$myhostname
 mydestination = localhost.\$mydomain, localhost
 
 smtpd_banner = \$myhostname ESMTP
@@ -372,6 +372,7 @@ recipient_delimiter = +
 
 local_recipient_maps =
 
+smtpd_delay_reject = yes
 smtpd_helo_required = yes
 smtpd_helo_restrictions =
     permit_mynetworks,
@@ -381,21 +382,21 @@ smtpd_helo_restrictions =
     reject_unknown_helo_hostname
 
 smtpd_sender_restrictions =
-   permit_mynetworks,
-   permit_sasl_authenticated,
-   reject_non_fqdn_sender,
-   reject_unknown_sender_domain,
-   reject_unknown_reverse_client_hostname
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_non_fqdn_sender,
+    reject_unknown_sender_domain,
+    reject_unknown_reverse_client_hostname
 
 smtpd_recipient_restrictions =
-   reject_unauth_destination,
-   check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf,
-   #check_policy_service unix:private/policyd-spf
-   reject_rhsbl_helo dbl.spamhaus.org,
-   reject_rhsbl_reverse_client dbl.spamhaus.org,
-   reject_rhsbl_sender dbl.spamhaus.org,
-   reject_rbl_client zen.spamhaus.org
-   reject_rbl_client dul.dnsbl.sorbs.net
+    reject_unauth_destination,
+    check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf,
+    #check_policy_service unix:private/policyd-spf
+    reject_rhsbl_helo dbl.spamhaus.org,
+    reject_rhsbl_reverse_client dbl.spamhaus.org,
+    reject_rhsbl_sender dbl.spamhaus.org,
+    reject_rbl_client zen.spamhaus.org
+    reject_rbl_client dul.dnsbl.sorbs.net
 
 # Block clients that speak too early.
 smtpd_data_restrictions = reject_unauth_pipelining
