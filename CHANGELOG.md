@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.1-r0 (2021/08/08)
+
+* AnonAddy 0.8.1 (#75)
+* Fix Postfix reject (#73)
+* Add `MAIL_ENCRYPTION` env var (#72)
+* Enable backwards compatibility for Postfix (#71)
+
 ## 0.8.0-r0 (2021/07/29)
 
 * AnonAddy 0.8.0 (#65)
