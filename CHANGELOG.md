@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1-r1 (2021/08/09)
+
+* Fix postfix relay restrictions (#76)
+
 ## 0.8.1-r0 (2021/08/08)
 
 * AnonAddy 0.8.1 (#75)
