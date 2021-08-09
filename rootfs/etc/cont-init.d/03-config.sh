@@ -207,7 +207,7 @@ REDIS_PORT=${REDIS_PORT}
 MAIL_FROM_NAME=${MAIL_FROM_NAME}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
 MAIL_DRIVER=smtp
-MAIL_HOST=localhost
+MAIL_HOST=127.0.0.1
 MAIL_PORT=25
 MAIL_ENCRYPTION=${MAIL_ENCRYPTION}
 
@@ -372,6 +372,11 @@ recipient_delimiter = +
 
 local_recipient_maps =
 
+smtpd_relay_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    defer_unauth_destination
+
 smtpd_delay_reject = yes
 smtpd_helo_required = yes
 smtpd_helo_restrictions =
@@ -389,6 +394,7 @@ smtpd_sender_restrictions =
     reject_unknown_reverse_client_hostname
 
 smtpd_recipient_restrictions =
+    permit_mynetworks,
     reject_unauth_destination,
     check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf,
     #check_policy_service unix:private/policyd-spf
