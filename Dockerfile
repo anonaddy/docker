@@ -1,4 +1,4 @@
-ARG ANONADDY_VERSION=0.8.1
+ARG ANONADDY_VERSION=0.8.2
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.14-2.2.0.3
@@ -95,8 +95,9 @@ RUN apk --update --no-cache add -t build-dependencies \
   && npm config set unsafe-perm true \
   && chown -R anonaddy. /var/www/anonaddy \
   && npm install --global cross-env \
-  && npm install \
+  && npm ci --ignore-scripts --only=production \
   && npm run production \
+  && npm prune --production \
   && chown -R nobody.nogroup /var/www/anonaddy \
   && apk del build-dependencies \
   && rm -rf /root/.composer \
