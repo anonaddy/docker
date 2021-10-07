@@ -297,7 +297,7 @@ if [ "$DMARC_ENABLE" = "true" ]; then
 BaseDirectory               /var/spool/postfix/opendmarc
 
 AuthservID                  OpenDMARC
-TrustedAuthservIDs          mail.${ANONADDY_DOMAIN}
+TrustedAuthservIDs          ${ANONADDY_HOSTNAME}
 
 Syslog                      yes
 DNSTimeout                  10
