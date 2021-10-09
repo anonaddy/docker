@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.4-r0 (2021/10/09)
+
+* AnonAddy 0.8.5 (#87)
+* Fix DMARC server ID (#86)
+* Add `ANONADDY_DKIM_SIGNING_KEY` and `ANONADDY_DKIM_SELECTOR` env vars (#83)
+
 ## 0.8.4-r0 (2021/09/17)
 
 * AnonAddy 0.8.4 (#82)
