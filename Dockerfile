@@ -4,7 +4,7 @@ FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.15-2.2.0.3
 
 COPY --from=yasu / /
-RUN apk --update --no-cache add \
+RUN apk --no-cache add \
     bash \
     ca-certificates \
     curl \
@@ -54,7 +54,7 @@ RUN apk --update --no-cache add \
     tzdata \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
-  && apk --update --no-cache add -t build-dependencies \
+  && apk --no-cache add -t build-dependencies \
     autoconf \
     automake \
     build-base \
@@ -76,7 +76,7 @@ ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
 
 ARG ANONADDY_VERSION
 WORKDIR /var/www/anonaddy
-RUN apk --update --no-cache add -t build-dependencies \
+RUN apk --no-cache add -t build-dependencies \
     git \
     nodejs \
     npm \
