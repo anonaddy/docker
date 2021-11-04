@@ -1,4 +1,4 @@
-ARG ANONADDY_VERSION=0.8.6
+ARG ANONADDY_VERSION=0.8.7
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.14-2.2.0.3
