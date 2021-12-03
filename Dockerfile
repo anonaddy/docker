@@ -1,4 +1,4 @@
-ARG ANONADDY_VERSION=0.8.7
+ARG ANONADDY_VERSION=0.8.8
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.14-2.2.0.3
@@ -69,7 +69,7 @@ RUN apk --update --no-cache add \
   && addgroup postfix opendkim \
   && addgroup opendmarc postfix \
   && apk del build-dependencies \
-  && rm -rf /tmp/* /var/cache/apk/* /var/www/*
+  && rm -rf /tmp/* /var/www/*
 
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
   SOCKLOG_TIMESTAMP_FORMAT="" \
@@ -103,7 +103,6 @@ RUN apk --update --no-cache add -t build-dependencies \
   && rm -rf /root/.composer \
     /root/.config \
     /root/.npm \
-    /var/cache/apk/* \
     /var/www/anonaddy/.git \
     /var/www/anonaddy/node_modules \
     /tmp/*
