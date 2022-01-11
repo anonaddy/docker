@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.9-r1 (2022/01/11)
+
+* Alpine Linux 3.15 (#95)
+* Fix here docs repeated config (#94)
+
 ## 0.8.9-r0 (2021/12/11)
 
 * AnonAddy 0.8.9
