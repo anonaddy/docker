@@ -54,6 +54,8 @@ RUN apk --update --no-cache add \
     shadow \
     tar \
     tzdata \
+  && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
+  && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --update --no-cache add -t build-dependencies \
     autoconf \
     automake \

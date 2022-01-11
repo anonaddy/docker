@@ -90,12 +90,14 @@ DMARC_ENABLE=${DMARC_ENABLE:-false}
 DMARC_FAILURE_REPORTS=${DMARC_FAILURE_REPORTS:-false}
 DMARC_MILTER_DEBUG=${DMARC_MILTER_DEBUG:-0}
 
-# Timezone
 echo "Setting timezone to ${TZ}..."
 ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
 echo ${TZ} >/etc/timezone
 
-# PHP
+##
+## PHP
+##
+
 echo "Init PHP extensions"
 cp -Rf /tpls/etc/php8/conf.d /etc/php8
 
@@ -109,12 +111,14 @@ echo "Setting PHP INI configuration"
 sed -i "s|memory_limit.*|memory_limit = ${MEMORY_LIMIT}|g" /etc/php8/php.ini
 sed -i "s|;date\.timezone.*|date\.timezone = ${TZ}|g" /etc/php8/php.ini
 
-# OpCache
 echo "Setting OpCache configuration"
 sed -e "s/@OPCACHE_MEM_SIZE@/$OPCACHE_MEM_SIZE/g" \
   /tpls/etc/php8/conf.d/opcache.ini >/etc/php8/conf.d/opcache.ini
 
-# Nginx
+##
+## Nginx
+##
+
 echo "Setting Nginx configuration"
 sed -e "s#@UPLOAD_MAX_SIZE@#$UPLOAD_MAX_SIZE#g" \
   -e "s#@REAL_IP_FROM@#$REAL_IP_FROM#g" \
@@ -125,6 +129,10 @@ sed -e "s#@UPLOAD_MAX_SIZE@#$UPLOAD_MAX_SIZE#g" \
 if [ "$LISTEN_IPV6" != "true" ]; then
   sed -e '/listen \[::\]:/d' -i /etc/nginx/nginx.conf
 fi
+
+##
+## Init
+##
 
 echo "Initializing files and folders"
 cp -Rf /var/www/anonaddy/storage /data
@@ -137,6 +145,10 @@ ln -sf /data/.gnupg /var/www/anonaddy/.gnupg
 chown -h anonaddy. /var/www/anonaddy/.gnupg
 chown -R anonaddy. /data/.gnupg
 chmod 700 /data/.gnupg
+
+##
+## Database
+##
 
 echo "Checking database connection..."
 if [ -z "$DB_HOST" ]; then
@@ -162,6 +174,10 @@ while ! ${dbcmd} -e "show databases;" >/dev/null 2>&1; do
   fi
 done
 echo "Database ready!"
+
+##
+## AnonAddy
+##
 
 file_env 'APP_KEY'
 if [ -z "$APP_KEY" ]; then
@@ -244,6 +260,10 @@ echo "Trust all proxies"
 anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
 
+##
+## OpenDKIM
+##
+
 if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
   echo "Copying OpenDKIM private key"
   mkdir -p /var/db/dkim
@@ -296,6 +316,10 @@ default._domainkey.${ANONADDY_DOMAIN}    ${ANONADDY_DOMAIN}:default:/var/db/dkim
 EOL
 fi
 
+##
+## OpenDMARC
+##
+
 if [ "$DMARC_ENABLE" = "true" ]; then
   echo "Setting OpenDMARC configuration"
   cat >/etc/opendmarc/opendmarc.conf <<EOL
@@ -331,6 +355,13 @@ SPFIgnoreResults            true
 SPFSelfValidate             true
 EOL
 fi
+
+##
+## Postfix
+##
+
+cp -f /etc/postfix/master.cf.orig /etc/postfix/master.cf
+cp -f /etc/postfix/main.cf.orig /etc/postfix/main.cf
 
 echo "Setting Postfix master configuration"
 POSTFIX_DEBUG_ARG=""
@@ -497,7 +528,7 @@ smtp_sasl_tls_security_options = noanonymous
 header_size_limit = 4096000
 EOL
 
-  cat >>/etc/postfix/sasl_passwd <<EOL
+  cat >/etc/postfix/sasl_passwd <<EOL
 
 ${POSTFIX_RELAYHOST} ${POSTFIX_RELAYHOST_USERNAME}:${POSTFIX_RELAYHOST_PASSWORD}
 EOL
