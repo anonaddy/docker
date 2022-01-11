@@ -1,7 +1,7 @@
 ARG ANONADDY_VERSION=0.8.9
 
 FROM crazymax/yasu:latest AS yasu
-FROM crazymax/alpine-s6:3.14-2.2.0.3
+FROM crazymax/alpine-s6:3.15-2.2.0.3
 
 COPY --from=yasu / /
 RUN apk --update --no-cache add \
