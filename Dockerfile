@@ -51,6 +51,9 @@ RUN apk --update --no-cache add \
     php8-zlib \
     postfix \
     postfix-mysql \
+    rspamd \
+    rspamd-controller \
+    rspamd-proxy \
     shadow \
     tar \
     tzdata \
@@ -111,7 +114,7 @@ RUN apk --update --no-cache add -t build-dependencies \
 
 COPY rootfs /
 
-EXPOSE 25 8000
+EXPOSE 25 8000 11334
 VOLUME [ "/data" ]
 
 ENTRYPOINT [ "/init" ]

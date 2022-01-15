@@ -176,6 +176,11 @@ Image: anonaddy/anonaddy:latest
 * `DMARC_FAILURE_REPORTS`: Enables generation of failure reports when the DMARC test fails (default `false`)
 * `DMARC_MILTER_DEBUG`: Sets the debug level to be requested from the milter library (default `0`)
 
+### RSPAMD
+
+* `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
+* `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
+
 ## Volumes
 
 * `/data`: Contains storage
@@ -185,7 +190,8 @@ Image: anonaddy/anonaddy:latest
 
 ## Ports
 
-* `8000`: HTTP port
+* `8000`: HTTP port (anonaddy web)
+* `11334`: HTTP port (rspamd web dashboard)
 * `25`: SMTP port (postfix)
 
 ## Usage
