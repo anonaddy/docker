@@ -267,6 +267,10 @@ sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/tr
 ## RSPAMD
 ##
 
+if [[ "$RSPAMD_ENABLE" = "true" && ("$DKIM_ENABLE" = "true" || "$DMARC_ENABLE" = "true") ]]; then
+  echo "action needed: RSPAMD_ENABLE must be mutually exclusive with DKIM_ENABLE or DMARC_ENABLE"
+fi
+
 if [ "$RSPAMD_ENABLE" = "true" ]; then
   if [ -f "$DKIM_PRIVATE_KEY" ]; then
     echo "Copying DKIM private key for Rspamd"
