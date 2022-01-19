@@ -32,12 +32,6 @@ services:
       - target: 25
         published: 25
         protocol: tcp
-      - target: 8000
-        published: 8000
-        protocol: tcp
-      - target: 11334
-        published: 11334
-        protocol: tcp
     volumes:
       - "./data:/data"
     env_file:
