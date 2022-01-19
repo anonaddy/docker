@@ -255,11 +255,15 @@ docker-compose exec anonaddy anonaddy anonaddy:create-user "username" "webmaster
 ```shell
 docker-compose run --entrypoint '' anonaddy gen-dkim
 ```
+
 ```text
-opendkim-genkey: generating private key
-opendkim-genkey: private key written to example.com.private
-opendkim-genkey: extracting public key
-opendkim-genkey: DNS TXT record written to example.com.txt
+generating private and storing in data/dkim/example.com.private
+generating DNS TXT record with public key and storing it in data/dkim/example.com.txt
+
+default._domainkey IN TXT ( "v=DKIM1; k=rsa; "
+        "p=***"
+        "***"
+) ;
 ```
 
 The keypair will be available in `/data/dkim`.

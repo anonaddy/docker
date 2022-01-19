@@ -4,14 +4,17 @@
 DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
 
 if [ -z "$ANONADDY_DOMAIN" ]; then
-  >&2 echo "ERROR: ANONADDY_DOMAIN must be defined"
+  echo >&2 "ERROR: ANONADDY_DOMAIN must be defined"
   exit 1
 fi
 if [ -f "$DKIM_PRIVATE_KEY" ]; then
-  >&2 echo "ERROR: $DKIM_PRIVATE_KEY already exists"
+  echo >&2 "ERROR: $DKIM_PRIVATE_KEY already exists"
   exit 1
 fi
 
 mkdir -p /data/dkim
-opendkim-genkey -b 2048 -d "${ANONADDY_DOMAIN}" -D /data/dkim -s "${ANONADDY_DOMAIN}" -v
+echo "generating private and storing in ${DKIM_PRIVATE_KEY}"
+echo "generating DNS TXT record with public key and storing it in /data/dkim/${ANONADDY_DOMAIN}.txt"
+echo ""
+rspamadm dkim_keygen -s 'default' -b 2048 -d "${ANONADDY_DOMAIN}" -k "${DKIM_PRIVATE_KEY}" | tee -a "/data/dkim/${ANONADDY_DOMAIN}.txt"
 chown -R anonaddy. /data/dkim
