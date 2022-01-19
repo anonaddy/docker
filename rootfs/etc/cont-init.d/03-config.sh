@@ -90,6 +90,9 @@ DMARC_ENABLE=${DMARC_ENABLE:-false}
 DMARC_FAILURE_REPORTS=${DMARC_FAILURE_REPORTS:-false}
 DMARC_MILTER_DEBUG=${DMARC_MILTER_DEBUG:-0}
 
+RSPAMD_ENABLE=${RSPAMD_ENABLE:-false}
+RSPAMD_WEB_PASSWORD=${RSPAMD_WEB_PASSWORD:-null}
+
 echo "Setting timezone to ${TZ}..."
 ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
 echo ${TZ} >/etc/timezone
@@ -261,10 +264,117 @@ anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProx
 sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
 
 ##
+## RSPAMD
+##
+
+if [[ "$RSPAMD_ENABLE" = "true" && ("$DKIM_ENABLE" = "true" || "$DMARC_ENABLE" = "true") ]]; then
+  echo "action needed: RSPAMD_ENABLE must be mutually exclusive with DKIM_ENABLE or DMARC_ENABLE"
+fi
+
+if [ "$RSPAMD_ENABLE" = "true" ]; then
+  if [ -f "$DKIM_PRIVATE_KEY" ]; then
+    echo "Copying DKIM private key for Rspamd"
+    mkdir /var/lib/rspamd/dkim
+    cp -f "${DKIM_PRIVATE_KEY}" "/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.default.key"
+
+    echo "Setting Rspamd dkim_signing.conf"
+    cat >/etc/rspamd/local.d/dkim_signing.conf <<EOL
+signing_table = [
+"*@${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}",
+"*@*.${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}",
+];
+
+key_table = [
+"${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}:default:/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.default.key",
+];
+
+use_domain = "envelope";
+allow_hdrfrom_mismatch = true;
+allow_hdrfrom_mismatch_sign_networks = true;
+allow_username_mismatch = true;
+use_esld = true;
+sign_authenticated = false;
+EOL
+
+    echo "Setting Rspamd arc.conf"
+    cp /etc/rspamd/local.d/dkim_signing.conf /etc/rspamd/local.d/arc.conf
+  fi
+
+  echo "Setting Rspamd classifier-bayes.conf"
+  cat >/etc/rspamd/local.d/classifier-bayes.conf <<EOL
+backend = "redis";
+EOL
+
+  echo "Setting Rspamd logging.inc"
+  cat >/etc/rspamd/local.d/logging.inc <<EOL
+level = "error";
+debug_modules = [];
+EOL
+
+  if [ -n "$REDIS_HOST" ]; then
+    echo "Setting Rspamd redis.conf"
+    cat >/etc/rspamd/local.d/redis.conf <<EOL
+write_servers = "${REDIS_HOST}";
+password = "${REDIS_PASSWORD}";
+read_servers = "${REDIS_HOST}";
+EOL
+
+    echo "Setting Rspamd greylist.conf"
+    cat >/etc/rspamd/local.d/greylist.conf <<EOL
+servers = "${REDIS_HOST}:${REDIS_PORT}";
+EOL
+
+    echo "Setting Rspamd history_redis.conf"
+    cat >/etc/rspamd/local.d/history_redis.conf <<EOL
+subject_privacy = true;
+EOL
+  fi
+
+  echo "Setting Rspamd groups.conf"
+  cat >/etc/rspamd/local.d/groups.conf <<EOL
+group "headers" {
+  symbols {
+    "FAKE_REPLY" {
+      weight = 0.0;
+    }
+
+    "FROM_NEQ_DISPLAY_NAME" {
+      weight = 0.0;
+    }
+
+    "FORGED_RECIPIENTS" {
+      weight = 0.0;
+    }
+  }
+}
+EOL
+
+  if [ -n "$RSPAMD_WEB_PASSWORD" ]; then
+    echo "Setting Rspamd worker-controller.inc"
+    cat >/etc/rspamd/local.d/worker-controller.inc <<EOL
+bind_socket = "*:11334";
+secure_ip = "127.0.0.1/32";
+password = "${RSPAMD_WEB_PASSWORD}";
+enable_password = "${RSPAMD_WEB_PASSWORD}";
+EOL
+  fi
+
+  echo "Disabling a variety of Rspamd modules"
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/fuzzy_check.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/asn.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/metadata_exporter.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/trie.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/neural.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/chartable.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/ratelimit.conf
+  echo "enabled = false;" | tee -a /etc/rspamd/override.d/replies.conf
+fi
+
+##
 ## OpenDKIM
 ##
 
-if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
+if [ "$RSPAMD_ENABLE" = "false" ] && [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
   echo "Copying OpenDKIM private key"
   mkdir -p /var/db/dkim
   cp -f "${DKIM_PRIVATE_KEY}" "/var/db/dkim/${ANONADDY_DOMAIN}.private"
@@ -320,7 +430,7 @@ fi
 ## OpenDMARC
 ##
 
-if [ "$DMARC_ENABLE" = "true" ]; then
+if [ "$RSPAMD_ENABLE" = "false" ] && [ "$DMARC_ENABLE" = "true" ]; then
   echo "Setting OpenDMARC configuration"
   cat >/etc/opendmarc/opendmarc.conf <<EOL
 BaseDirectory               /var/spool/postfix/opendmarc
@@ -448,14 +558,21 @@ maillog_file = /dev/stdout
 EOL
 
 SMTPD_MILTERS=""
-if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
-  if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
-  SMTPD_MILTERS="${SMTPD_MILTERS}unix:opendkim/opendkim.sock"
+
+if [ "$RSPAMD_ENABLE" = "true" ]; then
+  SMTPD_MILTERS="inet:127.0.0.1:11332"
+else
+  if [ "$DKIM_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
+    if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
+    SMTPD_MILTERS="${SMTPD_MILTERS}unix:opendkim/opendkim.sock"
+  fi
+
+  if [ "$DMARC_ENABLE" = "true" ]; then
+    if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
+    SMTPD_MILTERS="${SMTPD_MILTERS}unix:opendmarc/opendmarc.sock"
+  fi
 fi
-if [ "$DMARC_ENABLE" = "true" ]; then
-  if [ -n "$SMTPD_MILTERS" ]; then SMTPD_MILTERS="${SMTPD_MILTERS},"; fi
-  SMTPD_MILTERS="${SMTPD_MILTERS}unix:opendmarc/opendmarc.sock"
-fi
+
 if [ -n "$SMTPD_MILTERS" ]; then
   echo "Setting Postfix milter configuration"
   cat >>/etc/postfix/main.cf <<EOL
@@ -465,6 +582,7 @@ milter_default_action = accept
 milter_protocol = 6
 smtpd_milters = ${SMTPD_MILTERS}
 non_smtpd_milters = \$smtpd_milters
+milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 EOL
 fi
 
