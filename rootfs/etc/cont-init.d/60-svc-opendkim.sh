@@ -1,8 +1,7 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-DKIM_ENABLE=${DKIM_ENABLE:-false}
-DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
+. $(dirname $0)/00-env
 
 if [ "$DKIM_ENABLE" != "true" ]; then
   echo "INFO: OpenDKIM service disabled."
