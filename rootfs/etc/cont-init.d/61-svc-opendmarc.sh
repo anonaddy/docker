@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-DMARC_ENABLE=${DMARC_ENABLE:-false}
+. $(dirname $0)/00-env
 
 if [ "$DMARC_ENABLE" != "true" ]; then
   echo "INFO: OpenDMARC service disabled."

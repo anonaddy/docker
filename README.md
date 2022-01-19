@@ -166,6 +166,8 @@ Image: anonaddy/anonaddy:latest
 * `DKIM_ENABLE`: Enable OpenDKIM service. (default `false`)
 * `DKIM_REPORT_ADDRESS`: Specifies the string to use in the `From:` header field for outgoing reports (default `postmaster@${ANONADDY_DOMAIN}`)
 
+> :warning: Rspamd and OpenDKIM/OpenDMARC services are mutually exclusive.
+
 > :warning: DKIM private key must be located in `/data/dkim/${ANONADDY_DOMAIN}.private`. You can generate a DKIM
 > private/public keypair by following [this note](#generate-dkim-privatepublic-keypair).
 
@@ -177,10 +179,19 @@ Image: anonaddy/anonaddy:latest
 * `DMARC_FAILURE_REPORTS`: Enables generation of failure reports when the DMARC test fails (default `false`)
 * `DMARC_MILTER_DEBUG`: Sets the debug level to be requested from the milter library (default `0`)
 
+> :warning: Rspamd and OpenDKIM/OpenDMARC services are mutually exclusive.
+
 ### RSPAMD
 
 * `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
+
+> :warning: Rspamd and OpenDKIM/OpenDMARC services are mutually exclusive.
+
+> :warning: DKIM private key must be located in `/data/dkim/${ANONADDY_DOMAIN}.private`. You can generate a DKIM
+> private/public keypair by following [this note](#generate-dkim-privatepublic-keypair).
+
+> :warning: Rspamd service is disabled if DKIM private key is not found
 
 ## Volumes
 

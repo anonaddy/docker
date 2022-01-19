@@ -1,10 +1,14 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-RSPAMD_ENABLE=${RSPAMD_ENABLE:-false}
+. $(dirname $0)/00-env
 
 if [ "$RSPAMD_ENABLE" != "true" ]; then
   echo "INFO: Rspamd service disabled."
+  exit 0
+fi
+if [ ! -f "$DKIM_PRIVATE_KEY" ]; then
+  echo "WRN: $DKIM_PRIVATE_KEY not found. Rspamd service disabled."
   exit 0
 fi
 
