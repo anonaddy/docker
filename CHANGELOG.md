@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.10-r0 (2022/01/20)
+
+* AnonAddy 0.8.10 (#101)
+* Nginx example for SSL proxying (#99)
+* Split configuration (#98)
+* Support Rspamd (#96 #100)
+
 ## 0.8.9-r1 (2022/01/11)
 
 * Alpine Linux 3.15 (#95)
