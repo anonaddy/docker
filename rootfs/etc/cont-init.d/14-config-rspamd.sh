@@ -97,6 +97,40 @@ enable_password = "${RSPAMD_WEB_PASSWORD}";
 EOL
 fi
 
+echo "Setting Rspamd dmarc.conf"
+cat >/etc/rspamd/local.d/dmarc.conf <<EOL
+actions = {
+  quarantine = "add_header";
+  reject = "reject";
+}
+EOL
+
+echo "Setting Rspamd milter_headers.conf"
+cat >/etc/rspamd/local.d/milter_headers.conf <<EOL
+use = ["authentication-results", "remove-headers", "spam-header"];
+
+routines {
+  remove-headers {
+    headers {
+      "X-Spam" = 0;
+      "X-Spamd-Bar" = 0;
+      "X-Spam-Level" = 0;
+      "X-Spam-Status" = 0;
+      "X-Spam-Flag" = 0;
+    }
+  }
+  authentication-results {
+    header = "X-AnonAddy-Authentication-Results";
+    remove = 0;
+  }
+  spam-header {
+    header = "X-AnonAddy-Spam";
+    value = "Yes";
+    remove = 0;
+  }
+}
+EOL
+
 echo "Disabling a variety of Rspamd modules"
 echo "enabled = false;" > /etc/rspamd/override.d/fuzzy_check.conf
 echo "enabled = false;" > /etc/rspamd/override.d/asn.conf
