@@ -107,7 +107,7 @@ EOL
 
 echo "Setting Rspamd milter_headers.conf"
 cat >/etc/rspamd/local.d/milter_headers.conf <<EOL
-use = ["authentication-results", "remove-headers", "spam-header"];
+use = ["authentication-results", "remove-headers", "spam-header", "add_dmarc_allow_header"];
 
 routines {
   remove-headers {
@@ -128,6 +128,24 @@ routines {
     value = "Yes";
     remove = 0;
   }
+}
+
+custom {
+  add_dmarc_allow_header = <<EOD
+return function(task, common_meta)
+  if task:has_symbol('DMARC_POLICY_ALLOW') then
+    return nil,
+    {['X-AnonAddy-Dmarc-Allow'] = 'Yes'},
+    {['X-AnonAddy-Dmarc-Allow'] = 0},
+    {}
+  end
+
+  return nil,
+  {},
+  {['X-AnonAddy-Dmarc-Allow'] = 0},
+  {}
+end
+EOD;
 }
 EOL
 
