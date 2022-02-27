@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.10.1-r0 (2022/02/27)
+
+* AnonAddy 0.10.1 (#115)
+* Drop support for OpenDKIM/OpenDMARC (#116)
+
 ## 0.10.0-r1 (2022/02/24)
 
 * Fix Rspamd config (#113)
