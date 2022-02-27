@@ -4,7 +4,6 @@
 echo "Fixing perms..."
 mkdir -p /data \
   /data/dkim \
-  /data/dmarc \
   /var/run/nginx \
   /var/run/php-fpm
 chown anonaddy. /data

@@ -3,8 +3,8 @@
 
 . $(dirname $0)/00-env
 
-if [[ "$RSPAMD_ENABLE" = "true" && ("$DKIM_ENABLE" = "true" || "$DMARC_ENABLE" = "true") ]]; then
-  echo >&2 "ERROR: Rspamd and OpenDKIM/OpenDMARC are mutually exclusive"
+if [[ "$DKIM_ENABLE" = "true" || "$DMARC_ENABLE" = "true" ]]; then
+  echo >&2 "ERROR: OpenDKIM/OpenDMARC are not supported anymore. Please use Rspamd instead."
   exit 1
 fi
 
