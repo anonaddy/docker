@@ -14,11 +14,6 @@ RUN apk --update --no-cache add \
     libgd \
     mysql-client \
     nginx \
-    opendkim \
-    opendkim-libs \
-    opendkim-utils \
-    opendmarc \
-    opendmarc-libs \
     openssl \
     php8 \
     php8-cli \
@@ -70,9 +65,6 @@ RUN apk --update --no-cache add \
     php8-pear \
   && ln -s /usr/bin/php8 /usr/bin/php \
   && pecl8 install gnupg \
-  && addgroup opendkim postfix \
-  && addgroup postfix opendkim \
-  && addgroup opendmarc postfix \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/www/*
 
@@ -92,7 +84,6 @@ RUN apk --update --no-cache add -t build-dependencies \
   && npm --version \
   && addgroup -g ${PGID} anonaddy \
   && adduser -D -h /var/www/anonaddy -u ${PUID} -G anonaddy -s /bin/sh -D anonaddy \
-  && addgroup anonaddy opendkim \
   && addgroup anonaddy mail \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
   && git clone --branch v${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
