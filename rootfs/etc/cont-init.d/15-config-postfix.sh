@@ -177,10 +177,13 @@ fi
 
 # usernames query
 QUERY_USERNAMES=""
+QUERY_DOMAINS=""
 IFS=","
 for domain in $ANONADDY_ALL_DOMAINS; do
   if [ -n "$QUERY_USERNAMES" ]; then QUERY_USERNAMES="${QUERY_USERNAMES} OR "; fi
+  if [ -n "$QUERY_DOMAINS" ]; then QUERY_DOMAINS="${QUERY_DOMAINS}, "; fi
   QUERY_USERNAMES="${QUERY_USERNAMES}CONCAT(username, '.${domain}') = '%s'"
+  QUERY_DOMAINS="${QUERY_DOMAINS}CONCAT(username, '.${domain}')"
 done
 
 echo "Creating Postfix virtual alias domains and subdomains configuration"
@@ -267,7 +270,7 @@ BEGIN
             FROM
                 usernames
             WHERE
-                alias_domain IN (${QUERY_USERNAMES}) ) AS usernames,
+                alias_domain IN (${QUERY_DOMAINS}) ) AS usernames,
             (
             SELECT
                 CASE
