@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0-r1 (2022/03/09)
+
+* Fix check_access stored procedure (#119)
+
 ## 0.11.0-r0 (2022/03/06)
 
 * AnonAddy 0.11.0 (#117)
