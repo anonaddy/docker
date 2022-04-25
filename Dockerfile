@@ -1,4 +1,4 @@
-ARG ANONADDY_VERSION=0.11.1
+ARG ANONADDY_VERSION=0.11.2
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.15-2.2.0.3
@@ -86,6 +86,7 @@ RUN apk --no-cache add -t build-dependencies \
   && adduser -D -h /var/www/anonaddy -u ${PUID} -G anonaddy -s /bin/sh -D anonaddy \
   && addgroup anonaddy mail \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
+  && git config --global --add safe.directory /var/www/anonaddy \
   && git clone --branch v${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
