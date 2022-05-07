@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.11.2-r0 (2022/05/07)
+
+* AnonAddy 0.11.2 (#123)
+* Fix git `safe.directory` (#124)
+
 ## 0.11.1-r0 (2022/03/15)
 
 * AnonAddy 0.11.1 (#120)
