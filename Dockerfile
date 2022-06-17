@@ -1,7 +1,7 @@
 ARG ANONADDY_VERSION=0.11.2
 
 FROM crazymax/yasu:latest AS yasu
-FROM crazymax/alpine-s6:3.15-2.2.0.3
+FROM crazymax/alpine-s6:3.16-2.2.0.3
 
 COPY --from=yasu / /
 RUN apk --no-cache add \
@@ -63,7 +63,6 @@ RUN apk --no-cache add \
     pcre-dev \
     php8-dev \
     php8-pear \
-  && ln -s /usr/bin/php8 /usr/bin/php \
   && pecl8 install gnupg \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/www/*
