@@ -74,6 +74,7 @@ jobs:
             -e "APP_KEY=base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=" \
             -e "ANONADDY_DOMAIN=example.com" \
             -e "ANONADDY_SECRET=0123456789abcdefghijklmnopqrstuvwxyz" \
+            -e "POSTSRSD_ENABLE=true" \
             -e "RSPAMD_ENABLE=true" \
             -v "/tmp/data:/data" \
             ${{ steps.prep.outputs.build_tag }}

@@ -46,6 +46,7 @@ RUN apk --no-cache add \
     php8-zlib \
     postfix \
     postfix-mysql \
+    postsrsd \
     rspamd \
     rspamd-controller \
     rspamd-proxy \

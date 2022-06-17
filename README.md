@@ -29,6 +29,7 @@ ___
   * [Redis](#redis)
   * [Mail](#mail)
   * [Postfix](#postfix)
+  * [PostSRSd](#postsrsd)
   * [RSPAMD](#rspamd)
 * [Volumes](#volumes)
 * [Ports](#ports)
@@ -158,6 +159,15 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_RELAYHOST_AUTH_ENABLE`: Enable client-side authentication for relayhost (default `false`)
 * `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
+
+### PostSRSd
+
+* `POSTSRSD_ENABLE`: Enable PostSRSd service (default `false`)
+* `SRS_DOMAIN`: Addresses are rewritten to originate from this domain (default `$ANONADDY_DOMAIN`)
+* `SRS_EXCLUDE_DOMAINS`: Exclude additional domains (e.g. `.example.com,example.org`)
+* `SRS_SEPARATOR`: First separator character after SRS0 or SRS1 (default `=`)
+* `SRS_HASHLENGTH`: Length of hash to be used in rewritten addresses (default `4`)
+* `SRS_HASHMIN`: Minimum length of hash to accept when validating return addresses (default `4`)
 
 ### RSPAMD
 
