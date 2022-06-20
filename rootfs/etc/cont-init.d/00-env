@@ -18,6 +18,10 @@ file_env() {
   if [ "${!var:-}" ]; then
     val="${!var}"
   elif [ "${!fileVar:-}" ]; then
+    if [ ! -f "${!fileVar}" ]; then
+      echo >&2 "error: ${!fileVar} file not found for ${fileVar}"
+      exit 1
+    fi
     val="$(<"${!fileVar}")"
   fi
   export "$var"="$val"
@@ -42,7 +46,7 @@ APP_URL=${APP_URL:-http://localhost}
 #DB_HOST=${DB_HOST:-localhost}
 DB_PORT=${DB_PORT:-3306}
 DB_DATABASE=${DB_DATABASE:-anonaddy}
-DB_USERNAME=${DB_USERNAME:-anonaddy}
+#DB_USERNAME=${DB_USERNAME:-anonaddy}
 #DB_PASSWORD=${DB_PASSWORD:-asupersecretpassword}
 DB_TIMEOUT=${DB_TIMEOUT:-60}
 
@@ -97,7 +101,7 @@ DKIM_ENABLE=${DKIM_ENABLE:-false}
 DMARC_ENABLE=${DMARC_ENABLE:-false}
 
 file_env 'APP_KEY'
-file_env 'DB_USERNAME'
+file_env 'DB_USERNAME' 'anonaddy'
 file_env 'DB_PASSWORD'
 file_env 'ANONADDY_SECRET'
 file_env 'PUSHER_APP_SECRET'
