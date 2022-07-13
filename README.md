@@ -52,7 +52,7 @@ ___
 
 ## Build locally
 
-```shell
+```console
 git clone https://github.com/anonaddy/docker.git docker-anonaddy
 cd docker-anonaddy
 
@@ -101,7 +101,10 @@ Image: anonaddy/anonaddy:latest
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
 * `APP_URL`: The URL of your AnonAddy installation
 
-> 💡 `APP_KEY_FILE` can be used to fill in the value from a file, especially for Docker's secrets feature.
+> **Note**
+>
+> `APP_KEY_FILE` can be used to fill in the value from a file, especially for
+> Docker's secrets feature.
 
 ### AnonAddy
 
@@ -121,7 +124,10 @@ Image: anonaddy/anonaddy:latest
 * `ANONADDY_DKIM_SIGNING_KEY`: Path to the private DKIM signing key to be used to sign emails for custom domains.
 * `ANONADDY_DKIM_SELECTOR`: Selector for the current DKIM signing key (default `default`)
 
-> 💡 `ANONADDY_SECRET_FILE` can be used to fill in the value from a file, especially for Docker's secrets feature.
+> **Note**
+>
+> `ANONADDY_SECRET_FILE` and `ANONADDY_SIGNING_KEY_FINGERPRINT_FILE` can be used
+> to fill in the value from a file, especially for Docker's secrets feature.
 
 ### Database
 
@@ -132,8 +138,10 @@ Image: anonaddy/anonaddy:latest
 * `DB_PASSWORD`: MySQL password
 * `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
 
-> 💡 `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value from a file, especially for Docker's
-> secrets feature.
+> **Note**
+>
+> `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value
+> from a file, especially for Docker's secrets feature.
 
 ### Redis
 
@@ -159,22 +167,39 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
 
+> **Note**
+>
+> `POSTFIX_RELAYHOST_USERNAME_FILE` and `POSTFIX_RELAYHOST_PASSWORD_FILE` can be
+> used to fill in the value from a file, especially for Docker's secrets feature.
+
 ### RSPAMD
 
 * `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
 
-> :warning: DKIM private key must be located in `/data/dkim/${ANONADDY_DOMAIN}.private`. You can generate a DKIM
-> private/public keypair by following [this note](#generate-dkim-privatepublic-keypair).
+> **Note**
+>
+> `RSPAMD_WEB_PASSWORD_FILE` can be used to fill in the value from a file,
+> especially for Docker's secrets feature.
 
-> :warning: Rspamd service is disabled if DKIM private key is not found
+> **Warning**
+>
+> DKIM private key must be located in `/data/dkim/${ANONADDY_DOMAIN}.private`.
+> You can generate a DKIM private/public keypair by following [this note](#generate-dkim-privatepublic-keypair).
+
+> **Warning**
+>
+> Rspamd service is disabled if DKIM private key is not found
 
 ## Volumes
 
 * `/data`: Contains storage
 
-> :warning: Note that the volume should be owned by the user/group with the specified `PUID` and `PGID`. If you don't
-> give the volume correct permissions, the container may not start.
+> **Warning**
+>
+> Note that the volume should be owned by the user/group with the specified
+> `PUID` and `PGID`. If you don't give the volume correct permissions, the
+> container may not start.
 
 ## Ports
 
@@ -189,17 +214,17 @@ Image: anonaddy/anonaddy:latest
 Docker compose is the recommended way to run this image. You can use the following
 [docker compose template](examples/compose/docker-compose.yml), then run the container:
 
-```bash
+```console
 docker-compose up -d
 docker-compose logs -f
 ```
 
 ## Upgrade
 
-You can upgrade AnonAddy automatically through the UI, it works well. But I recommend to recreate the container
-whenever I push an update:
+You can upgrade AnonAddy automatically through the UI, it works well. But I
+recommend to recreate the container whenever I push an update:
 
-```bash
+```console
 docker-compose pull
 docker-compose up -d
 ```
@@ -208,27 +233,28 @@ docker-compose up -d
 
 ### `anonaddy` command
 
-If you want to use the artisan command to perform common server operations like manage users, passwords and more, type:
+If you want to use the artisan command to perform common server operations like
+manage users, passwords and more, type:
 
-```bash
+```console
 docker-compose exec anonaddy anonaddy <command>
 ```
 
 For example to list all available commands:
 
-```bash
+```console
 docker-compose exec anonaddy anonaddy list
 ```
 
 ### Create user
 
-```shell
+```console
 docker-compose exec anonaddy anonaddy anonaddy:create-user "username" "webmaster@example.com"
 ```
 
 ### Generate DKIM private/public keypair
 
-```shell
+```console
 docker-compose run --entrypoint '' anonaddy gen-dkim
 ```
 
@@ -246,9 +272,10 @@ The keypair will be available in `/data/dkim`.
 
 ### Generate GPG key
 
-If you don't have an existing GPG key, you can generate a new GPG key with the following command:
+If you don't have an existing GPG key, you can generate a new GPG key with the
+following command:
 
-```shell
+```console
 docker-compose exec --user anonaddy anonaddy gpg --full-gen-key
 ```
 
