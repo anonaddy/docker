@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.12.2-r0 (2022/07/13)
+
+* AnonAddy 0.12.2 (#138)
+* Ensure scripts exit early on error (#141)
+* Support more variables as secret file (#140)
+* Fix `DB_USERNAME_FILE` handling (#133)
+* Alpine Linux 3.16 (#131)
+* Updated postfix config for forwarding even if alias is disabled (#122)
+
 ## 0.11.2-r0 (2022/05/07)
 
 * AnonAddy 0.11.2 (#123)
