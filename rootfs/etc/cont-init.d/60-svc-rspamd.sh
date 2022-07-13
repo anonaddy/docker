@@ -1,5 +1,6 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
+set -e
 
 . $(dirname $0)/00-env
 
