@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 
 #ANONADDY_DOMAIN=${ANONADDY_DOMAIN:-null}
 DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
