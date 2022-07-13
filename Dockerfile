@@ -1,4 +1,4 @@
-ARG ANONADDY_VERSION=0.11.2
+ARG ANONADDY_VERSION=0.12.2
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.16-2.2.0.3
@@ -15,35 +15,35 @@ RUN apk --no-cache add \
     mysql-client \
     nginx \
     openssl \
-    php8 \
-    php8-cli \
-    php8-ctype \
-    php8-curl \
-    php8-dom \
-    php8-fileinfo \
-    php8-fpm \
-    php8-gd \
-    php8-gmp \
-    php8-iconv \
-    php8-intl \
-    php8-json \
-    php8-opcache \
-    php8-openssl \
-    php8-pdo \
-    php8-pdo_mysql \
-    php8-pecl-imagick \
-    php8-pecl-mailparse \
-    php8-phar \
-    php8-redis \
-    php8-session \
-    php8-simplexml \
-    php8-sodium \
-    php8-tokenizer \
-    php8-xml \
-    php8-xmlreader \
-    php8-xmlwriter \
-    php8-zip \
-    php8-zlib \
+    php81 \
+    php81-cli \
+    php81-ctype \
+    php81-curl \
+    php81-dom \
+    php81-fileinfo \
+    php81-fpm \
+    php81-gd \
+    php81-gmp \
+    php81-iconv \
+    php81-intl \
+    php81-json \
+    php81-opcache \
+    php81-openssl \
+    php81-pdo \
+    php81-pdo_mysql \
+    php81-pecl-imagick \
+    php81-pecl-mailparse \
+    php81-phar \
+    php81-redis \
+    php81-session \
+    php81-simplexml \
+    php81-sodium \
+    php81-tokenizer \
+    php81-xml \
+    php81-xmlreader \
+    php81-xmlwriter \
+    php81-zip \
+    php81-zlib \
     postfix \
     postfix-mysql \
     rspamd \
@@ -52,6 +52,7 @@ RUN apk --no-cache add \
     shadow \
     tar \
     tzdata \
+  && ln -s /usr/bin/php81 /usr/bin/php \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --no-cache add -t build-dependencies \
@@ -61,9 +62,9 @@ RUN apk --no-cache add \
     gpgme-dev \
     libtool \
     pcre-dev \
-    php8-dev \
-    php8-pear \
-  && pecl8 install gnupg \
+    php81-dev \
+    php81-pear \
+  && pecl81 install gnupg \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/www/*
 

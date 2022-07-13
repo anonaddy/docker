@@ -79,5 +79,4 @@ EOL
 chown anonaddy. /var/www/anonaddy/.env
 
 echo "Trust all proxies"
-anonaddy vendor:publish --no-interaction --provider="Fideloper\Proxy\TrustedProxyServiceProvider"
-sed -i "s|^    'proxies'.*|    'proxies' => '\*',|g" /var/www/anonaddy/config/trustedproxy.php
+sed -i "s|^    protected \$proxies.*|    protected \$proxies = '\*';|g" /var/www/anonaddy/app/Http/Middleware/TrustProxies.php
