@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.3-r1 (2022/07/20)
+
+* Allow custom env vars through `/data/.env` file (#147)
+* Revert #122 (#146)
+
 ## 0.12.3-r0 (2022/07/15)
 
 * AnonAddy 0.12.3 (#143)
