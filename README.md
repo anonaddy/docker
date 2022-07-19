@@ -40,6 +40,7 @@ ___
   * [Create user](#create-user)
   * [Generate DKIM private/public keypair](#generate-dkim-privatepublic-keypair)
   * [Generate GPG key](#generate-gpg-key)
+  * [Define additional env vars](#define-additional-env-vars)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -280,6 +281,11 @@ docker-compose exec --user anonaddy anonaddy gpg --full-gen-key
 ```
 
 Keys will be stored in `/data/.gnupg` folder.
+
+### Define additional env vars
+
+You can define additional environment variables that will be used by AnonAddy
+by creating a file named `.env` in `/data`.
 
 ## Contributing
 
