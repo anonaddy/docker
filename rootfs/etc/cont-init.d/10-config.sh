@@ -14,13 +14,18 @@ ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
 echo ${TZ} >/etc/timezone
 
 echo "Initializing files and folders"
-cp -Rf /var/www/anonaddy/storage /data
-rm -rf /var/www/anonaddy/storage
-ln -sf /data/storage /var/www/anonaddy/storage
+mkdir -p /data/storage
+if [ ! -L /var/www/anonaddy/storage ]; then
+  cp -Rf /var/www/anonaddy/storage /data
+  rm -rf /var/www/anonaddy/storage
+  ln -sf /data/storage /var/www/anonaddy/storage
+fi
 chown -h anonaddy. /var/www/anonaddy/storage
 chown -R anonaddy. /data/storage
 mkdir -p /data/.gnupg
-ln -sf /data/.gnupg /var/www/anonaddy/.gnupg
+if [ ! -L /var/www/anonaddy/.gnupg ]; then
+  ln -sf /data/.gnupg /var/www/anonaddy/.gnupg
+fi
 chown -h anonaddy. /var/www/anonaddy/.gnupg
 chown -R anonaddy. /data/.gnupg
 chmod 700 /data/.gnupg
