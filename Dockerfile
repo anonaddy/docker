@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG ANONADDY_VERSION=0.12.3
 
 FROM crazymax/yasu:latest AS yasu
@@ -68,13 +70,14 @@ RUN apk --no-cache add \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/www/*
 
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
+ARG ANONADDY_VERSION
+ENV ANONADDY_VERSION=$ANONADDY_VERSION \
+  S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
   SOCKLOG_TIMESTAMP_FORMAT="" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"
 
-ARG ANONADDY_VERSION
 WORKDIR /var/www/anonaddy
 RUN apk --no-cache add -t build-dependencies \
     git \
@@ -87,7 +90,8 @@ RUN apk --no-cache add -t build-dependencies \
   && addgroup anonaddy mail \
   && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer \
   && git config --global --add safe.directory /var/www/anonaddy \
-  && git clone --branch v${ANONADDY_VERSION} https://github.com/anonaddy/anonaddy . \
+  && git init . && git remote add origin "https://github.com/anonaddy/anonaddy.git" \
+  && git fetch --depth 1 origin "v${ANONADDY_VERSION}" && git checkout -q FETCH_HEAD \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
   && npm config set unsafe-perm true \
   && chown -R anonaddy. /var/www/anonaddy \
