@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.3-r0 (2022/08/01)
+
+* AnonAddy 0.13.3 (#158)
+* Set `ANONADDY_VERSION` env var (#157)
+* Add `LOG_CROND` env var (#154)
+* Check symlinks in data folder (#153)
+
 ## 0.12.3-r1 (2022/07/20)
 
 * Allow custom env vars through `/data/.env` file (#147)
