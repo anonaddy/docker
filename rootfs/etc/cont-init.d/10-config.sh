@@ -14,6 +14,12 @@ ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
 echo ${TZ} >/etc/timezone
 
 echo "Initializing files and folders"
+mkdir -p /data/config
+if [ ! -L /var/www/anonaddy/.config ]; then
+  ln -sf /data/config /var/www/anonaddy/.config
+fi
+chown -h anonaddy. /var/www/anonaddy/config
+chown -R anonaddy. /data/config
 mkdir -p /data/storage
 if [ ! -L /var/www/anonaddy/storage ]; then
   cp -Rf /var/www/anonaddy/storage /data
