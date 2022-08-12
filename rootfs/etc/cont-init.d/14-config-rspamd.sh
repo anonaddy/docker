@@ -14,7 +14,7 @@ if [ ! -f "$DKIM_PRIVATE_KEY" ]; then
 fi
 
 echo "Copying DKIM private key for Rspamd"
-mkdir /var/lib/rspamd/dkim
+mkdir -p /var/lib/rspamd/dkim
 cp -f "${DKIM_PRIVATE_KEY}" "/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.default.key"
 
 echo "Setting Rspamd dkim_signing.conf"
