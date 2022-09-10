@@ -14,7 +14,7 @@ if [ ! -f "$DKIM_PRIVATE_KEY" ]; then
 fi
 
 # Init
-mkdir -m o-rwx /var/run/rspamd
+mkdir -p -m o-rwx /var/run/rspamd
 chown rspamd. /var/run/rspamd
 
 # Fix perms
