@@ -41,6 +41,7 @@ ___
   * [Generate DKIM private/public keypair](#generate-dkim-privatepublic-keypair)
   * [Generate GPG key](#generate-gpg-key)
   * [Define additional env vars](#define-additional-env-vars)
+  * [Override Postfix main configuration](#override-postfix-main-configuration)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -287,6 +288,17 @@ Keys will be stored in `/data/.gnupg` folder.
 
 You can define additional environment variables that will be used by AnonAddy
 by creating a file named `.env` in `/data`.
+
+### Override Postfix main configuration
+
+In some cases you may want to override the default Postfix main configuration
+to fit your infrastructure. To do so, you can create a file named
+`postfix-main.alt.cf` in `/data` and it will be used instead of the generated
+configuration. **Use at your own risk**.
+
+> **Warning**
+>
+> Container has to be restarted to propagate changes
 
 ## Contributing
 

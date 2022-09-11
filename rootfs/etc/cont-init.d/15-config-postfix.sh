@@ -209,8 +209,12 @@ EOL
 chmod o= /etc/postfix/mysql-recipient-access.cf
 chgrp postfix /etc/postfix/mysql-recipient-access.cf
 
-echo "Checking Postfix hostname"
-postconf myhostname
+if [ -f "/data/postfix-main.alt.cf" ]; then
+  cat "/data/postfix-main.alt.cf" > /etc/postfix/main.cf
+fi
+
+echo "Display Postfix config"
+postconf | sed -e 's/^/[postfix-config] /'
 
 echo "Creating check_access stored procedure"
 mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
