@@ -116,7 +116,7 @@ Image: anonaddy/anonaddy:latest
 * `ANONADDY_DOMAIN`: Root domain to receive email from **required**
 * `ANONADDY_HOSTNAME`: FQDN hostname for your server used to validate records on custom domains that are added by users
 * `ANONADDY_DNS_RESOLVER`: Custom domains that are added by users to validate records (default `127.0.0.1`)
-* `ANONADDY_ALL_DOMAINS`: Other domains to use
+* `ANONADDY_ALL_DOMAINS`: If you would like to have other domains to use (e.g. `@username.example2.com`), set a comma separated list like so, `example.com,example2.com` (default `$ANONADDY_DOMAIN`)
 * `ANONADDY_SECRET`: Long random string used when hashing data for the anonymous replies **required**
 * `ANONADDY_LIMIT`: Number of emails a user can forward and reply per hour (default `200`)
 * `ANONADDY_BANDWIDTH_LIMIT`: Monthly bandwidth limit for users in bytes domains to use (default `104857600`)
