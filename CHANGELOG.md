@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.13.4-r0 (2022/08/02)
+## 0.13.7-r0 (2022/09/11)
+
+* AnonAddy 0.13.7 (#175)
+* Override Postfix main config support (#176)
+* Fix `60-svc-rspamd.sh` mkdir init script (#174)
+
+## 0.13.5-r0 (2022/08/02)
 
 * AnonAddy 0.13.5 (#164)
 
