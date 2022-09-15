@@ -304,7 +304,7 @@ configuration. **Use at your own risk**.
 ### Spamhaus DQS configuration
 
 If a public DNS resolver is used, it may be blocked by Spamhaus and not provide 
-any responses (see this article). To work around this, you can create an 
+any responses (see this [article](https://www.spamhaus.com/resource-center/successfully-accessing-spamhauss-free-block-lists-using-a-public-dns/)). To work around this, you can create an 
 account for the DQS service of Spamhaus and store the key in the `anonaddy.env` file:
 
 `POSTFIX_SPAMHAUS_DQS_KEY`: Personal key for Spamhaus DQS
