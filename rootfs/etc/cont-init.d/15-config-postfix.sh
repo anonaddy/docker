@@ -34,7 +34,7 @@ sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 if [ -n ""]; then
   DBL_DOMAIN="dbl.spamhaus.org"
   ZEN_DOMAIN="zen.spamhaus.org"
-elif
+else
   DBL_DOMAIN="${POSTFIX_SPAMHAUS_DQS_KEY}.dbl.dq.spamhaus.net"
   ZEN_DOMAIN="${POSTFIX_SPAMHAUS_DQS_KEY}.zen.dq.spamhaus.net"
 fi
