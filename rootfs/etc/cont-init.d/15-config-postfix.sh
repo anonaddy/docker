@@ -30,6 +30,7 @@ done
 sed -i 's/compatibility_level.*/compatibility_level = 2/g' /etc/postfix/main.cf
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
+sed -i 's/queue_directory.*/queue_directory =  \/data\/postfix\/queue/g' /etc/postfix/main.cf
 
 cat >>/etc/postfix/main.cf <<EOL
 myhostname = ${ANONADDY_HOSTNAME}
