@@ -31,7 +31,7 @@ sed -i 's/compatibility_level.*/compatibility_level = 2/g' /etc/postfix/main.cf
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 
-if [ -n ""]; then
+if [ -z "$POSTFIX_SPAMHAUS_DQS_KEY" ]; then
   DBL_DOMAIN="dbl.spamhaus.org"
   ZEN_DOMAIN="zen.spamhaus.org"
 else
