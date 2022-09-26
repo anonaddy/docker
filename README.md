@@ -92,7 +92,7 @@ Image: anonaddy/anonaddy:latest
 * `UPLOAD_MAX_SIZE`: Upload max size (default `16M`)
 * `CLEAR_ENV`: Clear environment in FPM workers (default `yes`)
 * `OPCACHE_MEM_SIZE`: PHP OpCache memory consumption (default `128`)
-* `LISTEN_IPV6`: Enable IPv6 for Nginx (default `true`)
+* `LISTEN_IPV6`: Enable IPv6 for Nginx and Postfix (default `true`)
 * `REAL_IP_FROM`: Trusted addresses that are known to send correct replacement addresses (default `0.0.0.0/32`)
 * `REAL_IP_HEADER`: Request header field whose value will be used to replace the client address (default `X-Forwarded-For`)
 * `LOG_IP_VAR`: Use another variable to retrieve the remote IP address for access [log_format](http://nginx.org/en/docs/http/ngx_http_log_module.html#log_format) on Nginx. (default `remote_addr`)
@@ -170,6 +170,7 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_RELAYHOST_AUTH_ENABLE`: Enable client-side authentication for relayhost (default `false`)
 * `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
+* `POSTFIX_SPAMHAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
 
 > **Note**
 >
@@ -303,11 +304,19 @@ configuration. **Use at your own risk**.
 
 ### Spamhaus DQS configuration
 
-If a public DNS resolver is used, it may be blocked by Spamhaus and not provide 
-any responses (see this [article](https://www.spamhaus.com/resource-center/successfully-accessing-spamhauss-free-block-lists-using-a-public-dns/)). To work around this, you can create an 
-account for the DQS service of Spamhaus and store the key in the `anonaddy.env` file:
+If a public DNS resolver is used, it may be blocked by Spamhaus and return a
+'non-existent domain' (NXDOMAIN), and soon will start to return an error code:
 
-`POSTFIX_SPAMHAUS_DQS_KEY`: Personal key for Spamhaus DQS
+```text
+Aug  3 10:15:40 mail01 postfix/smtpd[23645]: NOQUEUE: reject: RCPT from sender.example.com[xx.xx.xx.xx]: 554 5.7.1 Service unavailable;
+Client host [xx.xx.xx.xx] blocked using zen.spamhaus.org; Error: open resolver; https://www.spamhaus.org/returnc/pub/162.158.148.77;
+from=<sender@example.com> to=<recipient@example.com> proto=ESMTP helo=<icinga2.infiniroot.net>
+```
+
+To fix this issue, you can register a DQS key [here](https://www.spamhaustech.com/dqs/)
+and complete the registration procedure. After you register an account, go to
+[this page](https://portal.spamhaustech.com/manuals/dqs/), and you'll find the
+DQS key under section "1.0 Datafeed Query Service".
 
 ## Contributing
 
