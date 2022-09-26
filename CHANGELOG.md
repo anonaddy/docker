@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.7-r1 (2022/09/26)
+
+* Postfix IPv6 support (#183)
+* Persist Postfix queue to `/data` (#181)
+* Spamhaus DQS support (#177)
+
 ## 0.13.7-r0 (2022/09/11)
 
 * AnonAddy 0.13.7 (#175)
