@@ -31,6 +31,14 @@ sed -i 's/compatibility_level.*/compatibility_level = 2/g' /etc/postfix/main.cf
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
 
+if [ -z "$POSTFIX_SPAMHAUS_DQS_KEY" ]; then
+  DBL_DOMAIN="dbl.spamhaus.org"
+  ZEN_DOMAIN="zen.spamhaus.org"
+else
+  DBL_DOMAIN="${POSTFIX_SPAMHAUS_DQS_KEY}.dbl.dq.spamhaus.net"
+  ZEN_DOMAIN="${POSTFIX_SPAMHAUS_DQS_KEY}.zen.dq.spamhaus.net"
+fi
+
 cat >>/etc/postfix/main.cf <<EOL
 myhostname = ${ANONADDY_HOSTNAME}
 mydomain = ${ANONADDY_DOMAIN}
@@ -80,10 +88,10 @@ smtpd_recipient_restrictions =
     reject_unauth_destination,
     check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf,
     #check_policy_service unix:private/policyd-spf
-    reject_rhsbl_helo dbl.spamhaus.org,
-    reject_rhsbl_reverse_client dbl.spamhaus.org,
-    reject_rhsbl_sender dbl.spamhaus.org,
-    reject_rbl_client zen.spamhaus.org
+    reject_rhsbl_helo ${DBL_DOMAIN},
+    reject_rhsbl_reverse_client ${DBL_DOMAIN},
+    reject_rhsbl_sender ${DBL_DOMAIN},
+    reject_rbl_client ${ZEN_DOMAIN}
     reject_rbl_client dul.dnsbl.sorbs.net
 
 # Block clients that speak too early.
