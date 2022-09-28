@@ -314,9 +314,8 @@ from=<sender@example.com> to=<recipient@example.com> proto=ESMTP helo=<icinga2.i
 ```
 
 To fix this issue, you can register a DQS key [here](https://www.spamhaustech.com/dqs/)
-and complete the registration procedure. After you register an account, go to
-[this page](https://portal.spamhaustech.com/dqs/), and you'll find the
-DQS key under section "1.0 Datafeed Query Service".
+and complete the registration procedure. After you register an account, you can find the DQS key in the "Access" section of
+[this page](https://portal.spamhaustech.com/dqs/).
 
 ## Contributing
 
