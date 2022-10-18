@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.9-r0 (2022/10/18)
+
+* AnonAddy 0.13.9 (#188)
+* Add `REDIS_PASSWORD_FILE` env var (#186)
+
 ## 0.13.7-r1 (2022/09/26)
 
 * Postfix IPv6 support (#183)
