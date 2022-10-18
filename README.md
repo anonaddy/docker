@@ -153,6 +153,11 @@ Image: anonaddy/anonaddy:latest
 * `REDIS_PORT`: Redis port (default `6379`)
 * `REDIS_PASSWORD`: Redis password
 
+> **Note**
+>
+> `REDIS_PASSWORD_FILE` can be used to fill in the value from a file, especially
+> for Docker's secrets feature.
+
 ### Mail
 
 * `MAIL_FROM_NAME`: From name (default `AnonAddy`)
