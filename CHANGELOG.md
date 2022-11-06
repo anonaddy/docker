@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.11-r0 (2022/11/06)
+
+* AnonAddy 0.13.11 (#193)
+* Infer `SANCTUM_STATEFUL_DOMAINS` from `APP_URL` (#194)
+
 ## 0.13.9-r0 (2022/10/18)
 
 * AnonAddy 0.13.9 (#188)
