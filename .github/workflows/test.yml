@@ -12,6 +12,12 @@ on:
     paths-ignore:
       - '**.md'
 
+env:
+  BUILD_TAG: anonaddy:test
+  CONTAINER_NAME: anonaddy
+  RUNNING_TIMEOUT: 120
+  RUNNING_LOG_CHECK: "ready to handle connections"
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -19,14 +25,6 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v2
-      -
-        name: Prepare
-        id: prep
-        run: |
-          echo ::set-output name=build_tag::test
-          echo ::set-output name=container_name::anonaddy
-          echo ::set-output name=running_timeout::120
-          echo ::set-output name=running_log_check::ready to handle connections
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -39,16 +37,16 @@ jobs:
         with:
           targets: image-local
         env:
-          DEFAULT_TAG: ${{ steps.prep.outputs.build_tag }}
+          DEFAULT_TAG: ${{ env.BUILD_TAG }}
       -
         name: Create network
         run: |
-          docker network create -d bridge ${{ steps.prep.outputs.container_name }}
+          docker network create -d bridge ${{ env.CONTAINER_NAME }}
       -
         name: Start MariaDB container
         run: |
           docker run -d --name mariadb --hostname mariadb \
-            --network ${{ steps.prep.outputs.container_name }} \
+            --network ${{ env.CONTAINER_NAME }} \
             -e "MYSQL_ALLOW_EMPTY_PASSWORD=yes" \
             -e "MYSQL_DATABASE=anonaddy" \
             -e "MYSQL_USER=anonaddy" \
@@ -60,13 +58,13 @@ jobs:
           docker run --rm -t --entrypoint "" \
             -e "ANONADDY_DOMAIN=example.com" \
             -v "/tmp/data:/data" \
-            ${{ steps.prep.outputs.build_tag }} gen-dkim
+            ${{ env.BUILD_TAG }} gen-dkim
       -
         name: Start container
         run: |
-          docker run -d --name ${{ steps.prep.outputs.container_name }} \
+          docker run -d --name ${{ env.CONTAINER_NAME }} \
             --link mariadb \
-            --network ${{ steps.prep.outputs.container_name }} \
+            --network ${{ env.CONTAINER_NAME }} \
             -e "DB_HOST=mariadb" \
             -e "DB_DATABASE=anonaddy" \
             -e "DB_USERNAME=anonaddy" \
@@ -76,31 +74,31 @@ jobs:
             -e "ANONADDY_SECRET=0123456789abcdefghijklmnopqrstuvwxyz" \
             -e "RSPAMD_ENABLE=true" \
             -v "/tmp/data:/data" \
-            ${{ steps.prep.outputs.build_tag }}
+            ${{ env.BUILD_TAG }}
       -
         name: Test run
         run: |
-          TIMEOUT=$((SECONDS + ${{ steps.prep.outputs.running_timeout }}))
+          TIMEOUT=$((SECONDS + ${{ env.RUNNING_TIMEOUT }}))
           while read LOGLINE; do
             echo ${LOGLINE}
-            if [[ ${LOGLINE} == *"${{ steps.prep.outputs.running_log_check }}"* ]]; then
+            if [[ ${LOGLINE} == *"${{ env.RUNNING_LOG_CHECK }}"* ]]; then
               echo "🎉 Container up!"
               break
             fi
             if [[ $SECONDS -gt ${TIMEOUT} ]]; then
-              >&2 echo "❌ Failed to run ${{ steps.prep.outputs.container_name }} container"
+              >&2 echo "❌ Failed to run ${{ env.CONTAINER_NAME }} container"
               exit 1
             fi
-          done < <(docker logs -f ${{ steps.prep.outputs.container_name }} 2>&1)
+          done < <(docker logs -f ${{ env.CONTAINER_NAME }} 2>&1)
 
-          CONTAINER_STATUS=$(docker container inspect --format "{{.State.Status}}" ${{ steps.prep.outputs.container_name }})
+          CONTAINER_STATUS=$(docker container inspect --format "{{.State.Status}}" ${{ env.CONTAINER_NAME }})
           if [[ ${CONTAINER_STATUS} != "running" ]]; then
-            >&2 echo "❌ Container ${{ steps.prep.outputs.container_name }} returned status '$CONTAINER_STATUS'"
+            >&2 echo "❌ Container ${{ env.CONTAINER_NAME }} returned status '$CONTAINER_STATUS'"
             exit 1
           fi
       -
-        name: Container logs
+        name: Logs
         if: always()
         run: |
-          docker logs ${{ steps.prep.outputs.container_name }}
-          docker rm -f ${{ steps.prep.outputs.container_name }} > /dev/null 2>&1 || true
+          docker logs ${{ env.CONTAINER_NAME }}
+          docker rm -f ${{ env.CONTAINER_NAME }} > /dev/null 2>&1 || true
