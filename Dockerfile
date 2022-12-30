@@ -3,7 +3,7 @@
 ARG ANONADDY_VERSION=0.13.13
 
 FROM crazymax/yasu:latest AS yasu
-FROM crazymax/alpine-s6:3.16-2.2.0.3
+FROM crazymax/alpine-s6:3.17-2.2.0.3
 
 COPY --from=yasu / /
 RUN apk --no-cache add \
@@ -54,7 +54,6 @@ RUN apk --no-cache add \
     shadow \
     tar \
     tzdata \
-  && ln -s /usr/bin/php81 /usr/bin/php \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --no-cache add -t build-dependencies \
@@ -93,7 +92,6 @@ RUN apk --no-cache add -t build-dependencies \
   && git init . && git remote add origin "https://github.com/anonaddy/anonaddy.git" \
   && git fetch --depth 1 origin "v${ANONADDY_VERSION}" && git checkout -q FETCH_HEAD \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
-  && npm config set unsafe-perm true \
   && chown -R anonaddy. /var/www/anonaddy \
   && npm install --global cross-env \
   && npm ci --ignore-scripts --only=production \
