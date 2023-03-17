@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG ANONADDY_VERSION=0.13.13
+ARG ANONADDY_VERSION=0.14.0
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:3.17-2.2.0.3
