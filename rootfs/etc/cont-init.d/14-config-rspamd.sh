@@ -150,6 +150,14 @@ EOD;
 }
 EOL
 
+if [ "$RSPAMD_NO_LOCAL_ADDRS" = "true" ]; then
+  echo "Disabling Rspamd local networks"
+  # Empty the local_addrs array to avoid having Rspamd skip DMARC and SPF checks
+  # if the mailserver is running in a local network. Required since AnonAddy
+  # checks the headers injected by Rspamd. See https://github.com/anonaddy/docker/issues/192#issuecomment-1518111988
+  sed -i 's/local_addrs.*$/local_addrs=[]/' /etc/rspamd/options.inc
+fi
+
 echo "Disabling a variety of Rspamd modules"
 echo "enabled = false;" > /etc/rspamd/override.d/fuzzy_check.conf
 echo "enabled = false;" > /etc/rspamd/override.d/asn.conf
