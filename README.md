@@ -189,6 +189,7 @@ Image: anonaddy/anonaddy:latest
 
 * `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
+* `RSPAMD_NO_LOCAL_ADDRS`: Disable Rspamd local networks (default `false`)
 
 > **Note**
 >
