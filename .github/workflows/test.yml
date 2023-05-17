@@ -15,8 +15,6 @@ on:
 env:
   BUILD_TAG: anonaddy:test
   CONTAINER_NAME: anonaddy
-  RUNNING_TIMEOUT: 120
-  RUNNING_LOG_CHECK: "ready to handle connections"
 
 jobs:
   test:
@@ -76,28 +74,14 @@ jobs:
             -v "/tmp/data:/data" \
             ${{ env.BUILD_TAG }}
       -
-        name: Test run
-        run: |
-          TIMEOUT=$((SECONDS + ${{ env.RUNNING_TIMEOUT }}))
-          while read LOGLINE; do
-            echo ${LOGLINE}
-            if [[ ${LOGLINE} == *"${{ env.RUNNING_LOG_CHECK }}"* ]]; then
-              echo "🎉 Container up!"
-              break
-            fi
-            if [[ $SECONDS -gt ${TIMEOUT} ]]; then
-              >&2 echo "❌ Failed to run ${{ env.CONTAINER_NAME }} container"
-              exit 1
-            fi
-          done < <(docker logs -f ${{ env.CONTAINER_NAME }} 2>&1)
-
-          CONTAINER_STATUS=$(docker container inspect --format "{{.State.Status}}" ${{ env.CONTAINER_NAME }})
-          if [[ ${CONTAINER_STATUS} != "running" ]]; then
-            >&2 echo "❌ Container ${{ env.CONTAINER_NAME }} returned status '$CONTAINER_STATUS'"
-            exit 1
-          fi
+        name: Check container logs
+        uses: crazy-max/.github/.github/actions/container-logs-check@main
+        with:
+          container_name: ${{ env.CONTAINER_NAME }}
+          log_check: "ready to handle connections"
+          timeout: 120
       -
-        name: Logs
+        name: Container logs
         if: always()
         run: |
           docker logs ${{ env.CONTAINER_NAME }}
