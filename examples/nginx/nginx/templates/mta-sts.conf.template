@@ -26,9 +26,9 @@ server {
 
   location @mta-sts {
     return 200 "version: STSv1
-mode: enforce
-max_age: 86400
-mx: example.com
-mx: example.com\n";
+    mode: enforce
+    max_age: 86400
+    mx: example.com
+    mx: example.com\n";
   }
 }
