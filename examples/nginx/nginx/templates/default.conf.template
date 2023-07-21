@@ -7,9 +7,10 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name example.com;   
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name example.com;
     server_tokens off;
 
     add_header X-Frame-Options "SAMEORIGIN";
