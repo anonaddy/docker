@@ -25,6 +25,6 @@ mkdir -p /etc/services.d/rspamd
 cat >/etc/services.d/rspamd/run <<EOL
 #!/usr/bin/execlineb -P
 with-contenv
-/usr/sbin/rspamd -i -f -u rspamd -g rspamd
+/usr/bin/rspamd -i -f -u rspamd -g rspamd
 EOL
 chmod +x /etc/services.d/rspamd/run
