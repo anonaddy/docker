@@ -15,8 +15,8 @@ sudo openssl dhparam -out dhparam.pem 4096
 
 ## Configure mounts for nginx
 
-The `docker-compose.yml` may need some adjusting to properly mount your
-specific let's encrypt and dhparam certs.
+The `compose.yml` may need some adjusting to properly mount your specific
+let's encrypt and dhparam certs.
 
 ## Rspamd web ui
 

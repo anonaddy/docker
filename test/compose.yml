@@ -1,15 +1,17 @@
-version: "3.5"
+name: annoaddy
 
 services:
   db:
     image: mariadb:10.5
     container_name: anonaddy_db
+    networks:
+      - anonaddy
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
     volumes:
-      - "./db:/var/lib/mysql"
+      - "db:/var/lib/mysql"
     environment:
       - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
       - "MYSQL_DATABASE"
@@ -20,20 +22,27 @@ services:
   redis:
     image: redis:4.0-alpine
     container_name: anonaddy_redis
+    networks:
+      - anonaddy
     restart: always
 
   anonaddy:
-    image: anonaddy/anonaddy:latest
-    container_name: anonaddy
+    image: ${ANONADDY_IMAGE:-anonaddy/anonaddy}
+    container_name: ${ANONADDY_CONTAINER:-anonaddy}
     depends_on:
       - db
       - redis
+    networks:
+      - anonaddy
     ports:
       - target: 25
         published: 25
         protocol: tcp
+      - target: 8000
+        published: 8000
+        protocol: tcp
     volumes:
-      - "./data:/data"
+      - "anonaddy:/data"
     env_file:
       - "./anonaddy.env"
     environment:
@@ -44,15 +53,21 @@ services:
       - "REDIS_HOST=redis"
     restart: always
 
-  nginx:
-    image: nginx:1.20.1-alpine
-    container_name: anonaddy_nginx
-    restart: unless-stopped
-    ports:
-      - '443:443'
+  gen-dkim:
+    image: ${ANONADDY_IMAGE:-anonaddy/anonaddy}
+    profiles: ["bootstrap"]
+    entrypoint: ''
+    command: gen-dkim
     volumes:
-      - /etc/ssl/dhparam.pem:/etc/ssl/dhparam.pem
-      - ./nginx/templates:/etc/nginx/templates
-      - /etc/letsencrypt:/etc/letsencrypt
-    depends_on:
-      - anonaddy
+      - "anonaddy:/data"
+    env_file:
+      - "./anonaddy.env"
+    restart: no
+
+volumes:
+  db:
+  anonaddy:
+
+networks:
+  anonaddy:
+    name: anonaddy

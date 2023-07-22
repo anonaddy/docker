@@ -1,0 +1,48 @@
+name: annoaddy
+
+services:
+  db:
+    image: mariadb:10.5
+    container_name: anonaddy_db
+    command:
+      - "mysqld"
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    volumes:
+      - "./db:/var/lib/mysql"
+    environment:
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+      - "MYSQL_DATABASE"
+      - "MYSQL_USER"
+      - "MYSQL_PASSWORD"
+    restart: always
+
+  redis:
+    image: redis:4.0-alpine
+    container_name: anonaddy_redis
+    restart: always
+
+  anonaddy:
+    image: anonaddy/anonaddy:latest
+    container_name: anonaddy
+    depends_on:
+      - db
+      - redis
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+      - target: 8000
+        published: 8000
+        protocol: tcp
+    volumes:
+      - "./data:/data"
+    env_file:
+      - "./anonaddy.env"
+    environment:
+      - "DB_HOST=db"
+      - "DB_DATABASE=${MYSQL_DATABASE}"
+      - "DB_USERNAME=${MYSQL_USER}"
+      - "DB_PASSWORD=${MYSQL_PASSWORD}"
+      - "REDIS_HOST=redis"
+    restart: always
