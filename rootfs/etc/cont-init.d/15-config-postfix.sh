@@ -53,6 +53,7 @@ smtpd_banner = \$myhostname ESMTP
 biff = no
 readme_directory = no
 append_dot_mydomain = no
+message_size_limit = ${POSTFIX_MESSAGE_SIZE_LIMIT}
 
 virtual_transport = anonaddy:
 virtual_mailbox_domains = ${VBOX_DOMAINS},mysql:/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf

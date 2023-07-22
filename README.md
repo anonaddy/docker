@@ -170,6 +170,7 @@ Image: anonaddy/anonaddy:latest
 ### Postfix
 
 * `POSTFIX_DEBUG`: Enable debug (default `false`)
+* `POSTFIX_MESSAGE_SIZE_LIMIT`: The maximal size in bytes of a message, including envelope information (default `26214400`)
 * `POSTFIX_SMTPD_TLS`: Enabling TLS in the Postfix SMTP server (default `false`)
 * `POSTFIX_SMTPD_TLS_CERT_FILE`: File with the Postfix SMTP server RSA certificate in PEM format
 * `POSTFIX_SMTPD_TLS_KEY_FILE`: File with the Postfix SMTP server RSA private key in PEM format
