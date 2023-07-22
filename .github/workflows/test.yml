@@ -39,42 +39,21 @@ jobs:
         env:
           DEFAULT_TAG: ${{ env.BUILD_TAG }}
       -
-        name: Create network
-        run: |
-          docker network create -d bridge ${{ env.CONTAINER_NAME }}
-      -
-        name: Start MariaDB container
-        run: |
-          docker run -d --name mariadb --hostname mariadb \
-            --network ${{ env.CONTAINER_NAME }} \
-            -e "MYSQL_ALLOW_EMPTY_PASSWORD=yes" \
-            -e "MYSQL_DATABASE=anonaddy" \
-            -e "MYSQL_USER=anonaddy" \
-            -e "MYSQL_PASSWORD=anonaddy" \
-            mariadb:10.5
-      -
         name: Generate DKIM private key
         run: |
+          docker volume create anonaddy
           docker run --rm -t --entrypoint "" \
             -e "ANONADDY_DOMAIN=example.com" \
-            -v "/tmp/data:/data" \
+            -v "anonaddy:/data" \
             ${{ env.BUILD_TAG }} gen-dkim
       -
-        name: Start container
+        name: Start
         run: |
-          docker run -d --name ${{ env.CONTAINER_NAME }} \
-            --link mariadb \
-            --network ${{ env.CONTAINER_NAME }} \
-            -e "DB_HOST=mariadb" \
-            -e "DB_DATABASE=anonaddy" \
-            -e "DB_USERNAME=anonaddy" \
-            -e "DB_PASSWORD=anonaddy" \
-            -e "APP_KEY=base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=" \
-            -e "ANONADDY_DOMAIN=example.com" \
-            -e "ANONADDY_SECRET=0123456789abcdefghijklmnopqrstuvwxyz" \
-            -e "RSPAMD_ENABLE=true" \
-            -v "/tmp/data:/data" \
-            ${{ env.BUILD_TAG }}
+          docker compose up -d
+        working-directory: test
+        env:
+          ANONADDY_IMAGE: ${{ env.BUILD_TAG }}
+          ANONADDY_CONTAINER: ${{ env.CONTAINER_NAME }}
       -
         name: Check container logs
         uses: crazy-max/.github/.github/actions/container-logs-check@main
@@ -83,8 +62,11 @@ jobs:
           log_check: "ready to handle connections"
           timeout: 120
       -
-        name: Container logs
+        name: Logs
         if: always()
         run: |
-          docker logs ${{ env.CONTAINER_NAME }}
-          docker rm -f ${{ env.CONTAINER_NAME }} > /dev/null 2>&1 || true
+          docker compose logs
+        working-directory: test
+        env:
+          ANONADDY_IMAGE: ${{ env.BUILD_TAG }}
+          ANONADDY_CONTAINER: ${{ env.CONTAINER_NAME }}
