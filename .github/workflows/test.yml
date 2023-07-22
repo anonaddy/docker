@@ -41,11 +41,11 @@ jobs:
       -
         name: Generate DKIM private key
         run: |
-          docker volume create anonaddy
-          docker run --rm -t --entrypoint "" \
-            -e "ANONADDY_DOMAIN=example.com" \
-            -v "anonaddy:/data" \
-            ${{ env.BUILD_TAG }} gen-dkim
+          docker compose run --rm gen-dkim
+        working-directory: test
+        env:
+          ANONADDY_IMAGE: ${{ env.BUILD_TAG }}
+          ANONADDY_CONTAINER: ${{ env.CONTAINER_NAME }}
       -
         name: Start
         run: |

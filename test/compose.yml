@@ -53,6 +53,17 @@ services:
       - "REDIS_HOST=redis"
     restart: always
 
+  gen-dkim:
+    image: ${ANONADDY_IMAGE:-anonaddy/anonaddy}
+    profiles: ["bootstrap"]
+    entrypoint: ''
+    command: gen-dkim
+    volumes:
+      - "anonaddy:/data"
+    env_file:
+      - "./anonaddy.env"
+    restart: no
+
 volumes:
   db:
   anonaddy:
