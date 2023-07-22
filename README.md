@@ -227,11 +227,11 @@ Image: anonaddy/anonaddy:latest
 ### Docker Compose
 
 Docker compose is the recommended way to run this image. You can use the following
-[docker compose template](examples/compose/docker-compose.yml), then run the container:
+[docker compose template](examples/compose/compose.yml), then run the container:
 
 ```console
-docker-compose up -d
-docker-compose logs -f
+docker compose up -d
+docker compose logs -f
 ```
 
 ## Upgrade
@@ -240,8 +240,8 @@ You can upgrade AnonAddy automatically through the UI, it works well. But I
 recommend to recreate the container whenever I push an update:
 
 ```console
-docker-compose pull
-docker-compose up -d
+docker compose pull
+docker compose up -d
 ```
 
 ## Notes
@@ -252,25 +252,25 @@ If you want to use the artisan command to perform common server operations like
 manage users, passwords and more, type:
 
 ```console
-docker-compose exec anonaddy anonaddy <command>
+docker compose exec anonaddy anonaddy <command>
 ```
 
 For example to list all available commands:
 
 ```console
-docker-compose exec anonaddy anonaddy list
+docker compose exec anonaddy anonaddy list
 ```
 
 ### Create user
 
 ```console
-docker-compose exec anonaddy anonaddy anonaddy:create-user "username" "webmaster@example.com"
+docker compose exec anonaddy anonaddy anonaddy:create-user "username" "webmaster@example.com"
 ```
 
 ### Generate DKIM private/public keypair
 
 ```console
-docker-compose run --entrypoint '' anonaddy gen-dkim
+docker compose run --entrypoint '' anonaddy gen-dkim
 ```
 
 ```text
@@ -291,7 +291,7 @@ If you don't have an existing GPG key, you can generate a new GPG key with the
 following command:
 
 ```console
-docker-compose exec --user anonaddy anonaddy gpg --full-gen-key
+docker compose exec --user anonaddy anonaddy gpg --full-gen-key
 ```
 
 Keys will be stored in `/data/.gnupg` folder.
