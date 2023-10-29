@@ -206,6 +206,12 @@ Image: anonaddy/anonaddy:latest
 >
 > Rspamd service is disabled if DKIM private key is not found
 
+> **Warning**
+>
+> Rspamd service needs to be enabled for the reply anonymously feature to work.  
+> See [#169](https://github.com/anonaddy/docker/issues/169#issuecomment-1232577449) for more details.
+
+
 ## Volumes
 
 * `/data`: Contains storage
