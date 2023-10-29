@@ -1,5 +1,5 @@
 variable "DEFAULT_TAG" {
-  default = "anonaddy:local"
+  default = "addy:local"
 }
 
 // Special target: https://github.com/docker/metadata-action#bake-definition

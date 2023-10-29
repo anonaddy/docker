@@ -15,8 +15,8 @@ on:
       - '**.md'
 
 env:
-  BUILD_TAG: anonaddy:test
-  CONTAINER_NAME: anonaddy
+  BUILD_TAG: addy:test
+  CONTAINER_NAME: addy
 
 jobs:
   test:

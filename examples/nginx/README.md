@@ -1,6 +1,6 @@
 # Prerequisites
 
-Read [self-hosting docs](https://anonaddy.com/self-hosting/)
+Read [self-hosting docs](https://addy.io/self-hosting/)
 
 ## Let's Encrypt
 
@@ -22,4 +22,4 @@ let's encrypt and dhparam certs.
 
 This nginx configuration supports rspamd web ui out of the box. if you choose
 to not run rspamd, make sure to remove the `RSPAMD_ENABLE` variable in
-`anonaddy.env` and remove the proxy block in `nginx/templates/default.conf.template`.
+`addy.env` and remove the proxy block in `nginx/templates/default.conf.template`.

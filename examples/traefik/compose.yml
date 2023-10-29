@@ -1,4 +1,4 @@
-name: annoaddy
+name: addy
 
 services:
   traefik:
@@ -37,7 +37,7 @@ services:
 
   db:
     image: mariadb:10.5
-    container_name: anonaddy_db
+    container_name: addy_db
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
@@ -53,12 +53,12 @@ services:
 
   redis:
     image: redis:4.0-alpine
-    container_name: anonaddy_redis
+    container_name: addy_redis
     restart: always
 
-  anonaddy:
+  addy:
     image: anonaddy/anonaddy:latest
-    container_name: anonaddy
+    container_name: addy
     depends_on:
       - db
       - redis
@@ -70,14 +70,14 @@ services:
       - "./data:/data"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.anonaddy.entrypoints=https"
-      - "traefik.http.routers.anonaddy.rule=Host(`anonaddy.example.com`)"
-      - "traefik.http.routers.anonaddy.tls=true"
-      - "traefik.http.routers.anonaddy.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.anonaddy.tls.domains[0].main=anonaddy.example.com"
-      - "traefik.http.services.anonaddy.loadbalancer.server.port=8000"
+      - "traefik.http.routers.addy.entrypoints=https"
+      - "traefik.http.routers.addy.rule=Host(`addy.example.com`)"
+      - "traefik.http.routers.addy.tls=true"
+      - "traefik.http.routers.addy.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.addy.tls.domains[0].main=addy.example.com"
+      - "traefik.http.services.addy.loadbalancer.server.port=8000"
     env_file:
-      - "./anonaddy.env"
+      - "./addy.env"
     environment:
       - "DB_HOST=db"
       - "DB_DATABASE=${MYSQL_DATABASE}"
