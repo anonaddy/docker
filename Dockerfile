@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG ANONADDY_VERSION=0.14.1
+ARG ANONADDY_VERSION=1.0.3
 ARG ALPINE_VERSION=3.18
 
 FROM crazymax/yasu:latest AS yasu
@@ -96,11 +96,10 @@ RUN apk --no-cache add -t build-dependencies \
   && git config --global --add safe.directory /var/www/anonaddy \
   && git init . && git remote add origin "https://github.com/anonaddy/anonaddy.git" \
   && git fetch --depth 1 origin "v${ANONADDY_VERSION}" && git checkout -q FETCH_HEAD \
-  && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi \
+  && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi --ignore-platform-req=php-64bit \
   && chown -R anonaddy. /var/www/anonaddy \
-  && npm install --global cross-env \
-  && npm ci --ignore-scripts --only=production \
-  && npm run production \
+  && npm ci --ignore-scripts \
+  && APP_URL=https://addy-sh.test npm run production \
   && npm prune --production \
   && chown -R nobody.nogroup /var/www/anonaddy \
   && apk del build-dependencies \
