@@ -1,11 +1,11 @@
-name: annoaddy
+name: addy
 
 services:
   db:
     image: mariadb:10.5
-    container_name: anonaddy_db
+    container_name: addy_db
     networks:
-      - anonaddy
+      - addy
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
@@ -21,19 +21,19 @@ services:
 
   redis:
     image: redis:4.0-alpine
-    container_name: anonaddy_redis
+    container_name: addy_redis
     networks:
-      - anonaddy
+      - addy
     restart: always
 
-  anonaddy:
+  addy:
     image: ${ANONADDY_IMAGE:-anonaddy/anonaddy}
-    container_name: ${ANONADDY_CONTAINER:-anonaddy}
+    container_name: ${ANONADDY_CONTAINER:-addy}
     depends_on:
       - db
       - redis
     networks:
-      - anonaddy
+      - addy
     ports:
       - target: 25
         published: 25
@@ -42,9 +42,9 @@ services:
         published: 8000
         protocol: tcp
     volumes:
-      - "anonaddy:/data"
+      - "addy:/data"
     env_file:
-      - "./anonaddy.env"
+      - "./addy.env"
     environment:
       - "DB_HOST=db"
       - "DB_DATABASE=${MYSQL_DATABASE}"
@@ -59,15 +59,15 @@ services:
     entrypoint: ''
     command: gen-dkim
     volumes:
-      - "anonaddy:/data"
+      - "addy:/data"
     env_file:
-      - "./anonaddy.env"
+      - "./addy.env"
     restart: no
 
 volumes:
   db:
-  anonaddy:
+  addy:
 
 networks:
-  anonaddy:
-    name: anonaddy
+  addy:
+    name: addy

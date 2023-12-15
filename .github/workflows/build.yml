@@ -38,7 +38,7 @@ jobs:
             type=ref,event=pr
             type=edge
           labels: |
-            org.opencontainers.image.title=AnonAddy
+            org.opencontainers.image.title=addy.io
             org.opencontainers.image.description=Anonymous Email Forwarding
             org.opencontainers.image.vendor=CrazyMax
       -

@@ -18,7 +18,7 @@ if [ -z "$ANONADDY_SECRET" ]; then
   exit 1
 fi
 
-echo "Creating AnonAddy env file"
+echo "Creating env file"
 cat >/var/www/anonaddy/.env <<EOL
 APP_NAME=${APP_NAME}
 APP_ENV=production

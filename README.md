@@ -11,8 +11,7 @@
 
 ## About
 
-Docker image for [AnonAddy](https://anonaddy.com/), an anonymous email
-forwarding service. 
+Docker image for [addy.io](https://addy.io/), an anonymous email forwarding service. 
 
 > **Note**
 > 
@@ -27,7 +26,6 @@ ___
 * [Environment variables](#environment-variables)
   * [General](#general)
   * [App](#app)
-  * [AnonAddy](#anonaddy)
   * [Database](#database)
   * [Redis](#redis)
   * [Mail](#mail)
@@ -59,8 +57,8 @@ ___
 ## Build locally
 
 ```console
-git clone https://github.com/anonaddy/docker.git docker-anonaddy
-cd docker-anonaddy
+git clone https://github.com/anonaddy/docker.git docker-addy
+cd docker-addy
 
 # Build image and output to docker (default)
 docker buildx bake
@@ -89,8 +87,8 @@ Image: anonaddy/anonaddy:latest
 ### General
 
 * `TZ`: The timezone assigned to the container (default `UTC`)
-* `PUID`: AnonAddy user id (default `1000`)
-* `PGID`: AnonAddy group id (default `1000`)
+* `PUID`: user id (default `1000`)
+* `PGID`: group id (default `1000`)
 * `MEMORY_LIMIT`: PHP memory limit (default `256M`)
 * `UPLOAD_MAX_SIZE`: Upload max size (default `16M`)
 * `CLEAR_ENV`: Clear environment in FPM workers (default `yes`)
@@ -103,18 +101,10 @@ Image: anonaddy/anonaddy:latest
 
 ### App
 
-* `APP_NAME`: Name of the application (default `AnonAddy`)
+* `APP_NAME`: Name of the application (default `addy.io`)
 * `APP_KEY`: Application key for encrypter service. You can generate one through `anonaddy key:generate --show` or `echo "base64:$(openssl rand -base64 32)"`. **required**
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
-* `APP_URL`: The URL of your AnonAddy installation
-
-> **Note**
->
-> `APP_KEY_FILE` can be used to fill in the value from a file, especially for
-> Docker's secrets feature.
-
-### AnonAddy
-
+* `APP_URL`: The URL of your installation
 * `ANONADDY_RETURN_PATH`: Return-path header for outbound emails
 * `ANONADDY_ADMIN_USERNAME`: If set this value will be used and allow you to receive forwarded emails at the root domain
 * `ANONADDY_ENABLE_REGISTRATION`: If set to false this will prevent new users from registering on the site (default `true`)
@@ -133,8 +123,9 @@ Image: anonaddy/anonaddy:latest
 
 > **Note**
 >
-> `ANONADDY_SECRET_FILE` and `ANONADDY_SIGNING_KEY_FINGERPRINT_FILE` can be used
-> to fill in the value from a file, especially for Docker's secrets feature.
+> `APP_KEY_FILE`, `ANONADDY_SECRET_FILE` and `ANONADDY_SIGNING_KEY_FINGERPRINT_FILE`
+> can be used to fill in the value from a file, especially for Docker's secrets
+> feature.
 
 ### Database
 
@@ -163,8 +154,8 @@ Image: anonaddy/anonaddy:latest
 
 ### Mail
 
-* `MAIL_FROM_NAME`: From name (default `AnonAddy`)
-* `MAIL_FROM_ADDRESS`: From email address (default `anonaddy@${ANONADDY_DOMAIN}`)
+* `MAIL_FROM_NAME`: From name (default `addy.io`)
+* `MAIL_FROM_ADDRESS`: From email address (default `addy@${ANONADDY_DOMAIN}`)
 * `MAIL_ENCRYPTION`: Encryption protocol to send e-mail messages (default `null`)
 
 ### Postfix
@@ -224,7 +215,7 @@ Image: anonaddy/anonaddy:latest
 
 ## Ports
 
-* `8000`: HTTP port (anonaddy web)
+* `8000`: HTTP port (addy.io)
 * `11334`: HTTP port (rspamd web dashboard)
 * `25`: SMTP port (postfix)
 
@@ -242,9 +233,6 @@ docker compose logs -f
 
 ## Upgrade
 
-You can upgrade AnonAddy automatically through the UI, it works well. But I
-recommend to recreate the container whenever I push an update:
-
 ```console
 docker compose pull
 docker compose up -d
@@ -258,25 +246,25 @@ If you want to use the artisan command to perform common server operations like
 manage users, passwords and more, type:
 
 ```console
-docker compose exec anonaddy anonaddy <command>
+docker compose exec addy anonaddy <command>
 ```
 
 For example to list all available commands:
 
 ```console
-docker compose exec anonaddy anonaddy list
+docker compose exec addy anonaddy list
 ```
 
 ### Create user
 
 ```console
-docker compose exec anonaddy anonaddy anonaddy:create-user "username" "webmaster@example.com"
+docker compose exec addy anonaddy anonaddy:create-user "username" "webmaster@example.com"
 ```
 
 ### Generate DKIM private/public keypair
 
 ```console
-docker compose run --entrypoint '' anonaddy gen-dkim
+docker compose run --entrypoint '' addy gen-dkim
 ```
 
 ```text
@@ -297,14 +285,14 @@ If you don't have an existing GPG key, you can generate a new GPG key with the
 following command:
 
 ```console
-docker compose exec --user anonaddy anonaddy gpg --full-gen-key
+docker compose exec --user anonaddy addy gpg --full-gen-key
 ```
 
 Keys will be stored in `/data/.gnupg` folder.
 
 ### Define additional env vars
 
-You can define additional environment variables that will be used by AnonAddy
+You can define additional environment variables that will be used by the app
 by creating a file named `.env` in `/data`.
 
 ### Override Postfix main configuration
@@ -335,9 +323,10 @@ and complete the registration procedure. After you register an account, you can 
 
 ## Contributing
 
-Want to contribute? Awesome! The most basic way to show your support is to star the project, or to raise issues. You
-can also support this project by [**becoming a sponsor on GitHub**](https://github.com/sponsors/crazy-max) or by making
-a [Paypal donation](https://www.paypal.me/crazyws) to ensure this journey continues indefinitely!
+Want to contribute? Awesome! The most basic way to show your support is to star
+the project, or to raise issues. You can also support this project by [**becoming a sponsor on GitHub**](https://github.com/sponsors/crazy-max)
+or by making a [PayPal donation](https://www.paypal.me/crazyws) to ensure this
+journey continues indefinitely!
 
 Thanks again for your support, it is much appreciated! :pray:
 

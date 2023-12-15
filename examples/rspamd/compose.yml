@@ -3,7 +3,7 @@ name: annoaddy
 services:
   db:
     image: mariadb:10.5
-    container_name: anonaddy_db
+    container_name: addy_db
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
@@ -19,12 +19,12 @@ services:
 
   redis:
     image: redis:4.0-alpine
-    container_name: anonaddy_redis
+    container_name: addy_redis
     restart: always
 
-  anonaddy:
+  addy:
     image: anonaddy/anonaddy:latest
-    container_name: anonaddy
+    container_name: addy
     depends_on:
       - db
       - redis
@@ -41,7 +41,7 @@ services:
     volumes:
       - "./data:/data"
     env_file:
-      - "./anonaddy.env"
+      - "./addy.env"
     environment:
       - "DB_HOST=db"
       - "DB_DATABASE=${MYSQL_DATABASE}"

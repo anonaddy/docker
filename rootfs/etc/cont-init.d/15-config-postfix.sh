@@ -17,6 +17,9 @@ sed -i "s|^smtp.*inet.*|25 inet n - - - - smtpd${POSTFIX_DEBUG_ARG}|g" /etc/post
 cat >>/etc/postfix/master.cf <<EOL
 anonaddy unix - n n - - pipe
   flags=F user=anonaddy argv=php /var/www/anonaddy/artisan anonaddy:receive-email --sender=\${sender} --recipient=\${recipient} --local_part=\${user} --extension=\${extension} --domain=\${domain} --size=\${size}
+
+policy  unix  -       n       n       -       0       spawn
+  user=anonaddy argv=php /var/www/anonaddy/postfix/AccessPolicy.php
 EOL
 
 echo "Setting Postfix main configuration"
@@ -27,7 +30,7 @@ for domain in $ANONADDY_ALL_DOMAINS; do
   VBOX_DOMAINS="${VBOX_DOMAINS}${domain},unsubscribe.${domain}"
 done
 
-sed -i 's/compatibility_level.*/compatibility_level = 2/g' /etc/postfix/main.cf
+sed -i 's/compatibility_level.*/compatibility_level = 3\.6/g' /etc/postfix/main.cf
 sed -i 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
 [ "$LISTEN_IPV6" = "true" ] && sed -i 's/inet_protocols.*/inet_protocols = all/g' /etc/postfix/main.cf
 sed -i 's/readme_directory.*/readme_directory = no/g' /etc/postfix/main.cf
@@ -89,8 +92,7 @@ smtpd_sender_restrictions =
 smtpd_recipient_restrictions =
     permit_mynetworks,
     reject_unauth_destination,
-    check_recipient_access mysql:/etc/postfix/mysql-recipient-access.cf,
-    #check_policy_service unix:private/policyd-spf
+    check_policy_service unix:private/policy,
     reject_rhsbl_helo ${DBL_DOMAIN},
     reject_rhsbl_reverse_client ${DBL_DOMAIN},
     reject_rhsbl_sender ${DBL_DOMAIN},
@@ -209,111 +211,9 @@ EOL
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 
-echo "Creating Postfix recipient access configuration"
-cat >/etc/postfix/mysql-recipient-access.cf <<EOL
-user = ${DB_USERNAME}
-password = ${DB_PASSWORD}
-hosts = ${DB_HOST}:${DB_PORT}
-dbname = ${DB_DATABASE}
-query = CALL check_access('%s')
-EOL
-chmod o= /etc/postfix/mysql-recipient-access.cf
-chgrp postfix /etc/postfix/mysql-recipient-access.cf
-
 if [ -f "/data/postfix-main.alt.cf" ]; then
   cat "/data/postfix-main.alt.cf" > /etc/postfix/main.cf
 fi
 
 echo "Display Postfix config"
 postconf | sed -e 's/^/[postfix-config] /'
-
-echo "Creating check_access stored procedure"
-mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${DB_DATABASE} <<EOL
-DELIMITER //
-
-DROP PROCEDURE IF EXISTS \`block_alias\`//
-DROP PROCEDURE IF EXISTS \`check_access\`//
-
-CREATE PROCEDURE \`check_access\`(alias_email VARCHAR(254) charset utf8)
-BEGIN
-    DECLARE no_alias_exists int(1);
-    DECLARE alias_action varchar(30) charset utf8;
-    DECLARE username_action varchar(30) charset utf8;
-    DECLARE domain_action varchar(30) charset utf8;
-    DECLARE alias_domain varchar(254) charset utf8;
-
-    SET alias_domain = SUBSTRING_INDEX(alias_email, '@', -1);
-
-    # We only want to carry out the checks if it is a full RCPT TO address without any + extension
-    IF LOCATE('+',alias_email) = 0 THEN
-
-        SET no_alias_exists = CASE WHEN NOT EXISTS(SELECT NULL FROM aliases WHERE email = alias_email) THEN 1 ELSE 0 END;
-
-        # If there is an alias, check if it is deactivated or deleted
-        IF NOT no_alias_exists THEN
-            SET alias_action = (SELECT
-                IF(deleted_at IS NULL,
-                'DISCARD',
-                'REJECT Address does not exist')
-            FROM
-                aliases
-            WHERE
-                email = alias_email
-                AND (active = 0
-                OR deleted_at IS NOT NULL));
-        END IF;
-
-        # If the alias is deactivated or deleted then increment its blocked count and return the alias_action
-        IF alias_action IN('DISCARD','REJECT Address does not exist') THEN
-            UPDATE
-                aliases
-            SET
-                emails_blocked = emails_blocked + 1
-            WHERE
-                email = alias_email;
-
-            SELECT alias_action;
-        ELSE
-            SELECT
-            (
-            SELECT
-                CASE
-                    WHEN no_alias_exists
-                    AND catch_all = 0 THEN "REJECT Address does not exist"
-                    WHEN active = 0 THEN "DISCARD"
-                    ELSE NULL
-                END
-            FROM
-                usernames
-            WHERE
-                alias_domain IN (${QUERY_DOMAINS}) ) AS usernames,
-            (
-            SELECT
-                CASE
-                    WHEN no_alias_exists
-                    AND catch_all = 0 THEN "REJECT Address does not exist"
-                    WHEN active = 0 THEN "DISCARD"
-                    ELSE NULL
-                END
-            FROM
-                domains
-            WHERE
-                domain = alias_domain) INTO username_action, domain_action;
-
-            # If all actions are NULL then we can return 'DUNNO' which will prevent Postfix from trying substrings of the alias
-            IF username_action IS NULL AND domain_action IS NULL THEN
-                SELECT 'DUNNO';
-            ELSEIF username_action IN('DISCARD','REJECT Address does not exist') THEN
-                SELECT username_action;
-            ELSE
-                SELECT domain_action;
-            END IF;
-        END IF;
-    ELSE
-        # This means the alias must have a + extension so we will ignore it
-        SELECT NULL;
-    END IF;
- END//
-
-DELIMITER ;
-EOL

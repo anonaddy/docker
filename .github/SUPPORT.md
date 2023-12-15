@@ -25,6 +25,6 @@ You are now ready to [create a new issue](https://github.com/anonaddy/docker/iss
 
 ## Closure policy
 
-* Support directly related to anonaddy will not be provided if your problem is not related to the operation of this image.
+* Support directly related to addy.io will not be provided if your problem is not related to the operation of this image.
 * Issues that don't have the information requested above (when applicable) will be closed immediately and the poster directed to the support guidelines.
 * Issues that go a week without a response from original poster are subject to closure at my discretion.
