@@ -93,10 +93,11 @@ smtpd_recipient_restrictions =
     permit_mynetworks,
     reject_unauth_destination,
     check_policy_service unix:private/policy,
-    reject_rhsbl_helo ${DBL_DOMAIN},
-    reject_rhsbl_reverse_client ${DBL_DOMAIN},
-    reject_rhsbl_sender ${DBL_DOMAIN},
-    reject_rbl_client ${ZEN_DOMAIN}
+    reject_rbl_client ${ZEN_DOMAIN}=127.0.0.[2..11],
+    reject_rhsbl_sender ${DBL_DOMAIN}=127.0.1.[2..99],
+    reject_rhsbl_helo ${DBL_DOMAIN}=127.0.1.[2..99],
+    reject_rhsbl_reverse_client ${DBL_DOMAIN}=127.0.1.[2..99],
+    warn_if_reject reject_rbl_client ${ZEN_DOMAIN}=127.255.255.[1..255],
     reject_rbl_client dul.dnsbl.sorbs.net
 
 # Block clients that speak too early.
