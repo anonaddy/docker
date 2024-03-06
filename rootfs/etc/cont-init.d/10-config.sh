@@ -45,7 +45,13 @@ if [ -z "$DB_PASSWORD" ]; then
   echo >&2 "ERROR: Either DB_PASSWORD or DB_PASSWORD_FILE must be defined"
   exit 1
 fi
-dbcmd="mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}""
+
+# Add support for DB connection over TLS
+
+if [ -n "$MYSQL_ATTR_SSL_CA" ]; then
+  SSL_CA_OPTION="--ssl-ca=$MYSQL_ATTR_SSL_CA"
+fi
+dbcmd="mysql -h ${DB_HOST} -P ${DB_PORT} -u "${DB_USERNAME}" "-p${DB_PASSWORD}" ${SSL_CA_OPTION}"
 
 echo "Waiting ${DB_TIMEOUT}s for database to be ready..."
 counter=1
