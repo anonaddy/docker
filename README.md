@@ -135,6 +135,8 @@ Image: anonaddy/anonaddy:latest
 * `DB_USERNAME`: MySQL user (default `anonaddy`)
 * `DB_PASSWORD`: MySQL password
 * `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
+* `DB_SSL`: `true` to connect to MySQL over TLS/SSL (default `false`)
+* `MYSQL_ATTR_SSL_CA`: the certificate authority (CA) chain file that can verify MySQL server's certificate, when connecting over TLS/SSL (default `/etc/ssl/certs/ca-certificates.crt`, containing public CA's roots of trust, if `DB_SSL=true`, otherwise empty). If your MySQL server's certificate was generated using a private CA, mount your CA's certificate file on the container (e.g. `/host/path/to/ca.pem:/etc/certificates/my-ca.pem`) and point `MYSQL_ATTR_SSL_CA` to that file on the container (e.g. `MYSQL_ATTR_SSL_CA=/etc/certificates/my-ca.pem`). **Note:** setting `MYSQL_ATTR_SSL_CA` to a custom value automatically enforces connecting to MySQL over TLS/SSL, even if `DB_SSL` is set to `false`.
 
 > **Note**
 >
