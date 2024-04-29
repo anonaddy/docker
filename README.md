@@ -13,8 +13,7 @@
 
 Docker image for [addy.io](https://addy.io/), an anonymous email forwarding service. 
 
-> **Note**
-> 
+> [!TIP] 
 > Want to be notified of new releases? Check out 🔔 [Diun (Docker Image Update Notifier)](https://github.com/crazy-max/diun)
 > project!
 
@@ -121,8 +120,7 @@ Image: anonaddy/anonaddy:latest
 * `ANONADDY_DKIM_SIGNING_KEY`: Path to the private DKIM signing key to be used to sign emails for custom domains.
 * `ANONADDY_DKIM_SELECTOR`: Selector for the current DKIM signing key (default `default`)
 
-> **Note**
->
+> [!NOTE]
 > `APP_KEY_FILE`, `ANONADDY_SECRET_FILE` and `ANONADDY_SIGNING_KEY_FINGERPRINT_FILE`
 > can be used to fill in the value from a file, especially for Docker's secrets
 > feature.
@@ -136,8 +134,7 @@ Image: anonaddy/anonaddy:latest
 * `DB_PASSWORD`: MySQL password
 * `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
 
-> **Note**
->
+> [!NOTE]
 > `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value
 > from a file, especially for Docker's secrets feature.
 
@@ -147,8 +144,7 @@ Image: anonaddy/anonaddy:latest
 * `REDIS_PORT`: Redis port (default `6379`)
 * `REDIS_PASSWORD`: Redis password
 
-> **Note**
->
+> [!NOTE]
 > `REDIS_PASSWORD_FILE` can be used to fill in the value from a file, especially
 > for Docker's secrets feature.
 
@@ -172,8 +168,7 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
 * `POSTFIX_SPAMHAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
 
-> **Note**
->
+> [!NOTE]
 > `POSTFIX_RELAYHOST_USERNAME_FILE` and `POSTFIX_RELAYHOST_PASSWORD_FILE` can be
 > used to fill in the value from a file, especially for Docker's secrets feature.
 
@@ -183,8 +178,7 @@ Image: anonaddy/anonaddy:latest
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
 * `RSPAMD_NO_LOCAL_ADDRS`: Disable Rspamd local networks (default `false`)
 
-> **Note**
->
+> [!NOTE]
 > `RSPAMD_WEB_PASSWORD_FILE` can be used to fill in the value from a file,
 > especially for Docker's secrets feature.
 
