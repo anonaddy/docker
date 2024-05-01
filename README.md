@@ -13,7 +13,7 @@
 
 Docker image for [addy.io](https://addy.io/), an anonymous email forwarding service. 
 
-> [!TIP] 
+> [!TIP]
 > Want to be notified of new releases? Check out 🔔 [Diun (Docker Image Update Notifier)](https://github.com/crazy-max/diun)
 > project!
 
@@ -182,17 +182,14 @@ Image: anonaddy/anonaddy:latest
 > `RSPAMD_WEB_PASSWORD_FILE` can be used to fill in the value from a file,
 > especially for Docker's secrets feature.
 
-> **Warning**
->
+> [!WARNING]
 > DKIM private key must be located in `/data/dkim/${ANONADDY_DOMAIN}.private`.
 > You can generate a DKIM private/public keypair by following [this note](#generate-dkim-privatepublic-keypair).
 
-> **Warning**
->
+> [!WARNING]
 > Rspamd service is disabled if DKIM private key is not found
 
-> **Warning**
->
+> [!WARNING]
 > Rspamd service needs to be enabled for the reply anonymously feature to work.  
 > See [#169](https://github.com/anonaddy/docker/issues/169#issuecomment-1232577449) for more details.
 
@@ -201,8 +198,7 @@ Image: anonaddy/anonaddy:latest
 
 * `/data`: Contains storage
 
-> **Warning**
->
+> [!WARNING]
 > Note that the volume should be owned by the user/group with the specified
 > `PUID` and `PGID`. If you don't give the volume correct permissions, the
 > container may not start.
@@ -296,8 +292,7 @@ to fit your infrastructure. To do so, you can create a file named
 `postfix-main.alt.cf` in `/data` and it will be used instead of the generated
 configuration. **Use at your own risk**.
 
-> **Warning**
->
+> [!WARNING]
 > Container has to be restarted to propagate changes
 
 ### Spamhaus DQS configuration
