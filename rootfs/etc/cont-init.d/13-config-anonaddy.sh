@@ -88,4 +88,4 @@ fi
 chown anonaddy. /var/www/anonaddy/.env
 
 echo "Trust all proxies"
-sed -i "s|^    protected \$proxies.*|    protected \$proxies = '\*';|g" /var/www/anonaddy/app/Http/Middleware/TrustProxies.php
+sed -i "s|^    protected \$proxies.*|    protected \$proxies = '\*';|g" /var/www/anonaddy/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php
