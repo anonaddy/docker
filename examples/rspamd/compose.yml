@@ -2,7 +2,7 @@ name: annoaddy
 
 services:
   db:
-    image: mariadb:10.5
+    image: mariadb:10
     container_name: addy_db
     command:
       - "mysqld"
