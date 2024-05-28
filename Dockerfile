@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 ARG ANONADDY_VERSION=1.2.0
-ARG ALPINE_VERSION=3.18
+ARG ALPINE_VERSION=3.19
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:${ALPINE_VERSION}-2.2.0.3
@@ -55,7 +55,6 @@ RUN apk --no-cache add \
     shadow \
     tar \
     tzdata \
-  && ln -s /usr/bin/php82 /usr/bin/php \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --no-cache add -t build-dependencies \
