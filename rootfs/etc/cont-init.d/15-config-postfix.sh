@@ -209,6 +209,16 @@ hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
 query = SELECT (SELECT 1 FROM usernames WHERE ${QUERY_USERNAMES}) AS usernames, (SELECT 1 FROM domains WHERE domain = '%s' AND domain_verified_at IS NOT NULL) AS domains LIMIT 1;
 EOL
+
+# Add support for DB connection over TLS
+if [ -n "$MYSQL_ATTR_SSL_CA" ]; then
+  cat >>/etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf <<EOL
+tls_ciphers = TLSv1.3, TLSv1.2
+tls_CAfile = ${MYSQL_ATTR_SSL_CA}
+tls_verify_cert = yes
+EOL
+fi
+
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 
