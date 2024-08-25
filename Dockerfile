@@ -5,6 +5,7 @@ ARG ALPINE_VERSION=3.20
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:${ALPINE_VERSION}-2.2.0.3
+ENV QEMU_STRACE=1
 
 COPY --from=yasu / /
 RUN apk --no-cache add \
