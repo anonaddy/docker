@@ -1,10 +1,11 @@
 # syntax=docker/dockerfile:1
 
 ARG ANONADDY_VERSION=1.2.1
-ARG ALPINE_VERSION=3.18
+ARG ALPINE_VERSION=3.20
 
 FROM crazymax/yasu:latest AS yasu
 FROM crazymax/alpine-s6:${ALPINE_VERSION}-2.2.0.3
+ENV QEMU_STRACE=1
 
 COPY --from=yasu / /
 RUN apk --no-cache add \
