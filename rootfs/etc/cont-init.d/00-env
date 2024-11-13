@@ -51,6 +51,16 @@ DB_DATABASE=${DB_DATABASE:-anonaddy}
 #DB_PASSWORD=${DB_PASSWORD:-asupersecretpassword}
 DB_TIMEOUT=${DB_TIMEOUT:-60}
 
+# Add support for DB connection over TLS
+DB_SSL=${DB_SSL:-false}
+if [ "$DB_SSL" = "true" ]; then
+  # if DB TLS connection is enabled, default MYSQL_ATTR_SSL_CA to /etc/ssl/certs/ca-certificates.crt
+  MYSQL_ATTR_SSL_CA=${MYSQL_ATTR_SSL_CA:-/etc/ssl/certs/ca-certificates.crt}
+else
+  # if DB TLS connection is disabled, default MYSQL_ATTR_SSL_CA to null
+  MYSQL_ATTR_SSL_CA=${MYSQL_ATTR_SSL_CA:-}
+fi
+
 REDIS_HOST=${REDIS_HOST:-null}
 #REDIS_PASSWORD=${REDIS_PASSWORD:-null}
 REDIS_PORT=${REDIS_PORT:-6379}
