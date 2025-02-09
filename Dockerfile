@@ -55,6 +55,8 @@ RUN apk --no-cache add \
     shadow \
     tar \
     tzdata \
+    cyrus-sasl \
+    cyrus-sasl-login \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --no-cache add -t build-dependencies \
