@@ -165,7 +165,8 @@ linux/arm64
 * `POSTFIX_RELAYHOST_AUTH_ENABLE`: Enable client-side authentication for relayhost (default `false`)
 * `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
-* `POSTFIX_SPAMHAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
+* `POSTFIX_RELAYHOST_SSL_ENCRYPTION`: enable SSL encrpytion over SMTP where TLS is not available. (default `false`)
+* `POSTFIX_SPAMAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
 
 > [!NOTE]
 > `POSTFIX_RELAYHOST_USERNAME_FILE` and `POSTFIX_RELAYHOST_PASSWORD_FILE` can be
