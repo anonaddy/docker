@@ -12,10 +12,6 @@ if [ ! -f "$DKIM_PRIVATE_KEY" ]; then
   echo "WRN: $DKIM_PRIVATE_KEY not found. Rspamd service disabled."
   exit 0
 fi
-if [ -z "$ANONADDY_DKIM_SELECTOR" ]; then
-  export ANONADDY_DKIM_SELECTOR="default"
-  echo "INFO: DKIM selector not set, using default."
-fi
 
 echo "Copying DKIM private key for Rspamd"
 mkdir -p /var/lib/rspamd/dkim
