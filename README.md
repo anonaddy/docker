@@ -110,6 +110,7 @@ linux/arm64
 * `ANONADDY_HOSTNAME`: FQDN hostname for your server used to validate records on custom domains that are added by users
 * `ANONADDY_DNS_RESOLVER`: Custom domains that are added by users to validate records (default `127.0.0.1`)
 * `ANONADDY_ALL_DOMAINS`: If you would like to have other domains to use (e.g. `@username.example2.com`), set a comma separated list like so, `example.com,example2.com` (default `$ANONADDY_DOMAIN`)
+* `ANONADDY_NON_ADMIN_SHARED_DOMAINS`: If set to false this will prevent any non-admin users from being able to create shared domain aliases at any domains that have been set for `$ANONADDY_ALL_DOMAINS` (default `true`)
 * `ANONADDY_SECRET`: Long random string used when hashing data for the anonymous replies **required**
 * `ANONADDY_LIMIT`: Number of emails a user can forward and reply per hour (default `200`)
 * `ANONADDY_BANDWIDTH_LIMIT`: Monthly bandwidth limit for users in bytes domains to use (default `104857600`)
