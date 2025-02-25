@@ -57,6 +57,7 @@ RUN apk --no-cache add \
     tzdata \
     cyrus-sasl \
     cyrus-sasl-login \
+    cronie \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --no-cache add -t build-dependencies \
@@ -110,6 +111,8 @@ RUN apk --no-cache add -t build-dependencies \
     /var/www/anonaddy/.git \
     /var/www/anonaddy/node_modules \
     /tmp/*
+# Add cron job to reload Postfix daily at midnight
+RUN echo "0 0 * * * /usr/sbin/postfix reload" > /etc/crontabs/root
 
 COPY rootfs /
 
