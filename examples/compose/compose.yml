@@ -37,6 +37,7 @@ services:
         protocol: tcp
     volumes:
       - "./data:/data"
+      - "./env:/env/certs""
     env_file:
       - "./addy.env"
     environment:
