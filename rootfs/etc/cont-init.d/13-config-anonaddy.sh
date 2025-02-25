@@ -70,6 +70,7 @@ ANONADDY_DOMAIN=${ANONADDY_DOMAIN}
 ANONADDY_HOSTNAME=${ANONADDY_HOSTNAME}
 ANONADDY_DNS_RESOLVER=${ANONADDY_DNS_RESOLVER}
 ANONADDY_ALL_DOMAINS=${ANONADDY_ALL_DOMAINS}
+ANONADDY_NON_ADMIN_SHARED_DOMAINS=${ANONADDY_NON_ADMIN_SHARED_DOMAINS}
 ANONADDY_SECRET=${ANONADDY_SECRET}
 ANONADDY_LIMIT=${ANONADDY_LIMIT}
 ANONADDY_BANDWIDTH_LIMIT=${ANONADDY_BANDWIDTH_LIMIT}
@@ -85,7 +86,7 @@ if [ -f "/data/.env" ]; then
   cat "/data/.env" >> /var/www/anonaddy/.env
 fi
 
-chown anonaddy. /var/www/anonaddy/.env
+chown anonaddy:anonaddy /var/www/anonaddy/.env
 
 echo "Trust all proxies"
 sed -i "s|^    protected \$proxies.*|    protected \$proxies = '\*';|g" /var/www/anonaddy/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php

@@ -15,7 +15,7 @@ fi
 
 echo "Copying DKIM private key for Rspamd"
 mkdir -p /var/lib/rspamd/dkim
-cp -f "${DKIM_PRIVATE_KEY}" "/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.default.key"
+cp -f "${DKIM_PRIVATE_KEY}" "/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.${ANONADDY_DKIM_SELECTOR}.key"
 
 echo "Setting Rspamd dkim_signing.conf"
 cat >/etc/rspamd/local.d/dkim_signing.conf <<EOL
@@ -25,7 +25,7 @@ signing_table = [
 ];
 
 key_table = [
-"${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}:default:/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.default.key",
+"${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}:${ANONADDY_DKIM_SELECTOR}:/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.${ANONADDY_DKIM_SELECTOR}.key",
 ];
 
 use_domain = "envelope";

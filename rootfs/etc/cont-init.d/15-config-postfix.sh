@@ -98,7 +98,6 @@ smtpd_recipient_restrictions =
     reject_rhsbl_helo ${DBL_DOMAIN}=127.0.1.[2..99],
     reject_rhsbl_reverse_client ${DBL_DOMAIN}=127.0.1.[2..99],
     warn_if_reject reject_rbl_client ${ZEN_DOMAIN}=127.255.255.[1..255],
-    reject_rbl_client dul.dnsbl.sorbs.net
 
 # Block clients that speak too early.
 smtpd_data_restrictions = reject_unauth_pipelining
@@ -166,8 +165,18 @@ smtp_tls_mandatory_ciphers = high
 smtp_tls_ciphers = high
 smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+EOL
+
+  if [ "$POSTFIX_RELAYHOST_SSL_ENCRYPTION" = "true" ]; then
+    cat >>/etc/postfix/main.cf <<EOL
+smtp_tls_wrappermode = yes
+smtp_tls_security_level = encrypt
+EOL
+  else
+  cat >>/etc/postfix/main.cf <<EOL
 smtp_tls_security_level = may
 EOL
+  fi
 fi
 
 if [ "$POSTFIX_RELAYHOST_AUTH_ENABLE" = "true" ]; then

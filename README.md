@@ -71,14 +71,13 @@ docker buildx bake image-all
 Following platforms for this image are available:
 
 ```
-$ docker run --rm mplatform/mquery anonaddy/anonaddy:latest
-Image: anonaddy/anonaddy:latest
- * Manifest List: Yes
- * Supported platforms:
-   - linux/amd64
-   - linux/arm/v6
-   - linux/arm/v7
-   - linux/arm64
+$ docker buildx imagetools inspect anonaddy/anonaddy --format "{{json .Manifest}}" | \
+  jq -r '.manifests[] | select(.platform.os != null and .platform.os != "unknown") | .platform | "\(.os)/\(.architecture)\(if .variant then "/" + .variant else "" end)"'
+
+linux/amd64
+linux/arm/v6
+linux/arm/v7
+linux/arm64
 ```
 
 ## Environment variables
@@ -111,6 +110,7 @@ Image: anonaddy/anonaddy:latest
 * `ANONADDY_HOSTNAME`: FQDN hostname for your server used to validate records on custom domains that are added by users
 * `ANONADDY_DNS_RESOLVER`: Custom domains that are added by users to validate records (default `127.0.0.1`)
 * `ANONADDY_ALL_DOMAINS`: If you would like to have other domains to use (e.g. `@username.example2.com`), set a comma separated list like so, `example.com,example2.com` (default `$ANONADDY_DOMAIN`)
+* `ANONADDY_NON_ADMIN_SHARED_DOMAINS`: If set to false this will prevent any non-admin users from being able to create shared domain aliases at any domains that have been set for `$ANONADDY_ALL_DOMAINS` (default `true`)
 * `ANONADDY_SECRET`: Long random string used when hashing data for the anonymous replies **required**
 * `ANONADDY_LIMIT`: Number of emails a user can forward and reply per hour (default `200`)
 * `ANONADDY_BANDWIDTH_LIMIT`: Monthly bandwidth limit for users in bytes domains to use (default `104857600`)
@@ -166,7 +166,8 @@ Image: anonaddy/anonaddy:latest
 * `POSTFIX_RELAYHOST_AUTH_ENABLE`: Enable client-side authentication for relayhost (default `false`)
 * `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
-* `POSTFIX_SPAMHAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
+* `POSTFIX_RELAYHOST_SSL_ENCRYPTION`: enable SSL encrpytion over SMTP where TLS is not available. (default `false`)
+* `POSTFIX_SPAMAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
 
 > [!NOTE]
 > `POSTFIX_RELAYHOST_USERNAME_FILE` and `POSTFIX_RELAYHOST_PASSWORD_FILE` can be
@@ -177,6 +178,7 @@ Image: anonaddy/anonaddy:latest
 * `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
 * `RSPAMD_NO_LOCAL_ADDRS`: Disable Rspamd local networks (default `false`)
+* `RSPAMD_SMTPD_MILTERS`: A list of Milter (space or comma as separated) applications for new mail that arrives (default `inet:127.0.0.1:11332`)
 
 > [!NOTE]
 > `RSPAMD_WEB_PASSWORD_FILE` can be used to fill in the value from a file,
