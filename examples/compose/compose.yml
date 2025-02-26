@@ -8,8 +8,12 @@ services:
       - "mysqld"
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
+      - "--ssl-ca=/etc/mysql/certs/${DB_SSL_CA}"
+      - "--ssl-cert=/etc/mysql/certs/${DB_SSL_CERT}"
+      - "--ssl-key=/etc/mysql/certs/${DB_SSL_KEY}"
     volumes:
       - "./db:/var/lib/mysql"
+      - "./env:/etc/mysql/certs:ro"
     environment:
       - "MARIADB_RANDOM_ROOT_PASSWORD=yes"
       - "MYSQL_DATABASE"
@@ -37,6 +41,7 @@ services:
         protocol: tcp
     volumes:
       - "./data:/data"
+      - "./env:/env/certs"
     env_file:
       - "./addy.env"
     environment:
