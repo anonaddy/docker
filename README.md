@@ -133,6 +133,9 @@ linux/arm64
 * `DB_USERNAME`: MySQL user (default `anonaddy`)
 * `DB_PASSWORD`: MySQL password
 * `DB_TIMEOUT`: Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default `60`)
+* `DB_SSL_CA`: filename of CA file available in ./env folder of your installation. You can use your own or generate one as explained below
+* `DB_SSL_CERT`: filename of server certificate file available in ./env folder of your installation. You can use your own or generate one as explained below
+* `DB_SSL_KEY`: filename of server private key file available in ./env folder of your installation. You can use your own or generate one as explained below
 
 > [!NOTE]
 > `DB_USERNAME_FILE` and `DB_PASSWORD_FILE` can be used to fill in the value
@@ -281,6 +284,38 @@ docker compose exec --user anonaddy addy gpg --full-gen-key
 ```
 
 Keys will be stored in `/data/.gnupg` folder.
+
+### Generate SSL certificate for communication with MariaDB
+
+If you don't have an existing SSL certificates, you can generate a new with the
+following commands (assuming you already have openssl installed):
+
+```console
+cd ./env # Make sure, you are in the env directory of your instance
+sh -c "
+  openssl genrsa -out ca-key.pem 4096 &&
+  openssl req -new -x509 -days 3650 -key ca-key.pem -out ca-cert.pem -subj '/CN=addy_db_CA' &&
+  openssl genrsa -out server-key.pem 2048 &&
+  openssl req -new -key server-key.pem -out server-req.pem -subj '/CN=db' &&
+  openssl x509 -req -days 365 -in server-req.pem -CA ca-cert.pem -CAkey ca-key.pem -CAcreateserial -out server-cert.pem &&
+  chmod 600 ./*.pem
+"
+```
+You can also use docker alternative if you do not have openssl and do not want to install:
+
+```console
+docker run --rm -v /your/path/to/env:/certs alpine sh -c "
+  apk add --no-cache openssl &&
+  openssl genrsa -out /certs/ca-key.pem 4096 &&
+  openssl req -new -x509 -days 3650 -key /certs/ca-key.pem -out /certs/ca-cert.pem -subj '/CN=addy_db_CA' &&
+  openssl genrsa -out /certs/server-key.pem 2048 &&
+  openssl req -new -key /certs/server-key.pem -out /certs/server-req.pem -subj '/CN=db' &&
+  openssl x509 -req -days 365 -in /certs/server-req.pem -CA /certs/ca-cert.pem -CAkey /certs/ca-key.pem -CAcreateserial -out /certs/server-cert.pem &&
+  chmod 600 /certs/*.pem
+"
+```
+
+Change /CN=db to any hostname you have used in compose file in case modified. Keys will be stored in `./env` folder.
 
 ### Define additional env vars
 

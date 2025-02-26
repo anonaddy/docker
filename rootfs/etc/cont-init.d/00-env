@@ -50,6 +50,7 @@ DB_DATABASE=${DB_DATABASE:-anonaddy}
 #DB_USERNAME=${DB_USERNAME:-anonaddy}
 #DB_PASSWORD=${DB_PASSWORD:-asupersecretpassword}
 DB_TIMEOUT=${DB_TIMEOUT:-60}
+DB_SSL_CA=${DB_SSL_CA:-ca-cert.pem}
 
 REDIS_HOST=${REDIS_HOST:-null}
 #REDIS_PASSWORD=${REDIS_PASSWORD:-null}
@@ -116,3 +117,7 @@ file_env 'ANONADDY_SIGNING_KEY_FINGERPRINT'
 file_env 'POSTFIX_RELAYHOST_USERNAME' 'null'
 file_env 'POSTFIX_RELAYHOST_PASSWORD' 'null'
 file_env 'RSPAMD_WEB_PASSWORD' 'null'
+
+echo ssl-ca=/env/certs/$DB_SSL_CA >> /etc/my.cnf.d/skip-ssl.cnf
+# MariaDB configs writable to others are not being considered
+chmod 644 /etc/my.cnf.d/*.cnf
