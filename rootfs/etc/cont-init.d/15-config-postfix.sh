@@ -136,7 +136,6 @@ smtpd_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1
 smtpd_tls_mandatory_ciphers = high
 smtpd_tls_ciphers = high
-smtpd_tls_eecdh_grade = ultra
 tls_high_cipherlist=EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH+aRSA+RC4:EECDH:EDH+aRSA:RC4:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS
 tls_preempt_cipherlist = yes
 tls_ssl_options = NO_COMPRESSION
