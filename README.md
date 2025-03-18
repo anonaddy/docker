@@ -177,6 +177,7 @@ linux/arm64
 
 * `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
+* `RSPAMD_DISABLE_WEB_PASSWORD`: Disable Rspamd web password (default `false`)
 * `RSPAMD_NO_LOCAL_ADDRS`: Disable Rspamd local networks (default `false`)
 * `RSPAMD_SMTPD_MILTERS`: A list of Milter (space or comma as separated) applications for new mail that arrives (default `inet:127.0.0.1:11332`)
 
