@@ -120,7 +120,7 @@ milter_mail_macros =  i {mail_addr} {client_addr} {client_name} {auth_authen}
 EOL
 fi
 
-if [ "$POSTFIX_SMTPD_TLS" = "true" ]; then
+if [[ "$POSTFIX_SMTPD_TLS" =~ ^(true|may|encrypt|ask|require)$ ]]; then
   echo "Setting Postfix smtpd TLS configuration"
   cat >>/etc/postfix/main.cf <<EOL
 
@@ -128,7 +128,6 @@ if [ "$POSTFIX_SMTPD_TLS" = "true" ]; then
 smtpd_use_tls=yes
 smtpd_tls_session_cache_database = lmdb:\${data_directory}/smtpd_scache
 smtpd_tls_CApath = /etc/ssl/certs
-smtpd_tls_security_level = may
 smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1
 smtpd_tls_loglevel = 1
 smtpd_tls_session_cache_database = lmdb:\${data_directory}/smtpd_scache
@@ -148,9 +147,26 @@ EOL
   if [ -n "$POSTFIX_SMTPD_TLS_KEY_FILE" ]; then
     echo "smtpd_tls_key_file=${POSTFIX_SMTPD_TLS_KEY_FILE}" >>/etc/postfix/main.cf
   fi
+  if [ -n "$POSTFIX_SMTPD_TLS_ECCERT_FILE" ]; then
+      echo "smtpd_tls_eccert_file=${POSTFIX_SMTPD_TLS_ECCERT_FILE}" >>/etc/postfix/main.cf
+  fi
+  if [ -n "$POSTFIX_SMTPD_TLS_ECKEY_FILE" ]; then
+      echo "smtpd_tls_eckey_file=${POSTFIX_SMTPD_TLS_ECKEY_FILE}" >>/etc/postfix/main.cf
+  fi
+  
+  # TLS policy for smtpd
+  if [[ "$POSTFIX_SMTPD_TLS" == "true" ]]; then
+    echo "smtpd_tls_security_level = may" >>/etc/postfix/main.cf  # Default value if true
+  else
+    echo "smtpd_tls_security_level = $POSTFIX_SMTPD_TLS" >>/etc/postfix/main.cf
+  fi
+
+  # Additional options for client certificates
+  [[ "$POSTFIX_SMTPD_TLS" == "ask" ]] && echo "smtpd_tls_ask_ccert = yes" >>/etc/postfix/main.cf
+  [[ "$POSTFIX_SMTPD_TLS" == "require" ]] && echo "smtpd_tls_req_ccert = yes" >>/etc/postfix/main.cf
 fi
 
-if [ "$POSTFIX_SMTP_TLS" = "true" ]; then
+if [[ "$POSTFIX_SMTP_TLS" =~ ^(true|encrypt|dane|dane-only|verify|secure)$ ]]; then
   echo "Setting Postfix smtp TLS configuration"
   cat >>/etc/postfix/main.cf <<EOL
 
@@ -167,15 +183,35 @@ smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, 
 smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
 EOL
 
+  # TLS policy for smtp
+  if [[ "$POSTFIX_SMTP_TLS" == "true" ]]; then
+    if [ "$POSTFIX_RELAYHOST_SSL_ENCRYPTION" = "true" ]; then
+      echo "smtp_tls_security_level = encrypt" >>/etc/postfix/main.cf # Backwards compatibility
+    else
+      echo "smtp_tls_security_level = may" >>/etc/postfix/main.cf  # Default value if true
+    fi
+  else
+    echo "smtp_tls_security_level = $POSTFIX_SMTP_TLS" >>/etc/postfix/main.cf
+  fi
+
+  # DNS support for DANE
+  if [[ "$POSTFIX_SMTP_TLS" =~ ^(dane|dane-only)$ ]]; then
+    echo "smtp_dns_support_level = dnssec" >>/etc/postfix/main.cf
+  fi
+
   if [ "$POSTFIX_RELAYHOST_SSL_ENCRYPTION" = "true" ]; then
     cat >>/etc/postfix/main.cf <<EOL
 smtp_tls_wrappermode = yes
-smtp_tls_security_level = encrypt
 EOL
-  else
-  cat >>/etc/postfix/main.cf <<EOL
-smtp_tls_security_level = may
-EOL
+  fi
+
+  # TLS "may" Exception for specific domains
+  if [ -n "$POSTFIX_SMTP_TLS_DOMAINS_EXCEPTIONS" ]; then
+    IFS=',' read -r -a domains <<< "$POSTFIX_SMTP_TLS_DOMAINS_EXCEPTIONS"
+    for domain in "${domains[@]}"; do
+      echo "$domain                 may" >>/etc/postfix/tls_policy
+    done
+    echo "smtp_tls_policy_maps = hash:/etc/postfix/tls_policy" >>/etc/postfix/main.cf
   fi
 fi
 
