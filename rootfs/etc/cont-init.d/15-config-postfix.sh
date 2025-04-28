@@ -155,10 +155,10 @@ EOL
   fi
   
   # TLS policy for smtpd
-  if [[ "$POSTFIX_SMTPD_TLS" == "true" ]]; then
+  if [[ "$POSTFIX_SMTPD_TLS" =~ ^(true|may)$ ]]; then
     echo "smtpd_tls_security_level = may" >>/etc/postfix/main.cf  # Default value if true
   else
-    echo "smtpd_tls_security_level = $POSTFIX_SMTPD_TLS" >>/etc/postfix/main.cf
+    echo "smtpd_tls_security_level = encrypt" >>/etc/postfix/main.cf
   fi
 
   # Additional options for client certificates
@@ -199,7 +199,7 @@ EOL
     echo "smtp_dns_support_level = dnssec" >>/etc/postfix/main.cf
   fi
 
-  if [ "$POSTFIX_RELAYHOST_SSL_ENCRYPTION" = "true" ]; then
+  if [[ "$POSTFIX_RELAYHOST_SSL_ENCRYPTION" =~ ^(true|tls_policy)$ ]]; then
     cat >>/etc/postfix/main.cf <<EOL
 smtp_tls_wrappermode = yes
 EOL
