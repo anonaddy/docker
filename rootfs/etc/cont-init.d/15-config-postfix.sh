@@ -166,7 +166,7 @@ EOL
   [[ "$POSTFIX_SMTPD_TLS" == "require" ]] && echo "smtpd_tls_req_ccert = yes" >>/etc/postfix/main.cf
 fi
 
-if [[ "$POSTFIX_SMTP_TLS" =~ ^(true|encrypt|dane|dane-only|verify|secure)$ ]]; then
+if [[ "$POSTFIX_SMTP_TLS" =~ ^(true|may|encrypt|dane|dane-only|verify|secure)$ ]]; then
   echo "Setting Postfix smtp TLS configuration"
   cat >>/etc/postfix/main.cf <<EOL
 
