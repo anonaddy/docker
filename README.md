@@ -158,15 +158,18 @@ linux/arm64
 
 * `POSTFIX_DEBUG`: Enable debug (default `false`)
 * `POSTFIX_MESSAGE_SIZE_LIMIT`: The maximal size in bytes of a message, including envelope information (default `26214400`)
-* `POSTFIX_SMTPD_TLS`: Enabling TLS in the Postfix SMTP server (default `false`)
+* `POSTFIX_SMTPD_TLS`: Enabling TLS in the Postfix SMTP server (default `false`, possible values: `true`|`may`|`encrypt`|`ask`|`require`, see [Postfix TLS README](https://www.postfix.org/TLS_README.html#client_tls_levels))
 * `POSTFIX_SMTPD_TLS_CERT_FILE`: File with the Postfix SMTP server RSA certificate in PEM format
-* `POSTFIX_SMTPD_TLS_KEY_FILE`: File with the Postfix SMTP server RSA private key in PEM format
-* `POSTFIX_SMTP_TLS`: Enabling TLS in the Postfix SMTP client (default `false`)
+* `POSTFIX_SMTPD_TLS_ECCERT_FILE`: File with the Postfix SMTP server RSA private key in PEM format
+* `POSTFIX_SMTPD_TLS_ECKEY_FILE`: File with the Postfix SMTP server ECC certificate in PEM format
+* `POSTFIX_SMTPD_TLS_KEY_FILE`: File with the Postfix SMTP server ECC private key in PEM format
+* `POSTFIX_SMTP_TLS`: Enabling TLS in the Postfix SMTP client (default `false`, possible values: `true`|`may`|`encrypt`|`dane`|`dane-only`|`verify`|`secure`, see [Postfix TLS README](https://www.postfix.org/TLS_README.html#server_vrfy_client))
 * `POSTFIX_RELAYHOST`: Default host to send mail to
 * `POSTFIX_RELAYHOST_AUTH_ENABLE`: Enable client-side authentication for relayhost (default `false`)
 * `POSTFIX_RELAYHOST_USERNAME`: Postfix SMTP Client username for relayhost authentication
 * `POSTFIX_RELAYHOST_PASSWORD`: Postfix SMTP Client password for relayhost authentication
-* `POSTFIX_RELAYHOST_SSL_ENCRYPTION`: enable SSL encrpytion over SMTP where TLS is not available. (default `false`)
+* `POSTFIX_RELAYHOST_SSL_ENCRYPTION`: enable SSL encrpytion over SMTP where TLS is not available. (default `false`, possible values: `true`|`tls_policy`, `tls_policy` uses the policy defined by `POSTFIX_SMTP_TLS`)
+* `POSTFIX_SMTP_TLS_DOMAINS_EXCEPTIONS`: Comma-separated list of domains with TLS exceptions (`TLS policy`: `may`)
 * `POSTFIX_SPAMAUS_DQS_KEY`: Personal key for [Spamhaus DQS](#spamhaus-dqs-configuration)
 
 > [!NOTE]
