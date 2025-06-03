@@ -8,24 +8,34 @@ if [ "$RSPAMD_ENABLE" != "true" ]; then
   echo "INFO: Rspamd service disabled."
   exit 0
 fi
-if [ ! -f "$DKIM_PRIVATE_KEY" ]; then
-  echo "WRN: $DKIM_PRIVATE_KEY not found. Rspamd service disabled."
-  exit 0
+
+echo "Determining shared domains"
+CHECK_DOMAINS="${ANONADDY_ALL_DOMAINS}"
+if [[ "${CHECK_DOMAINS}" != *"${ANONADDY_DOMAIN}"* ]]; then
+    CHECK_DOMAINS="${ANONADDY_DOMAIN} ${CHECK_DOMAINS}"
 fi
 
-echo "Copying DKIM private key for Rspamd"
-mkdir -p /var/lib/rspamd/dkim
-cp -f "${DKIM_PRIVATE_KEY}" "/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.${ANONADDY_DKIM_SELECTOR}.key"
+echo "Building DKIM tables"
+CONFIG_SIGNING_TABLE=
+CONFIG_KEY_TABLE=
+for DOM in ${CHECK_DOMAINS//,/ }; do
+  CONFIG_SIGNING_TABLE=$( printf '%s\n"*@%s %s",\n"*@*.%s %s",' "${CONFIG_SIGNING_TABLE}" "${DOM}" "${DOM}" "${DOM}" "${DOM}")
+  CONFIG_KEY_TABLE=$( printf '%s\n"%s %s:%s:/var/lib/rspamd/dkim/%s.%s.key",' "${CONFIG_KEY_TABLE}" "${DOM}" "${DOM}" "${ANONADDY_DKIM_SELECTOR}" "${DOM}" "${ANONADDY_DKIM_SELECTOR}")
+  # try to register a new dkim and if it fails don't exit this script.
+  # failure can occur when the files have already been generated.
+  /bin/sh /usr/local/bin/gen-dkim "${DOM}" >/dev/null 2>/dev/null && true
+done
+CONFIG_SIGNING_TABLE="${CONFIG_SIGNING_TABLE#*$'\n'}"
+CONFIG_KEY_TABLE="${CONFIG_KEY_TABLE#*$'\n'}"
 
 echo "Setting Rspamd dkim_signing.conf"
 cat >/etc/rspamd/local.d/dkim_signing.conf <<EOL
 signing_table = [
-"*@${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}",
-"*@*.${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}",
+${CONFIG_SIGNING_TABLE}
 ];
 
 key_table = [
-"${ANONADDY_DOMAIN} ${ANONADDY_DOMAIN}:${ANONADDY_DKIM_SELECTOR}:/var/lib/rspamd/dkim/${ANONADDY_DOMAIN}.${ANONADDY_DKIM_SELECTOR}.key",
+${CONFIG_KEY_TABLE}
 ];
 
 use_domain = "envelope";
@@ -36,8 +46,34 @@ use_esld = true;
 sign_authenticated = false;
 EOL
 
+echo "Copying and moving keys for shared domains"
+for file in /data/dkim/*.private; do
+    cp "$file" "${file%.*}.${ANONADDY_DKIM_SELECTOR}.key"
+done
+mkdir -p /var/lib/rspamd/dkim
+mv /data/dkim/*.key /var/lib/rspamd/dkim/
+
 echo "Setting Rspamd arc.conf"
 cp /etc/rspamd/local.d/dkim_signing.conf /etc/rspamd/local.d/arc.conf
+
+# Note to future self, if you are stuck, then read these instructions.
+#
+# Run these commands in your addy docker folder, they generate two
+# local variables you can use to generate the DNS records you need:
+#
+# YOUR_DOMAIN_NAME=idhi.de
+# DKIM_DOM="$( cat data/dkim/${YOUR_DOMAIN_NAME}.txt | tr -d '\n\\"' | sed -r 's/[[:space:]]+/ /g' | sed -E 's/ ([^;])/\1/g' | grep -oP '\(\K[^)]+' )"
+#
+# These are the DNS records required for a bare domain (you will need to
+# amend these for subdomains and fill in the ANONADDY_* variables yourself,
+# I'm not going to do all the work for you):
+#
+# TXT ${ANONADDY_DKIM_SELECTOR}._domainkey.${YOUR_DOMAIN_NAME} ${DKIM_DOM}
+# MX ${YOUR_DOMAIN_NAME} ${ANONADDY_DOMAIN}. 10
+# TXT ${YOUR_DOMAIN_NAME} v=spf1 mx include:${ANONADDY_DOMAIN} ~all
+# TXT _dmarc.${YOUR_DOMAIN_NAME} v=DMARC1; p=reject; rua=mailto:postmaster@${YOUR_DOMAIN_NAME}; ruf=mailto:postmaster@${YOUR_DOMAIN_NAME}; pct=100; adkim=r; aspf=r
+#
+# You will need to add these records wherever your domain name is registered.
 
 echo "Setting Rspamd classifier-bayes.conf"
 cat >/etc/rspamd/local.d/classifier-bayes.conf <<EOL
