@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 
-#ANONADDY_DOMAIN=${ANONADDY_DOMAIN:-null}
+ANONADDY_DOMAIN=${1}
+if [ -z "${ANONADDY_DOMAIN}" ]; then
+    ANONADDY_DOMAIN=${ANONADDY_DOMAIN:-null};
+fi
 DKIM_PRIVATE_KEY=/data/dkim/${ANONADDY_DOMAIN}.private
 
 if [ -z "$ANONADDY_DOMAIN" ]; then
