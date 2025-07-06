@@ -182,6 +182,7 @@ linux/arm64
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
 * `RSPAMD_NO_LOCAL_ADDRS`: Disable Rspamd local networks (default `false`)
 * `RSPAMD_SMTPD_MILTERS`: A list of Milter (space or comma as separated) applications for new mail that arrives (default `inet:127.0.0.1:11332`)
+* `RSPAMD_GREYLIST_ENABLE`: Whether to enable greylisting in rspamd (default `true`)
 
 > [!NOTE]
 > `RSPAMD_WEB_PASSWORD_FILE` can be used to fill in the value from a file,
