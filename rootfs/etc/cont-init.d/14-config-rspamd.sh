@@ -94,15 +94,14 @@ password = "${REDIS_PASSWORD}";
 read_servers = "${REDIS_HOST}";
 EOL
 
-if [ "${RSPAMD_GREYLIST_ENABLE:-true}" = true ]
-then
+if [ "$RSPAMD_GREYLIST_ENABLE" = true ]; then
   echo "Setting Rspamd greylist.conf"
   cat >/etc/rspamd/local.d/greylist.conf <<EOL
 servers = "${REDIS_HOST}:${REDIS_PORT}";
 EOL
 else
-  echo "Disabling greylisting"
-  echo "enabled = false;" > /etc/rspamd/override.d/greylist.conf
+  echo "Rspamd greylisting disabled"
+  echo "enabled = false;" > /etc/rspamd/local.d/greylist.conf
 fi
 
   echo "Setting Rspamd history_redis.conf"
