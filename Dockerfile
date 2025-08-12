@@ -13,7 +13,7 @@ RUN apk --no-cache add \
     curl \
     gnupg \
     gpgme \
-    imagemagick \
+    imagemagick-dev \
     libgd \
     mysql-client \
     nginx \
@@ -35,7 +35,6 @@ RUN apk --no-cache add \
     php83-openssl \
     php83-pdo \
     php83-pdo_mysql \
-    php83-pecl-imagick \
     php83-phar \
     php83-redis \
     php83-session \
@@ -72,6 +71,8 @@ RUN apk --no-cache add \
   && echo "extension=gnupg.so" > /etc/php83/conf.d/60_gnupg.ini \
   && pecl83 install mailparse \
   && echo "extension=mailparse.so" > /etc/php83/conf.d/60_mailparse.ini \
+  && pecl83 install imagick \
+  && echo "extension=imagick.so" > /etc/php83/conf.d/50_imagick.ini \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/www/*
 
