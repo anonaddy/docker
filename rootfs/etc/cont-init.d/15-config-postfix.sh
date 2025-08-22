@@ -257,6 +257,20 @@ EOL
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 chgrp postfix /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
 
+if [ "$POSTFIX_STRIP_SENDER_HEADER" = "true" ]; then
+  echo "Setting Postfix header_checks to strip Sender header"
+  cat >/etc/postfix/header_checks <<EOL
+/^Sender:/      IGNORE
+EOL
+  cat >>/etc/postfix/main.cf <<EOL
+
+# Header checks configuration
+mime_header_checks = regexp:/etc/postfix/header_checks
+header_checks = regexp:/etc/postfix/header_checks
+EOL
+  postmap /etc/postfix/header_checks
+fi
+
 if [ -f "/data/postfix-main.alt.cf" ]; then
   cat "/data/postfix-main.alt.cf" > /etc/postfix/main.cf
 fi

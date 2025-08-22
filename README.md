@@ -158,6 +158,7 @@ linux/arm64
 
 * `POSTFIX_DEBUG`: Enable debug (default `false`)
 * `POSTFIX_MESSAGE_SIZE_LIMIT`: The maximal size in bytes of a message, including envelope information (default `26214400`)
+* `POSTFIX_STRIP_SENDER_HEADER`: Strip the Sender header from incoming emails to prevent SES rejection issues (default `false`)
 * `POSTFIX_SMTPD_TLS`: Enabling TLS in the Postfix SMTP server (default `false`, possible values: `true`|`may`|`encrypt`|`ask`|`require`, see [Postfix TLS README](https://www.postfix.org/TLS_README.html#client_tls_levels))
 * `POSTFIX_SMTPD_TLS_CERT_FILE`: File with the Postfix SMTP server RSA certificate in PEM format
 * `POSTFIX_SMTPD_TLS_ECCERT_FILE`: File with the Postfix SMTP server RSA private key in PEM format
