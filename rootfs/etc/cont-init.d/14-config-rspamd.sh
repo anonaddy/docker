@@ -129,11 +129,15 @@ group "headers" {
 }
 EOL
 
-if [ -n "$RSPAMD_WEB_PASSWORD" ]; then
+if [ -n "$RSPAMD_WEB_PASSWORD" ] || [ "$RSPAMD_DISABLE_WEB_PASSWORD" = "true" ]; then
   echo "Setting Rspamd worker-controller.inc"
+  SECURE_IP="127.0.0.1/32"
+  if [ "$RSPAMD_DISABLE_WEB_PASSWORD" = "true" ]; then
+    SECURE_IP="0.0.0.0/0"
+  fi
   cat >/etc/rspamd/local.d/worker-controller.inc <<EOL
 bind_socket = "*:11334";
-secure_ip = "127.0.0.1/32";
+secure_ip = "${SECURE_IP}";
 password = "${RSPAMD_WEB_PASSWORD}";
 enable_password = "${RSPAMD_WEB_PASSWORD}";
 EOL
