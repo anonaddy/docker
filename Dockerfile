@@ -13,7 +13,7 @@ RUN apk --no-cache add \
     curl \
     gnupg \
     gpgme \
-    imagemagick-dev \
+    imagemagick \
     libgd \
     mysql-client \
     nginx \
@@ -63,6 +63,7 @@ RUN apk --no-cache add \
     automake \
     build-base \
     gpgme-dev \
+    imagemagick-dev \
     libtool \
     pcre-dev \
     php83-dev \
