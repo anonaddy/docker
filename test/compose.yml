@@ -2,12 +2,12 @@ name: addy
 
 services:
   db:
-    image: mariadb:10
+    image: mariadb:12
     container_name: addy_db
     networks:
       - addy
     command:
-      - "mysqld"
+      - "mariadbd"
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
     volumes:
@@ -20,7 +20,7 @@ services:
     restart: always
 
   redis:
-    image: redis:4.0-alpine
+    image: redis:8-alpine
     container_name: addy_redis
     networks:
       - addy
