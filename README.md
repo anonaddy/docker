@@ -181,6 +181,7 @@ linux/arm64
 
 * `RSPAMD_ENABLE`: Enable Rspamd service. (default `false`)
 * `RSPAMD_WEB_PASSWORD`: Rspamd web password (default `null`)
+* `RSPAMD_SECURE_IP`: Bypass password for IPs in this CIDR. `0.0.0.0/0` to disable password (default `127.0.0.1/32`)
 * `RSPAMD_NO_LOCAL_ADDRS`: Disable Rspamd local networks (default `false`)
 * `RSPAMD_SMTPD_MILTERS`: A list of Milter (space or comma as separated) applications for new mail that arrives (default `inet:127.0.0.1:11332`)
 * `RSPAMD_GREYLIST_ENABLE`: Whether to enable greylisting in rspamd (default `true`)
