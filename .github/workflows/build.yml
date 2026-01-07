@@ -22,7 +22,7 @@ on:
 
 jobs:
   build:
-    uses: crazy-max/.github/.github/workflows/bake-distribute-mp.yml@0acc187b016a2946786f201397bbcfb2c530ffc7
+    uses: crazy-max/.github/.github/workflows/bake-distribute-mp.yml@260f9dc454be47686f6a3ecc777beea64d104f41
     permissions:
       # same as global permissions
       contents: read
