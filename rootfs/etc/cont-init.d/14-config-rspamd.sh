@@ -133,7 +133,7 @@ if [ -n "$RSPAMD_WEB_PASSWORD" ]; then
   echo "Setting Rspamd worker-controller.inc"
   cat >/etc/rspamd/local.d/worker-controller.inc <<EOL
 bind_socket = "*:11334";
-secure_ip = "127.0.0.1/32";
+secure_ip = "${RSPAMD_SECURE_IP}";
 password = "${RSPAMD_WEB_PASSWORD}";
 enable_password = "${RSPAMD_WEB_PASSWORD}";
 EOL
