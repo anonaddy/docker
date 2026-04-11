@@ -3,10 +3,10 @@
 ARG ANONADDY_VERSION=1.5.0
 ARG ALPINE_VERSION=3.22
 
-FROM crazymax/yasu:latest AS yasu
-FROM crazymax/alpine-s6:${ALPINE_VERSION}-2.2.0.3
+FROM tianon/gosu:latest AS gosu
 
-COPY --from=yasu / /
+FROM crazymax/alpine-s6:${ALPINE_VERSION}-2.2.0.3
+COPY --from=gosu /gosu /usr/local/bin/
 RUN apk --no-cache add \
     bash \
     ca-certificates \
