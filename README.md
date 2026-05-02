@@ -155,6 +155,7 @@ linux/arm64
 ### Postfix
 
 * `POSTFIX_DEBUG`: Enable debug (default `false`)
+* `POSTFIX_MYNETWORKS`: Trusted SMTP clients that may relay outbound mail through Postfix (default `127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128`)
 * `POSTFIX_MESSAGE_SIZE_LIMIT`: The maximal size in bytes of a message, including envelope information (default `26214400`)
 * `POSTFIX_STRIP_SENDER_HEADER`: Strip the Sender header from incoming emails to prevent SES rejection issues (default `false`)
 * `POSTFIX_SMTPD_TLS`: Enabling TLS in the Postfix SMTP server (default `false`, possible values: `true`|`may`|`encrypt`|`ask`|`require`, see [Postfix TLS README](https://www.postfix.org/TLS_README.html#client_tls_levels))
@@ -174,6 +175,12 @@ linux/arm64
 > [!NOTE]
 > `POSTFIX_RELAYHOST_USERNAME_FILE` and `POSTFIX_RELAYHOST_PASSWORD_FILE` can be
 > used to fill in the value from a file, especially for Docker's secrets feature.
+
+> [!WARNING]
+> Do not add Docker bridge, proxy, VPN, or private LAN ranges to `POSTFIX_MYNETWORKS`
+> unless every client in those ranges is trusted to relay mail. Docker port
+> publishing and proxies can make external SMTP clients appear as private bridge
+> addresses.
 
 ### RSPAMD
 
