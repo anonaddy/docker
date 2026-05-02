@@ -18,34 +18,34 @@ RUN apk --no-cache add \
     mysql-client \
     nginx \
     openssl \
-    php83 \
-    php83-cli \
-    php83-ctype \
-    php83-curl \
-    php83-dom \
-    php83-fileinfo \
-    php83-fpm \
-    php83-gd \
-    php83-gmp \
-    php83-iconv \
-    php83-intl \
-    php83-json \
-    php83-mbstring \
-    php83-opcache \
-    php83-openssl \
-    php83-pdo \
-    php83-pdo_mysql \
-    php83-phar \
-    php83-redis \
-    php83-session \
-    php83-simplexml \
-    php83-sodium \
-    php83-tokenizer \
-    php83-xml \
-    php83-xmlreader \
-    php83-xmlwriter \
-    php83-zip \
-    php83-zlib \
+    php84 \
+    php84-cli \
+    php84-ctype \
+    php84-curl \
+    php84-dom \
+    php84-fileinfo \
+    php84-fpm \
+    php84-gd \
+    php84-gmp \
+    php84-iconv \
+    php84-intl \
+    php84-json \
+    php84-mbstring \
+    php84-opcache \
+    php84-openssl \
+    php84-pdo \
+    php84-pdo_mysql \
+    php84-phar \
+    php84-redis \
+    php84-session \
+    php84-simplexml \
+    php84-sodium \
+    php84-tokenizer \
+    php84-xml \
+    php84-xmlreader \
+    php84-xmlwriter \
+    php84-zip \
+    php84-zlib \
     postfix \
     postfix-mysql \
     rspamd \
@@ -66,14 +66,14 @@ RUN apk --no-cache add \
     imagemagick-dev \
     libtool \
     pcre-dev \
-    php83-dev \
-    php83-pear \
-  && pecl83 install gnupg \
-  && echo "extension=gnupg.so" > /etc/php83/conf.d/60_gnupg.ini \
-  && pecl83 install mailparse \
-  && echo "extension=mailparse.so" > /etc/php83/conf.d/60_mailparse.ini \
-  && pecl83 install imagick \
-  && echo "extension=imagick.so" > /etc/php83/conf.d/50_imagick.ini \
+    php84-dev \
+    php84-pear \
+  && pecl84 install gnupg \
+  && echo "extension=gnupg.so" > /etc/php84/conf.d/60_gnupg.ini \
+  && pecl84 install mailparse \
+  && echo "extension=mailparse.so" > /etc/php84/conf.d/60_mailparse.ini \
+  && pecl84 install imagick \
+  && echo "extension=imagick.so" > /etc/php84/conf.d/50_imagick.ini \
   && apk del build-dependencies \
   && rm -rf /tmp/* /var/www/*
 

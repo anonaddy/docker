@@ -26,6 +26,6 @@ cat > /etc/services.d/php-fpm/run <<EOL
 #!/usr/bin/execlineb -P
 with-contenv
 s6-setuidgid ${PUID}:${PGID}
-php-fpm83 -F
+php-fpm84 -F
 EOL
 chmod +x /etc/services.d/php-fpm/run
