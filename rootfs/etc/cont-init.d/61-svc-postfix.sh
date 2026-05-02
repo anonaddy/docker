@@ -2,6 +2,8 @@
 # shellcheck shell=bash
 set -e
 
+. $(dirname $0)/00-env
+
 mkdir -p /etc/services.d/postfix
 cat > /etc/services.d/postfix/run <<EOL
 #!/usr/bin/execlineb -P
