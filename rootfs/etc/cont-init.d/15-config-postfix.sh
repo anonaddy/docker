@@ -104,7 +104,8 @@ smtpd_data_restrictions = reject_unauth_pipelining
 
 disable_vrfy_command = yes
 strict_rfc821_envelopes = yes
-maillog_file = /dev/stdout
+maillog_file_prefixes = /var, /dev/stdout, /data/postfix/
+maillog_file = ${POSTFIX_LOG_PATH}
 EOL
 
 if [ -n "$SMTPD_MILTERS" ]; then
