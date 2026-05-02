@@ -9,3 +9,11 @@ with-contenv
 /usr/sbin/postfix -c /etc/postfix start-fg
 EOL
 chmod +x /etc/services.d/postfix/run
+
+mkdir -p /etc/services.d/postfix-logs
+cat > /etc/services.d/postfix-logs/run <<EOL
+#!/usr/bin/execlineb -P
+with-contenv
+tail -F ${POSTFIX_LOG_PATH}
+EOL
+chmod +x /etc/services.d/postfix-logs/run
