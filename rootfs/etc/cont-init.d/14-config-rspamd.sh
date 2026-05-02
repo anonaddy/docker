@@ -199,6 +199,89 @@ if [ "$RSPAMD_NO_LOCAL_ADDRS" = "true" ]; then
   sed -i 's/local_addrs.*$/local_addrs=[]/' /etc/rspamd/options.inc
 fi
 
+echo "Setting Rspamd addy_blocklist.lua"
+mkdir -p /etc/rspamd/lua.local.d
+cat >/etc/rspamd/lua.local.d/addy_blocklist.lua <<EOL
+local blocklist_api_url = '${APP_URL}/api/blocklist-check'
+local blocklist_secret = '${BLOCKLIST_API_SECRET}'
+
+local function url_encode(s)
+  if s == nil or s == '' then return '' end
+  s = tostring(s)
+  return (s:gsub('[^%w%-_.~ ]', function(c)
+    return string.format('%%%02X', string.byte(c))
+  end):gsub(' ', '%%20'))
+end
+
+local logger = require "rspamd_logger"
+local rspamd_http = require 'rspamd_http'
+
+rspamd_config:register_symbol({
+  name = 'BLOCKLIST_USER',
+  callback = function(task)
+    local rcpts = task:get_recipients('smtp')
+    local from_env = task:get_from('smtp')
+    if not rcpts or #rcpts == 0 then
+      logger.infox('blocklist: skip - missing recipient')
+      return false
+    end
+    local recipient = (rcpts[1].addr and rcpts[1].addr:lower()) or ''
+
+    local sender = ''
+    if from_env and from_env.addr then
+      sender = from_env.addr:lower()
+    end
+
+    local from_email = ''
+    local from_hdr = task:get_header('From')
+    if from_hdr then
+      local raw = (type(from_hdr) == 'table') and (from_hdr[1] or from_hdr) or from_hdr
+      raw = tostring(raw)
+      from_email = raw:match('<([^>]+)>') or raw:match('%S+@%S+') or ''
+      from_email = from_email:lower()
+    end
+    if from_email == '' then
+      from_email = sender
+    end
+
+    if recipient == '' or (sender == '' and from_email == '') then
+      logger.infox('blocklist: skip - missing recipient or from (recipient=%1, sender=%2, from_email=%3)', recipient, sender, from_email)
+      return false
+    end
+
+    local url = blocklist_api_url
+      .. '?recipient=' .. url_encode(recipient)
+      .. '&from_email=' .. url_encode(from_email)
+
+    local req_headers = {}
+    if blocklist_secret ~= '' then
+      req_headers['X-Blocklist-Secret'] = blocklist_secret
+    end
+
+    rspamd_http.request({
+      url = url,
+      headers = req_headers,
+      timeout = 2.0,
+      task = task,
+      callback = function(err_message, code, body, _headers)
+        if err_message then
+          logger.warnx('blocklist: HTTP error - %1', err_message)
+          return
+        end
+        if code == 200 and body and body:match('"block"%s*:%s*true') then
+          task:set_pre_result('reject', '550 5.1.1 Address not found')
+          task:insert_result(true, 'BLOCKLIST_USER', 1000.0, '550 5.1.1 Address not found')
+          logger.infox('blocklist: BLOCKLIST_USER set for recipient=%1 from_email=%2', recipient, from_email)
+        end
+      end,
+    })
+
+    return false
+  end,
+  score = 1000.0,
+})
+EOL
+
 echo "Disabling a variety of Rspamd modules"
 echo "enabled = false;" > /etc/rspamd/override.d/fuzzy_check.conf
 echo "enabled = false;" > /etc/rspamd/override.d/asn.conf
