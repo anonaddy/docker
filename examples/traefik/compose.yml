@@ -2,25 +2,21 @@ name: addy
 
 services:
   traefik:
-    image: traefik:2.5
+    image: traefik:v3.6
     container_name: traefik
     command:
-      - "--global.checknewversion=false"
-      - "--global.sendanonymoususage=false"
-      - "--log=true"
+      - "--global.checkNewVersion=false"
+      - "--global.sendAnonymousUsage=false"
       - "--log.level=INFO"
-      - "--entrypoints.http=true"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.http.http.redirections.entrypoint.to=https"
       - "--entrypoints.http.http.redirections.entrypoint.scheme=https"
-      - "--entrypoints.https=true"
       - "--entrypoints.https.address=:443"
-      - "--certificatesresolvers.letsencrypt"
-      - "--certificatesresolvers.letsencrypt.acme.storage=acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.email=webmaster@example.com"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
-      - "--providers.docker"
+      - "--providers.docker=true"
       - "--providers.docker.watch=true"
       - "--providers.docker.exposedbydefault=false"
     ports:
