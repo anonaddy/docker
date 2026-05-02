@@ -199,12 +199,14 @@ if [ "$RSPAMD_NO_LOCAL_ADDRS" = "true" ]; then
   sed -i 's/local_addrs.*$/local_addrs=[]/' /etc/rspamd/options.inc
 fi
 
+# https://github.com/anonaddy/anonaddy/blob/fd4c71bef72213dd61b88b242c17be37c14158fe/SELF-HOSTING.md?plain=1#L933
 echo "Setting Rspamd addy_blocklist.lua"
 mkdir -p /etc/rspamd/lua.local.d
 cat >/etc/rspamd/lua.local.d/addy_blocklist.lua <<EOL
 local blocklist_api_url = '${APP_URL}/api/blocklist-check'
 local blocklist_secret = '${BLOCKLIST_API_SECRET}'
 
+-- Simple percent-encode for query parameter values (rspamd_http has no escape)
 local function url_encode(s)
   if s == nil or s == '' then return '' end
   s = tostring(s)
@@ -276,7 +278,7 @@ rspamd_config:register_symbol({
       end,
     })
 
-    return false
+    return false  -- do not match symbol here; only HTTP callback may add it via insert_result
   end,
   score = 1000.0,
 })
