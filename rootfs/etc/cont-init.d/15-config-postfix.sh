@@ -269,6 +269,15 @@ EOL
   postmap /etc/postfix/header_checks
 fi
 
+# Force Postfix MySQL maps to use the container's global database configuration
+for f in /etc/postfix/mysql-*.cf; do
+  if [ -f "$f" ]; then
+    echo "option_file = /etc/my.cnf" >> "$f"
+    echo "option_group = client" >> "$f"
+    echo "tls_verify_cert = no" >> "$f"
+  fi
+done
+
 if [ -f "/data/postfix-main.alt.cf" ]; then
   cat "/data/postfix-main.alt.cf" > /etc/postfix/main.cf
 fi
