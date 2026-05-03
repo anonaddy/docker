@@ -4,7 +4,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#permissions
 permissions:
   contents: read
 
@@ -14,15 +13,11 @@ on:
       - 'master'
     tags:
       - '*'
-    paths-ignore:
-      - '**.md'
   pull_request:
-    paths-ignore:
-      - '**.md'
 
 jobs:
   build:
-    uses: docker/github-builder/.github/workflows/bake.yml@v1
+    uses: docker/github-builder/.github/workflows/bake.yml@7d2a02426d4b989616ba5aaee4e879afd4134b0d # v1.6.0
     permissions:
       contents: read # same as global permissions
       id-token: write # for signing attestation(s) with GitHub OIDC Token
