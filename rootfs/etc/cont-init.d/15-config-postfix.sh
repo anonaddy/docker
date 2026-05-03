@@ -9,7 +9,7 @@ cp -f /etc/postfix/master.cf.orig /etc/postfix/master.cf
 cp -f /etc/postfix/main.cf.orig /etc/postfix/main.cf
 
 # Postfix logs file
-touch /data/postfix/mail.log
+touch "${POSTFIX_LOG_PATH}"
 chown anonaddy:anonaddy "${POSTFIX_LOG_PATH}"
 
 echo "Setting Postfix master configuration"
