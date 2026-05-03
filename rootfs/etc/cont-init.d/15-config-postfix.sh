@@ -254,6 +254,7 @@ user = ${DB_USERNAME}
 password = ${DB_PASSWORD}
 hosts = ${DB_HOST}:${DB_PORT}
 dbname = ${DB_DATABASE}
+tls_verify_cert = no
 query = SELECT (SELECT 1 FROM usernames WHERE ${QUERY_USERNAMES}) AS usernames, (SELECT 1 FROM domains WHERE domain = '%s' AND domain_verified_at IS NOT NULL) AS domains LIMIT 1;
 EOL
 chmod o= /etc/postfix/mysql-virtual-alias-domains-and-subdomains.cf
