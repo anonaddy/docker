@@ -9,10 +9,8 @@ mkdir -p /data \
   /var/run/nginx \
   /var/run/php-fpm
 chown anonaddy:anonaddy /data
-touch /data/postfix/mail.log
 chown -R anonaddy:anonaddy \
   /data/dkim \
-  /data/postfix \
   /tpls \
   /var/lib/nginx \
   /var/log/nginx \

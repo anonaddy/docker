@@ -8,6 +8,10 @@ set -e
 cp -f /etc/postfix/master.cf.orig /etc/postfix/master.cf
 cp -f /etc/postfix/main.cf.orig /etc/postfix/main.cf
 
+# Postfix logs file
+touch /data/postfix/mail.log
+chown anonaddy:anonaddy "${POSTFIX_LOG_PATH}"
+
 echo "Setting Postfix master configuration"
 POSTFIX_DEBUG_ARG=""
 if [ "$POSTFIX_DEBUG" = "true" ]; then
@@ -152,7 +156,7 @@ EOL
   if [ -n "$POSTFIX_SMTPD_TLS_ECKEY_FILE" ]; then
       echo "smtpd_tls_eckey_file=${POSTFIX_SMTPD_TLS_ECKEY_FILE}" >>/etc/postfix/main.cf
   fi
-  
+
   # TLS policy for smtpd
   if [[ "$POSTFIX_SMTPD_TLS" =~ ^(true|may)$ ]]; then
     echo "smtpd_tls_security_level = may" >>/etc/postfix/main.cf  # Default value if true
