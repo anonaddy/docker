@@ -147,9 +147,14 @@ actions = {
 }
 EOL
 
+echo "Setting Rspamd actions.conf"
+cat >/etc/rspamd/local.d/actions.conf <<EOL
+reject = 500;
+EOL
+
 echo "Setting Rspamd milter_headers.conf"
 cat >/etc/rspamd/local.d/milter_headers.conf <<EOL
-use = ["authentication-results", "remove-headers", "spam-header", "add_dmarc_allow_header"];
+use = ["authentication-results", "remove-headers", "spam-header", "add_dmarc_allow_header", "add_should_quarantine_header"];
 
 routines {
   remove-headers {
@@ -186,6 +191,41 @@ return function(task, common_meta)
   {},
   {['X-AnonAddy-Dmarc-Allow'] = 0},
   {}
+end
+EOD;
+  add_should_quarantine_header = <<EOD
+return function(task, common_meta)
+  local metric = task:get_metric_score('default')
+  local score = metric and metric[1] or 0
+  local reject_threshold = 15.0
+  local should_quarantine = false
+  local quarantine_reason = nil
+
+  if score >= reject_threshold then
+    should_quarantine = true
+    quarantine_reason = quarantine_reason or '5.7.1 Spam message rejected'
+  end
+
+  if should_quarantine then
+    return nil,
+      {
+        ['X-AnonAddy-Should-Quarantine'] = 'Yes',
+        ['X-AnonAddy-Quarantine-Reason'] = quarantine_reason or '5.7.1 Spam message rejected'
+      },
+      {
+        ['X-AnonAddy-Should-Quarantine'] = 0,
+        ['X-AnonAddy-Quarantine-Reason'] = 0
+      },
+      {}
+  end
+
+  return nil,
+    {},
+    {
+      ['X-AnonAddy-Should-Quarantine'] = 0,
+      ['X-AnonAddy-Quarantine-Reason'] = 0
+    },
+    {}
 end
 EOD;
 }
