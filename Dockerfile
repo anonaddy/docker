@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG ANONADDY_VERSION=1.5.0
+ARG ANONADDY_VERSION=1.6.0
 ARG ALPINE_VERSION=3.23
 
 FROM tianon/gosu:latest AS gosu
@@ -101,7 +101,6 @@ RUN apk --no-cache add -t build-dependencies \
   && git fetch --depth 1 origin "v${ANONADDY_VERSION}" && git checkout -q FETCH_HEAD \
   && composer install --optimize-autoloader --no-dev --no-interaction --no-ansi --ignore-platform-req=php-64bit \
   && chown -R anonaddy:anonaddy /var/www/anonaddy \
-  && npm install --package-lock-only --ignore-scripts --no-audit --no-fund \
   && npm ci --ignore-scripts --no-audit --no-fund \
   && APP_URL=https://addy-sh.test npm run production \
   && chown -R nobody:nogroup /var/www/anonaddy \
