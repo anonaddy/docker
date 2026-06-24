@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG ANONADDY_VERSION=1.6.1
+ARG ANONADDY_VERSION=1.6.2
 ARG ALPINE_VERSION=3.23
 
 FROM tianon/gosu:latest AS gosu
