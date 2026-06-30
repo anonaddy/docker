@@ -112,6 +112,7 @@ linux/arm64
 * `ANONADDY_SECRET`: Long random string used when hashing data for the anonymous replies **required**
 * `ANONADDY_LIMIT`: Number of emails a user can forward and reply per hour (default `200`)
 * `ANONADDY_BANDWIDTH_LIMIT`: Monthly bandwidth limit for users in bytes domains to use (default `104857600`)
+* `ANONADDY_BANDWIDTH_LIMIT_ENABLED`: If set to false this will disable the monthly bandwidth enforcement (default `true`)
 * `ANONADDY_NEW_ALIAS_LIMIT`: Number of new aliases a user can create each hour (default `10`)
 * `ANONADDY_ADDITIONAL_USERNAME_LIMIT`: Number of additional usernames a user can add to their account (default `10`)
 * `ANONADDY_SIGNING_KEY_FINGERPRINT`: GPG key used to sign forwarded emails. Should be the same as your mail from email address
