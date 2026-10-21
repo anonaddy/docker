@@ -56,6 +56,7 @@ RUN apk --no-cache add \
     tzdata \
     cyrus-sasl \
     cyrus-sasl-login \
+  && ln -sf /usr/bin/php84 /usr/bin/php \
   && cp /etc/postfix/master.cf /etc/postfix/master.cf.orig \
   && cp /etc/postfix/main.cf /etc/postfix/main.cf.orig \
   && apk --no-cache add -t build-dependencies \
