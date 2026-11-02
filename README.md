@@ -41,6 +41,7 @@ ___
   * [Generate DKIM private/public keypair](#generate-dkim-privatepublic-keypair)
   * [Generate GPG key](#generate-gpg-key)
   * [Define additional env vars](#define-additional-env-vars)
+  * [Background jobs](#background-jobs)
   * [Override Postfix main configuration](#override-postfix-main-configuration)
   * [Spamhaus DQS configuration](#spamhaus-dqs-configuration)
 * [Contributing](#contributing)
@@ -102,6 +103,7 @@ linux/arm64
 * `APP_KEY`: Application key for encrypter service. You can generate one through `anonaddy key:generate --show` or `echo "base64:$(openssl rand -base64 32)"`. **required**
 * `APP_DEBUG`: Enables or disables debug mode, used to troubleshoot issues (default `false`)
 * `APP_URL`: The URL of your installation
+* `QUEUE_CONNECTION`: Job execution mode, `sync` or `redis` (default `sync`). See [Background jobs](#background-jobs) for Redis queue setup.
 * `ANONADDY_RETURN_PATH`: Return-path header for outbound emails
 * `ANONADDY_ADMIN_USERNAME`: If set this value will be used and allow you to receive forwarded emails at the root domain
 * `ANONADDY_ENABLE_REGISTRATION`: If set to false this will prevent new users from registering on the site (default `true`)
@@ -305,6 +307,25 @@ Keys will be stored in `/data/.gnupg` folder.
 
 You can define additional environment variables that will be used by the app
 by creating a file named `.env` in `/data`.
+
+### Background jobs
+
+With `QUEUE_CONNECTION=redis`, all queued application jobs, including email
+delivery and notifications, run in the background. The worker uses the configured
+Redis server and queue. Other queue connections require an externally managed
+worker.
+
+The worker allows three attempts with a five-second retry delay and a 60-second
+timeout. Job-specific retry and timeout settings take precedence. The timeout is
+shorter than the application's 90-second Redis retry interval.
+
+The Compose examples enable Redis append-only persistence in `./redis`. When
+enabling queues, set `S6_SERVICES_GRACETIME=65000` and `stop_grace_period: 90s`
+on the `addy` service so the worker can finish its current job during shutdown.
+
+Drain pending jobs before switching back to `sync`, since that mode does
+not start a worker. Failed jobs can be inspected with `anonaddy queue:failed` and
+retried with `anonaddy queue:retry <id>`.
 
 ### Override Postfix main configuration
 

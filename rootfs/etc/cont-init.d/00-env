@@ -44,6 +44,7 @@ APP_NAME=${APP_NAME:-addy.io}
 #APP_KEY=${APP_KEY:-base64:Gh8/RWtNfXTmB09pj6iEflt/L6oqDf9ZxXIh4I9MS7A=}
 APP_DEBUG=${APP_DEBUG:-false}
 APP_URL=${APP_URL:-http://localhost}
+QUEUE_CONNECTION=${QUEUE_CONNECTION:-sync}
 
 #DB_HOST=${DB_HOST:-localhost}
 DB_PORT=${DB_PORT:-3306}
