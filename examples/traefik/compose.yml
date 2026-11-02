@@ -50,6 +50,9 @@ services:
   redis:
     image: redis:8-alpine
     container_name: addy_redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - "./redis:/data"
     restart: always
 
   addy:

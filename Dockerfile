@@ -33,6 +33,7 @@ RUN apk --no-cache add \
     php84-mbstring \
     php84-opcache \
     php84-openssl \
+    php84-pcntl \
     php84-pdo \
     php84-pdo_mysql \
     php84-phar \

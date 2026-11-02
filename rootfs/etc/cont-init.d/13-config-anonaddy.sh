@@ -53,7 +53,7 @@ echo "Creating env file"
   printf '\n'
   dotenv_entry "BROADCAST_DRIVER" "log"
   dotenv_entry "CACHE_DRIVER" "file"
-  dotenv_entry "QUEUE_CONNECTION" "sync"
+  dotenv_entry "QUEUE_CONNECTION" "$QUEUE_CONNECTION"
   dotenv_entry "SESSION_DRIVER" "file"
   dotenv_entry "SESSION_LIFETIME" "120"
 
