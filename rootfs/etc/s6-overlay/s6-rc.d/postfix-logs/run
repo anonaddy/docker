@@ -1,0 +1,5 @@
+#!/usr/bin/execlineb -P
+with-contenv
+s6-setuidgid anonaddy
+pipeline -w { s6-log -b "p[postfix]" 1 }
+tail -F /data/postfix/mail.log

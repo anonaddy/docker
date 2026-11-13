@@ -320,8 +320,9 @@ timeout. Job-specific retry and timeout settings take precedence. The timeout is
 shorter than the application's 90-second Redis retry interval.
 
 The Compose examples enable Redis append-only persistence in `./redis`. When
-enabling queues, set `S6_SERVICES_GRACETIME=65000` and `stop_grace_period: 90s`
-on the `addy` service so the worker can finish its current job during shutdown.
+enabling queues, set `stop_grace_period: 90s` on the `addy` service so the worker
+can finish its current job during shutdown. The native s6-overlay v3 queue
+service allows 65 seconds for the worker to stop.
 
 Drain pending jobs before switching back to `sync`, since that mode does
 not start a worker. Failed jobs can be inspected with `anonaddy queue:failed` and

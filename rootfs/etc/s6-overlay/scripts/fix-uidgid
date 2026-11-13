@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ -n "${PGID}" ] && [ "${PGID}" != "$(id -g anonaddy)" ]; then
+  echo "Switching to PGID ${PGID}..."
+  groupmod -o -g "${PGID}" anonaddy
+fi
+if [ -n "${PUID}" ] && [ "${PUID}" != "$(id -u anonaddy)" ]; then
+  echo "Switching to PUID ${PUID}..."
+  usermod -o -u "${PUID}" anonaddy
+fi

@@ -1,0 +1,8 @@
+#!/command/with-contenv sh
+
+log_output=/dev/null
+if [ "${LOG_CROND:-true}" = "true" ]; then
+  log_output=/dev/stdout
+fi
+
+exec busybox crond -f -L "$log_output"

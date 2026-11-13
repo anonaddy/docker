@@ -5,7 +5,7 @@ ARG ALPINE_VERSION=3.24
 
 FROM tianon/gosu:latest AS gosu
 
-FROM crazymax/alpine-s6:${ALPINE_VERSION}-2.2.0.3
+FROM alpine:${ALPINE_VERSION}
 COPY --from=gosu /gosu /usr/local/bin/
 RUN apk --no-cache add \
     bash \
@@ -52,6 +52,7 @@ RUN apk --no-cache add \
     rspamd \
     rspamd-controller \
     rspamd-proxy \
+    s6-overlay \
     shadow \
     tar \
     tzdata \
@@ -82,7 +83,7 @@ RUN apk --no-cache add \
 ARG ANONADDY_VERSION
 ENV ANONADDY_VERSION=$ANONADDY_VERSION \
   S6_BEHAVIOUR_IF_STAGE2_FAILS="2" \
-  SOCKLOG_TIMESTAMP_FORMAT="" \
+  S6_STAGE2_HOOK="/etc/s6-overlay/scripts/init" \
   TZ="UTC" \
   PUID="1000" \
   PGID="1000"

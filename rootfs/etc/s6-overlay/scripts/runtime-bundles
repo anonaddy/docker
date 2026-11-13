@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+. /etc/s6-overlay/scripts/env
+
+contents=/etc/s6-overlay/s6-rc.d/user/contents.d
+
+queue_connection=$(php -r '$config = require "/var/www/anonaddy/bootstrap/cache/config.php"; echo $config["queue"]["default"];')
+if [ "$queue_connection" = "redis" ]; then
+  touch "${contents}/queue"
+else
+  rm -f "${contents}/queue"
+  echo "INFO: Redis queue worker disabled (connection: ${queue_connection})."
+fi
+
+if [ "$RSPAMD_ENABLE" = "true" ] && [ -f "$DKIM_PRIVATE_KEY" ]; then
+  touch "${contents}/rspamd"
+else
+  rm -f "${contents}/rspamd"
+fi

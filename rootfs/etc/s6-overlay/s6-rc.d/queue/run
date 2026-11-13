@@ -1,0 +1,5 @@
+#!/command/with-contenv sh
+
+cd /var/www/anonaddy || exit 1
+exec s6-setuidgid "${PUID}:${PGID}" php artisan queue:work redis \
+  --sleep=3 --tries=3 --backoff=5 --timeout=60 --no-interaction --no-ansi

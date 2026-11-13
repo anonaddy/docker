@@ -59,6 +59,14 @@ jobs:
           log_check: "ready to handle connections"
           timeout: 120
       -
+        name: Check native services
+        run: |
+          timeout 60 sh -c 'until docker compose exec -T addy sh -s < s6-services.sh; do sleep 2; done'
+        working-directory: test
+        env:
+          ANONADDY_IMAGE: ${{ env.BUILD_TAG }}
+          ANONADDY_CONTAINER: ${{ env.CONTAINER_NAME }}
+      -
         name: Logs
         if: always()
         run: |
