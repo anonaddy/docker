@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+echo "DB migration"
+anonaddy migrate --no-interaction --force
+
+echo "Clear cache"
+anonaddy cache:clear --no-interaction
+anonaddy config:cache --no-interaction
+anonaddy view:cache --no-interaction
+anonaddy route:cache --no-interaction
+anonaddy queue:restart --no-interaction

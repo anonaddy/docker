@@ -1,0 +1,11 @@
+#!/command/with-contenv sh
+set -e
+
+cd /var/www/anonaddy
+
+# Select services only after Laravel's cached configuration and DKIM keys exist.
+for script in fix-logs fix-uidgid fix-perms config config-php config-nginx config-anonaddy config-rspamd config-postfix config-main init-rspamd config-cron; do
+  "/etc/s6-overlay/scripts/${script}"
+done
+
+exec /etc/s6-overlay/scripts/runtime-bundles

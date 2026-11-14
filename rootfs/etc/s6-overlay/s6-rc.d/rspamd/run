@@ -1,0 +1,3 @@
+#!/command/with-contenv sh
+
+exec /usr/bin/rspamd -i -f -u rspamd -g rspamd
