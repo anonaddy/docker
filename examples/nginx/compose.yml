@@ -48,7 +48,7 @@ services:
     restart: always
 
   nginx:
-    image: nginx:1.29-alpine
+    image: nginx:1.30-alpine
     container_name: addy_nginx
     restart: unless-stopped
     ports:
